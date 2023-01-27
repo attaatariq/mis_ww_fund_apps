@@ -1,6 +1,6 @@
-# welfare_claims_app
+# MIS Workers Welfare Fund Pakistan
 
-A new Flutter application.
+Mobile Applications.
 
 ## Getting Started
 
