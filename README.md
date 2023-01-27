@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-# welfare_claims_app
+# Management Information System - Flutter Apps
 
-A new Flutter application.
-=======
-# MIS Workers Welfare Fund Pakistan
-
-MOBILE APPLICATIONS (FLUTTER APPS DEVELOPMENT)
->>>>>>> f646d0124a1b4e3ec79fd4d160058ebf05cafa87
+WORKERS WELFARE FUND PAKISTAN
 
 ## Getting Started
 
