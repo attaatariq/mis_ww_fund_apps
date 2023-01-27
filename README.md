@@ -1,6 +1,6 @@
 # MIS Workers Welfare Fund Pakistan
 
-MBILE APPLICATIONS (FLUTTER TECHNOLOGY)
+MoBILE APPLICATIONS (FLUTTER TECHNOLOGY)
 
 ## Getting Started
 
