@@ -2,7 +2,7 @@
 
 WORKERS WELFARE FUND, MINISTRY OF HUMAN RESOURCES AND OVERSEAS PAKISTANIES
 
-## Getting Started
+## Getting Started.
 
 This project is a starting point for a Flutter application.
 
