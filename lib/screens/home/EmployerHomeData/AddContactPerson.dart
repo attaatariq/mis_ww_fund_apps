@@ -26,13 +26,29 @@ class _AddContactPersonState extends State<AddContactPerson> {
   var numberMask = new MaskTextInputFormatter(mask: '###########',);
   UIUpdates uiUpdates;
   Constants constants;
-
+  String selectedGender= "Male";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     uiUpdates= new UIUpdates(context);
     constants= new Constants();
+  }
+  int _radioValue = 0;
+
+  void _handleRadioValueChange(int value) {
+    setState(() {
+      _radioValue = value;
+
+      switch (_radioValue) {
+        case 0:
+          selectedGender= "Male";
+          break;
+        case 1:
+          selectedGender= "Female";
+          break;
+      }
+    });
   }
 
   @override
@@ -185,7 +201,6 @@ class _AddContactPersonState extends State<AddContactPerson> {
                           ],
                         ),
                       ),
-
                       Container(
                         margin: EdgeInsets.only(top: 15),
                         height: 45,
@@ -339,6 +354,51 @@ class _AddContactPersonState extends State<AddContactPerson> {
                           ],
                         ),
                       ),
+                      Container(
+                          margin: EdgeInsets.only(top: 15),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                                unselectedWidgetColor: AppTheme.colors.newPrimary,
+                                toggleableActiveColor: AppTheme.colors.newPrimary
+                            ), //set the dark theme or write your own theme
+                            child: Row(
+                              children: <Widget>[
+                                Row(
+                                  children: [
+                                    Radio(
+                                      value: 0,
+                                      groupValue: _radioValue,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                    new Text(
+                                      'Male',
+                                      style: TextStyle(
+                                          color: AppTheme.colors.newBlack,
+                                          fontSize: 14,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                    new Radio(
+                                      value: 1,
+                                      groupValue: _radioValue,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                    new Text(
+                                      'Female',
+                                      style: TextStyle(
+                                          color: AppTheme.colors.newBlack,
+                                          fontSize: 14,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                      ),
 
                       InkWell(
                         onTap: (){
@@ -428,10 +488,12 @@ class _AddContactPersonState extends State<AddContactPerson> {
       "person_email": emailController.text.toString(),
       "person_contact": contactNoController.text.toString(),
       "person_faxno": faxNoController.text.toString(),
+      "person_gender": selectedGender.toString(),
     };
 
     var url = constants.getApiBaseURL()+constants.companies+"person";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    print("url:$url :data:$data:resp:${response.body}");
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     if(responseCodeModel.status == true)
@@ -447,6 +509,7 @@ class _AddContactPersonState extends State<AddContactPerson> {
         uiUpdates.ShowToast(message);
       }
     }else {
+      print("here");
       uiUpdates.ShowToast(responseCodeModel.message);
     }
   }

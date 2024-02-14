@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
+import 'package:welfare_claims_app/controllers/authentication/login.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employer/CompanyInformationFrom.dart';
@@ -22,11 +24,9 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-FocusNode cnicNode= FocusNode();
-TextEditingController cnicController= TextEditingController();
-TextEditingController passwordController= TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
+  LoginController loginController=Get.put(LoginController());
   bool rememberMe = false;
   var cnicMask = new MaskTextInputFormatter(mask: '#####-#######-#',);
   String ipAddress="000.000.0.000", deviceModel="Not Available", platform="";
@@ -117,8 +117,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: TextField(
-                                      focusNode: cnicNode,
-                                      controller: cnicController,
+                                      focusNode: loginController.cnicNode,
+                                      controller: loginController.cnicController,
                                       inputFormatters: [cnicMask],
                                       cursorColor: AppTheme.colors.newPrimary,
                                       keyboardType: TextInputType.number,
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: TextField(
-                                      controller: passwordController,
+                                      controller: loginController.passwordController,
                                       cursorColor: AppTheme.colors.newPrimary,
                                       keyboardType: TextInputType.text,
                                       maxLines: 1,
@@ -313,92 +313,39 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
   }
 
   void Validation() {
-    if(cnicController.text.isNotEmpty)
+    if(loginController.cnicController.text.isNotEmpty)
       {
-        if(cnicController.text.toString().length == 15) {
-          if (passwordController.text.isNotEmpty) {
+        if(loginController.cnicController.text.toString().length == 15) {
+          if (loginController.passwordController.text.isNotEmpty) {
               CheckConnectivity();
           } else {
+            uiUpdates.DismissProgresssDialog();
             uiUpdates.ShowToast(Strings.instance.passwordMessage);
           }
         }else {
+          uiUpdates.DismissProgresssDialog();
           uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
         }
       }else{
+      uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.cnicMessage);
     }
   }
 
   void CheckConnectivity() {
-    constants.CheckConnectivity(context).then((value) => {
+    constants.CheckConnectivity(context).then((value) {
       if(value)
         {
-          LoginUser()
+          print("here now");
+          loginController.loginData(ipAddress: ipAddress,platform: platform,deviceModel: deviceModel,context: context,uiUpdates: uiUpdates);
+//          LoginUser();
         }else{
-        uiUpdates.DismissProgresssDialog(),
-        uiUpdates.ShowToast(Strings.instance.internetNotConnected)
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowToast(Strings.instance.internetNotConnected);
       }
     });
   }
 
-  LoginUser() async{
-    uiUpdates.HideKeyBoard();
-    Map data = {
-      "cnic": cnicController.text.toString(),
-      "password": passwordController.text.toString(),
-      "ip": ipAddress,
-      "platform": platform,
-      "device": deviceModel,
-    };
-    print(data.toString());
-    var url = constants.getApiBaseURL()+constants.authentication+"login";
-    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
-    print(response.body+" : "+response.statusCode.toString());
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
-    uiUpdates.DismissProgresssDialog();
-      if (responseCodeModel.status == true) {
-        var body = jsonDecode(response.body);
-        String code = body["Code"].toString();
-        if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.loginSuccess);
-          var dataObject = body["Data"];
-          String userID = dataObject["user_id"].toString();
-          String user_name = dataObject["user_name"].toString();
-          String user_cnic = dataObject["user_cnic"].toString();
-          String user_email = dataObject["user_email"].toString();
-          String user_contact = dataObject["user_contact"].toString();
-          String user_sector = dataObject["user_sector"].toString();
-          String sector_name = dataObject["sector_name"].toString();
-          String user_role = dataObject["user_role"].toString();
-          String role_name = dataObject["role_name"].toString();
-          String user_image = dataObject["user_image"].toString();
-          String user_about = dataObject["user_about"].toString();
-          String user_token = dataObject["user_token"].toString();
-          String user_account = dataObject["user_account"].toString();
-          String ref_id = dataObject["ref_id"].toString();
-          String agent_expiry = dataObject["agent_expiry"].toString();
-          SetSession(
-              userID,
-              user_name,
-              user_cnic,
-              user_email,
-              user_contact,
-              user_image,
-              user_about,
-              user_token,
-              user_account,
-              user_sector,
-              user_role,
-              ref_id,
-              agent_expiry);
-          SetScreen(user_sector, user_role, user_account);
-        } else {
-          uiUpdates.ShowToast(Strings.instance.loginFailed);
-        }
-      } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
-      }
-  }
 
   GetIPAddress() {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
@@ -422,6 +369,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
     });
   }
 
+/*
   void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String ref_id, String agent_expiry) {
     UserSessions.instance.setUserID(userID);
     UserSessions.instance.setUserName(user_name);
@@ -501,4 +449,67 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver{
 
     }
   }
+*/
+/*
+  LoginUser() async{
+    uiUpdates.HideKeyBoard();
+    Map data = {
+      "cnic": cnicController.text.toString(),
+      "password": passwordController.text.toString(),
+      "ip": ipAddress,
+      "platform": platform,
+      "device": deviceModel,
+    };
+    print(data.toString());
+    var url = constants.getApiBaseURL()+constants.authentication+"login";
+    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    print(response.body+" : "+response.statusCode.toString());
+    ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
+    uiUpdates.DismissProgresssDialog();
+      if (responseCodeModel.status == true) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"].toString();
+        if (code == "1") {
+          uiUpdates.ShowToast(Strings.instance.loginSuccess);
+          var dataObject = body["Data"];
+          String userID = dataObject["user_id"].toString();
+          String user_name = dataObject["user_name"].toString();
+          String user_cnic = dataObject["user_cnic"].toString();
+          String user_email = dataObject["user_email"].toString();
+          String user_contact = dataObject["user_contact"].toString();
+          String user_sector = dataObject["user_sector"].toString();
+          String sector_name = dataObject["sector_name"].toString();
+          String user_role = dataObject["user_role"].toString();
+          String role_name = dataObject["role_name"].toString();
+          String user_image = dataObject["user_image"].toString();
+          String user_about = dataObject["user_about"].toString();
+          String user_token = dataObject["user_token"].toString();
+          String user_account = dataObject["user_account"].toString();
+          String ref_id = dataObject["ref_id"].toString();
+          String agent_expiry = dataObject["agent_expiry"].toString();
+          SetSession(
+              userID,
+              user_name,
+              user_cnic,
+              user_email,
+              user_contact,
+              user_image,
+              user_about,
+              user_token,
+              user_account,
+              user_sector,
+              user_role,
+              ref_id,
+              agent_expiry);
+          SetScreen(user_sector, user_role, user_account);
+        } else {
+          uiUpdates.ShowToast(Strings.instance.loginFailed);
+        }
+      } else {
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }
+  }
+*/
+
+
 }

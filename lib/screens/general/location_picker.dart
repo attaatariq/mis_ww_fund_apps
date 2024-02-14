@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 
 class LocationPicker extends StatefulWidget {
   @override
@@ -15,18 +17,39 @@ class _LocationPickerState extends State<LocationPicker> {
   GoogleMapController googleMapController;
   LatLng targetLatLang= LatLng(0.0, 0.0);
   Map data = {"lat" : "0.0", "lng" : "0.0"};
+  UIUpdates uiUpdates;
 
-  void OnMapCreated(GoogleMapController controller){
-    _controller.complete(controller);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    uiUpdates= new UIUpdates(context);
+  }
+
+  Future<void> OnMapCreated(GoogleMapController controller) async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+    ].request();
+
+      _controller.complete(controller);
     googleMapController= controller;
-    GetCurrentLocation();
+
+    await GetCurrentLocation();
   }
 
   void GetCurrentLocation() async{
-    Position position= await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    targetLatLang= LatLng(position.latitude, position.longitude);
-    CameraPosition cameraPosition= CameraPosition(target: targetLatLang, zoom: 16);
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      targetLatLang = LatLng(position.latitude, position.longitude);
+      CameraPosition cameraPosition = CameraPosition(
+          target: targetLatLang, zoom: 16);
+      googleMapController.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition));
+    }catch(e){
+      print('error:$e');
+      uiUpdates.ShowToast(e.toString());
+    }
   }
 
   void _updatePosition(CameraPosition _position) {

@@ -19,11 +19,11 @@ class _AlertsState extends State<Alerts> {
       child: widget.list.length > 0 ? Column(
         children: [
           Flexible(
-            child: Padding(
+            child: Container(
               padding: EdgeInsets.symmetric(horizontal: 0),
               child: ListView.builder(
                 shrinkWrap: true,
-                padding: EdgeInsets.all(0),
+                padding: EdgeInsets.only(bottom: 60),
                 itemBuilder: (_, int index) =>
                     AlertListItem(widget.list[index]),
                 itemCount: widget.list.length,
@@ -31,18 +31,16 @@ class _AlertsState extends State<Alerts> {
             ),
           )
         ],
-      ) : Expanded(
-        child: Center(
-          child: Text(
-            "Alerts Not Available",
-            maxLines: 1,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                color: AppTheme.colors.newBlack,
-                fontSize: 13,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.normal),
-          ),
+      ) : Center(
+        child: Text(
+          "Alerts Not Available",
+          maxLines: 1,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 13,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.normal),
         ),
       ),
     );

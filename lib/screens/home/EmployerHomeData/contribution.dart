@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/annex3A.dart';
+import 'package:welfare_claims_app/screens/home/EmployerHomeData/annex3A_new.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/annexA.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -155,7 +156,7 @@ class _ContributionState extends State<Contribution> {
 
   void OpenAnnex3A() {
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Annex3A()
+        builder: (context) => Annex3ANew()
     ));
   }
 }

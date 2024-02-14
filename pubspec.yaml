@@ -37,20 +37,25 @@ dependencies:
   email_validator: ^2.0.1
   intl: ^0.17.0
   file_picker: ^4.2.3
-  permission_handler: ^8.1.6
+  permission_handler: ^10.2.0
   mask_text_input_formatter: ^2.0.0
   mime: ^1.0.1
   gson: ^0.1.6-dev
   device_info: ^2.0.3
   date_format: ^2.0.4
   google_maps_flutter: ^2.0.0
-  geolocator: ^7.1.1
+  geolocator: ^9.0.2
   firebase_core: ^1.10.0
   firebase_messaging: ^10.0.0
-  flutter_local_notifications: ^5.0.0+4
+  flutter_local_notifications: ^9.9.0
   #fluttertoast: ^8.0.8
   new_version: ^0.2.0
   package_info_plus:
+  firebase_core_platform_interface: 4.5.1
+  get: ^4.6.5
+  geocoding: ^2.0.5
+  flutter_launcher_icons: ^0.11.0
+
 
 dev_dependencies:
   flutter_test:
@@ -97,3 +102,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/new_logo.png"
+  adaptive_icon_background: "#2CC285"

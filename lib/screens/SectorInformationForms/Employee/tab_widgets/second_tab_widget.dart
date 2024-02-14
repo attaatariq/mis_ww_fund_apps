@@ -4,6 +4,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/dialogs/banks_dialog_model.dart';
 import 'package:welfare_claims_app/models/CommpanyWorkerBankInformationModel.dart';
+import 'package:welfare_claims_app/models/bankAccountTypeModel.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 
@@ -22,6 +23,7 @@ TextEditingController cWAccountNumberController= TextEditingController();
 
 class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
   String selectedBankName= Strings.instance.selectBankName;
+  String selectedAccountType= Strings.instance.selectedAccount;
   bool isDisable= false;
   UIUpdates uiUpdates;
   Constants constants;
@@ -34,7 +36,16 @@ class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
     constants= new Constants();
     CheckTokenExpiry();
   }
-
+  Future<String> BankAccountTypeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: BankAccountTypeDialogModel(),
+          );
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -206,6 +217,68 @@ class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
                 ],
               ),
             ),
+            InkWell(
+              onTap: (){
+
+
+                BankAccountTypeDialog(context).then((value) => {
+                  if(value != null){
+                    setState(() {
+                      selectedAccountType = value;
+                    })
+                  }
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 15),
+                height: 45,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Container(
+                                height: 35,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(selectedAccountType,
+                                        textAlign: TextAlign.start,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: selectedAccountType == Strings.instance.selectedAccount ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                                            fontSize: 14,
+                                            fontFamily: "AppFont",
+                                            fontWeight: FontWeight.normal
+                                        ),
+                                      ),
+                                    ),
+
+                                    Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
+                                  ],
+                                )
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 1,
+                        color: AppTheme.colors.colorDarkGray,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
 
             Container(
               margin: EdgeInsets.only(top: 30, bottom: 60),
@@ -292,7 +365,11 @@ class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
     if(selectedBankName != Strings.instance.selectBankName){
       if(cWAccountTitleController.text.toString().isNotEmpty){
         if(cWAccountNumberController.text.toString().isNotEmpty){
-          CreateBankModel();
+          if(selectedAccountType!= Strings.instance.selectedAccount){
+            CreateBankModel();
+          }else{
+            uiUpdates.ShowToast(Strings.instance.selectedAccount);
+          }
         }else{
           uiUpdates.ShowToast(Strings.instance.accountNumberMessage);
         }
@@ -306,7 +383,7 @@ class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
 
   void CreateBankModel() {
     CompanyWorkerBankInformationModel companyWorkerBankInformationModel= new CompanyWorkerBankInformationModel(selectedBankName,
-        cWAccountTitleController.text.toString(), cWAccountNumberController.text.toString());
+        cWAccountTitleController.text.toString(), cWAccountNumberController.text.toString(),selectedAccountType);
     EmployeeInformationForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
     widget.parentFunction(2);
   }

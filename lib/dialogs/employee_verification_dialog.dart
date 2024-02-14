@@ -184,30 +184,28 @@ class _EmployeeVerificationDialogState extends State<EmployeeVerificationDialog>
                         ),
                         margin: EdgeInsets.only(top: 20),
                         height: 70,
-                        child: Expanded(
-                          child: Container(
-                            height: 70,
-                            padding: EdgeInsets.only(left: 8, right: 8),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: TextField(
-                                controller: remarksController,
-                                cursorColor: AppTheme.colors.newPrimary,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 3,
-                                textInputAction: TextInputAction.done,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppTheme.colors.newBlack
+                        child: Container(
+                          height: 70,
+                          padding: EdgeInsets.only(left: 8, right: 8),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: TextField(
+                              controller: remarksController,
+                              cursorColor: AppTheme.colors.newPrimary,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 3,
+                              textInputAction: TextInputAction.done,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppTheme.colors.newBlack
+                              ),
+                              decoration: InputDecoration(
+                                hintText: "Remarks",
+                                hintStyle: TextStyle(
+                                    fontFamily: "AppFont",
+                                    color: AppTheme.colors.colorDarkGray
                                 ),
-                                decoration: InputDecoration(
-                                  hintText: "Remarks",
-                                  hintStyle: TextStyle(
-                                      fontFamily: "AppFont",
-                                      color: AppTheme.colors.colorDarkGray
-                                  ),
-                                  border: InputBorder.none,
-                                ),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -272,12 +270,12 @@ class _EmployeeVerificationDialogState extends State<EmployeeVerificationDialog>
       "user_token": UserSessions.instance.getToken,
       "matched": status,
       "remarks": remarksController.text.toString(),
-      "reference": widget.model.emp_id,
+      "emp_id": widget.model.emp_id,
     };
     print(data.toString());
     var url = constants.getApiBaseURL()+constants.companies+"verify";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
-    print(response.body+" : "+response.statusCode.toString());
+    print("url:${url} :data:$data"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {

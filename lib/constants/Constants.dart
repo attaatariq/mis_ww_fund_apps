@@ -28,8 +28,13 @@ import 'package:welfare_claims_app/screens/general/splash_screen.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
 class Constants {
-  String ApiBaseURL = "https://mis.wwf.gov.pk/api/";
-  String ImageBaseURL = "https://mis.wwf.gov.pk/";
+///demo
+String ApiBaseURL = "https://inixioworld.live/api/";
+String ImageBaseURL = "https://inixioworld.live/";
+
+///live
+//  String ApiBaseURL = "https://mis.wwf.gov.pk/api/";
+//  String ImageBaseURL = "https://mis.wwf.gov.pk/";
   String ConnectionMessage = "Internet Not Connected, Try Again";
   String ErrorOccurMessage = "Error Occur, Try Again";
   String ExceptionOccurMessage = "Exception Occur, Try Again";
@@ -44,8 +49,8 @@ class Constants {
   String assessments = "interaction/";
   String alerts = "alerts/";
   String homescreen = "homescreen";
-  String homeEmployees = "home_employees";
-  String homeCompanies = "home_companies";
+  String homeEmployees = "employees";
+  String homeCompanies = "companies";
 
   //expire token enum
   String expireToken = "TOKEN_EXPIRED";
@@ -74,6 +79,10 @@ class Constants {
   ///identity types
   String cnic = "CNIC";
   String bform = "B-Form";
+
+  ///bank account types
+  String iban = "IBAN";
+  String bban = "BBAN";
 
   ///living types
   String dayScholar = "Day-Scholar";
@@ -337,6 +346,18 @@ class Constants {
     return bankModelList;
   }
 
+  List<String> GetCompaniesModel() {
+    List<String> companierModelList = [];
+    companierModelList.add("Amazon Private Limited");
+    companierModelList.add("PTCL Private Limited");
+    companierModelList.add("The Coca Cola Limited.");
+    companierModelList.add("The Orient PVT. LTD.");
+    companierModelList.add("Wallmart Private Limited.");
+    companierModelList.add("Workers Welfare Fund");
+    return companierModelList;
+  }
+
+
   List<String> GetYearModel() {
     List<String> yearsModelList = [];
     var now = new DateTime.now();
@@ -346,6 +367,17 @@ class Constants {
       yearsModelList.add(i.toString());
     }
     return yearsModelList;
+  }
+
+  List<String> GetFinancialYearModel() {
+    List<String> financialYearsModelList = [];
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy');
+    String formattedDate = formatter.format(now);
+    for (int i = int.parse(formattedDate); i >= 2000; i--) {
+      financialYearsModelList.add((i-1).toString()+"-"+i.toString());
+    }
+    return financialYearsModelList;
   }
 
   List<String> GetComplaintTypes() {
@@ -438,6 +470,7 @@ class Constants {
     var agentDate = new DateFormat("yyyy-MM-dd HH:mm:ss")
         .parse(UserSessions.instance.getAgentExpiry);
     var now = new DateTime.now();
+
     if (agentDate.compareTo(now) > 0) {
       return false;
     } else {
@@ -471,10 +504,10 @@ class Constants {
           android: AndroidNotificationDetails(
             channel.id,
             channel.name,
-            channel.description,
+//            channel.description,
             color: AppTheme.colors.newPrimary,
             playSound: true,
-            icon: '@mipmap/ic_launcher',
+            icon: '@mipmap/launcher_icon',
           ),
         ));
   }

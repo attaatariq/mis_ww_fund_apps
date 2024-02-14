@@ -289,12 +289,13 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
   }
 
   void GetTurnOverHistory() async{
+    print("turn");
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL() + constants.companies +
-        "turnoverhistory/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    print(url);
+        "turnovers/" + UserSessions.instance.getUserID + "/" +
+        UserSessions.instance.getToken+"/7/4";
     var response = await http.get(Uri.parse(url));
+    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -302,18 +303,18 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
       String code = body["Code"].toString();
       if (code == "1") {
         var data= body["Data"];
-        var currentEmployee= data["Current Employment"];
+        var currentEmployee= data["current"];
         var currentComp= currentEmployee[0];
           comp_name = currentComp["comp_name"].toString();
           comp_type = currentComp["comp_type"].toString();
           comp_landline = currentComp["comp_landline"].toString();
-          comp_fax_no = currentComp["comp_fax_no"].toString();
+          comp_fax_no = currentComp["comp_fax_no"]??"";
           comp_logo = currentComp["comp_logo"].toString();
           comp_address= currentComp["comp_address"].toString();
           print(currentComp.toString());
 
         //instalemnts
-        List<dynamic> entitlements = data["Previous Employment History"];
+        List<dynamic> entitlements = data["previous"];
         if(entitlements.length > 0)
         {
           list.clear();
@@ -344,6 +345,8 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
     } else {
       uiUpdates.ShowToast(responseCodeModel.message);
     }
+    uiUpdates.DismissProgresssDialog();
+
   }
 
   void CheckTokenExpiry() {

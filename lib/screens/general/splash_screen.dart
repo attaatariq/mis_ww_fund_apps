@@ -26,7 +26,7 @@ class SplashScreen extends StatefulWidget {
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'FFW', // id
     'FFW Notifications', // title
-    'This channel is used for WWF notifications.', // description
+    //'This channel is used for WWF notifications.', // description
     importance: Importance.high,
     playSound: true);
 Constants constants= new Constants();
@@ -163,8 +163,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void SetScreen() {
     print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken+" : "+UserSessions.instance.getRefID);
-    if(UserSessions.instance.getUserSector == "7" && UserSessions.instance.getUserRole == "6"){ // wwf employee
-      if(UserSessions.instance.getUserAccount == "1"){
+    if((UserSessions.instance.getUserSector == "7" && UserSessions.instance.getUserRole == "6")
+    || (UserSessions.instance.getUserSector == "4" && UserSessions.instance.getUserRole == "3")
+    ){ // wwf employee
+      if(UserSessions.instance.getUserAccount == "1" || UserSessions.instance.getRefID != "null"){
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmployeeHome(),
@@ -180,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       }
     }else if(UserSessions.instance.getUserSector == "8" && UserSessions.instance.getUserRole == "9"){ // company worker
-      if(UserSessions.instance.getUserAccount == "1"){
+      if(UserSessions.instance.getUserAccount == "1"|| UserSessions.instance.getRefID != "null"){
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmployeeHome(),
@@ -196,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       }
     }else if(UserSessions.instance.getUserSector == "8" && UserSessions.instance.getUserRole == "7"){ //CEO company
-      if(UserSessions.instance.getUserAccount == "1"){
+      if(UserSessions.instance.getUserAccount == "1"|| UserSessions.instance.getRefID != "null"){
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmployerHome(),

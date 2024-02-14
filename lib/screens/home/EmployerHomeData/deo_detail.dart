@@ -42,7 +42,6 @@ class _DeoDetailState extends State<DeoDetail> {
               height: 70,
               width: double.infinity,
               color: AppTheme.colors.newPrimary,
-
               child: Container(
                 margin: EdgeInsets.only(top: 23),
                 child: Row(
@@ -81,7 +80,8 @@ class _DeoDetailState extends State<DeoDetail> {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => AddDeo()
                         )).then((value) => {
-                          setState(() {})
+                          setState(() {}),
+                          CheckTokenExpiry()
                         });
                       },
                       child: Padding(
@@ -347,6 +347,7 @@ class _DeoDetailState extends State<DeoDetail> {
 
   GetInformation() async{
     List<String> tagsList= [constants.accountInfo, constants.deoInfo];
+    print('taglist:${tagsList}');
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "user_token": UserSessions.instance.getToken,
@@ -354,8 +355,9 @@ class _DeoDetailState extends State<DeoDetail> {
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
+    print("url:$url:${data}");
     var response = await http.post(Uri.parse(url), body: data);
-    print(response.body+" : "+response.statusCode.toString());
+    debugPrint(response.body+" : "+response.statusCode.toString(),wrapWidth: 1024);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -368,6 +370,7 @@ class _DeoDetailState extends State<DeoDetail> {
           var account = data["account"];
           if (account != null) {
             var deoDetail = account["DEO"];
+            print("deoDetail:$deoDetail:$account");
             if(deoDetail != null) {
               name = deoDetail["user_name"].toString();
               deoImage = deoDetail["user_image"].toString();

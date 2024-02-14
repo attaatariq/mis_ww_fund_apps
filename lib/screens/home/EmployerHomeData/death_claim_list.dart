@@ -98,7 +98,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
                 padding: EdgeInsets.symmetric(horizontal: 0),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
                       DeathClaimListItem(list[index]),
                   itemCount: this.list.length,
@@ -170,7 +170,18 @@ class _DeathClaimListState extends State<DeathClaimList> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        if(message!="null"){
+          uiUpdates.ShowToast(message);
+        }else{
+          if(body["Data"].toString()=="[]")
+          {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+
+        }
       }
     }
   }

@@ -92,10 +92,9 @@ class _Annex3AState extends State<Annex3A> {
                         child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Add Annex-3A",
+                      child: Text("Add Annex-III-A",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: AppTheme.colors.newWhite,
@@ -1649,32 +1648,42 @@ class _Annex3AState extends State<Annex3A> {
     var request = http.MultipartRequest('POST', Uri.parse(url));
     print(UserSessions.instance.getRefID);
     request.fields['comp_id'] = UserSessions.instance.getRefID;
-    request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
+    request.fields['user_id'] = UserSessions.instance.getUserID;//
+    request.fields['user_token'] = UserSessions.instance.getToken;//
     request.fields['year'] = selectedYear;
     request.fields['statement'] = selectedStatement;
-    request.fields['received'] = selectedReceivedDate;
+    request.fields['received'] = selectedReceivedDate;//
     request.fields['financial'] = selectFinancialYear;
-    request.fields['net_profit'] = netProfitController.text.toString();
+    request.fields['net_profit'] = netProfitController.text.toString();//
     request.fields['allocated'] = wppfAmountController.text.toString();
-    request.fields['count_cat1'] = category1wORKERController.text.toString();
-    request.fields['count_cat2'] = category2wORKERController.text.toString();
-    request.fields['count_cat3'] = category3wORKERController.text.toString();
+    request.fields['count_cat1'] = category1wORKERController.text.toString();//
+    request.fields['count_cat2'] = category2wORKERController.text.toString();//
+    request.fields['count_cat3'] = category3wORKERController.text.toString();//
     request.fields['amount1'] = amountFix1CategoryController.text.toString();
     request.fields['amount2'] = amountFix2CategoryController.text.toString();
     request.fields['amount3'] = amountFix3CategoryController.text.toString();
-    request.fields['dispense1'] = amountDistributedCategory1Controller.text.toString();
+//    request.fields['dispense1'] = amountDistributedCategory1Controller.text.toString();//
+    request.fields['dispensecat1'] = amountDistributedCategory1Controller.text.toString();//
 
-    request.fields['dispense2'] = amountDistributedCategory2Controller.text.toString();
-    request.fields['dispense3'] = amountDistributedCategory3Controller.text.toString();
-    request.fields['transfered'] = amountContributedController.text.toString();
-    request.fields['pay_mode'] = selectModeOfPayment;
-    request.fields['challan_no'] = challanNumberController.text.toString();
+//    request.fields['dispense2'] = amountDistributedCategory2Controller.text.toString();
+  //  request.fields['dispense3'] = amountDistributedCategory3Controller.text.toString();
+
+    request.fields['dispensecat2'] = amountDistributedCategory2Controller.text.toString();//
+    request.fields['dispensecat3'] = amountDistributedCategory3Controller.text.toString();//
+
+    request.fields['transfered'] = amountContributedController.text.toString();//
+//    request.fields['pay_mode'] = selectModeOfPayment;
+    request.fields['mode'] = selectModeOfPayment;//
+//    request.fields['challan_no'] = challanNumberController.text.toString();
+    request.fields['modeno'] = challanNumberController.text.toString();
     request.fields['bank'] = selectBankName;
-    request.fields['payment'] = totalPaymentController.text.toString();
-    request.fields['pay_date'] = selectedPaymentDate;
+    request.fields['payment'] = totalPaymentController.text.toString();//
+//    request.fields['pay_date'] = selectedPaymentDate;
+    request.fields['paid_at'] = selectedPaymentDate;//
     request.fields['percent'] = wwf2percentamountController.text.toString();
     request.fields['employees'] = totalNoEmployees.text.toString();
+
+    ///allocated, dispensesum,
     request.files.add(
         http.MultipartFile(
             'proof',

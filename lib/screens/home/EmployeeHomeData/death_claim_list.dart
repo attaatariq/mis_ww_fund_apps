@@ -83,8 +83,12 @@ class _DeathClaimListState extends State<DeathClaimList> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => DeathClaim()
-                        )).then((value) => {
-                          setState(() {})
+                        )).then((value)  {
+                          setState(() {});
+                          if(value==true){
+                            list.clear();
+                          CheckTokenExpiry() ;
+                          }
                         });
                       },
                       child: Padding(
@@ -114,7 +118,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
                 padding: EdgeInsets.symmetric(horizontal: 0),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
                       DeathClaimListItem(list[index]),
                   itemCount: this.list.length,

@@ -391,7 +391,7 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
                     onTap: (){
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => HajjClaimsDetail()
+                          builder: (context) => HajjClaim()
                       ));
                     },
                     child: Container(

@@ -5,6 +5,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/itemviews/interst_distribution_item.dart';
 import 'package:welfare_claims_app/models/InterstDistributionModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/annex3A.dart';
+import 'package:welfare_claims_app/screens/home/EmployerHomeData/annex3A_new.dart';
 
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
@@ -80,7 +81,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
                     InkWell(
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => Annex3A()
+                            builder: (context) => Annex3ANew()
                         )).then((value) => {
                           setState(() {})
                         });
@@ -146,7 +147,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
 
   void GetAllAnnexA() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.companies+"annexure2/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
+    var url = constants.getApiBaseURL()+constants.companies+"annexure_2/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
     var response = await http.get(Uri.parse(url));
     print(url);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);

@@ -545,7 +545,12 @@ class _AddDeoState extends State<AddDeo> {
                     {
                       if(passwordController.text.toString() == confirmPasswordController.text.toString())
                       {
-                        CheckConnectivity();
+                        if(logoFilePath.isNotEmpty)
+                        {
+                          CheckConnectivity();
+                        }else {
+                          uiUpdates.ShowToast(Strings.instance.selectImage);
+                        }
                       }else {
                         uiUpdates.ShowToast(Strings.instance.passwordMatchMessage);
                       }
@@ -593,7 +598,9 @@ class _AddDeoState extends State<AddDeo> {
 
   AddDEO() async{
     uiUpdates.HideKeyBoard();
-    var url = constants.getApiBaseURL()+constants.companies+"deo";
+//    var url = constants.getApiBaseURL()+constants.companies+"deo";
+    var url = constants.getApiBaseURL()+constants.companies+"stenotypist";
+    print("url:$url:$logoFilePath");
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['name'] = fullNameController.text.toString();
     request.fields['comp_id'] = UserSessions.instance.getRefID;
@@ -607,37 +614,46 @@ class _AddDeoState extends State<AddDeo> {
     request.fields['role'] = "8";
     request.fields['password'] = passwordController.text.toString();
     request.fields['confirm'] = confirmPasswordController.text.toString();
-    request.files.add(
-        http.MultipartFile(
-            'image',
-            File(logoFilePath).readAsBytes().asStream(),
-            File(logoFilePath).lengthSync(),
-            filename: logoFilePath.split("/").last
-        )
-    );
+    if(logoFilePath.isNotEmpty)
+      {
+        request.files.add(
+            http.MultipartFile(
+                'image',
+                File(logoFilePath).readAsBytes().asStream(),
+                File(logoFilePath).lengthSync(),
+                filename: logoFilePath.split("/").last
+            )
+        );
+      }else{
+      return;
+    }
 
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
-    try {
-      final resp = await http.Response.fromStream(response);
-      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-      uiUpdates.DismissProgresssDialog();
-      if (responseCodeModel.status == true) {
-        var body = jsonDecode(resp.body);
-        String code = body["Code"].toString();
-        if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.deoAddMessage);
-          Navigator.pop(context);
-        } else {
-          uiUpdates.ShowToast(Strings.instance.deoAddFailed);
-        }
+    final resp = await http.Response.fromStream(response);
+    debugPrint("data:${request.fields}:resp:${resp.bodyBytes}",wrapWidth: 1024);
+    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+    uiUpdates.DismissProgresssDialog();
+    if (responseCodeModel.status == true) {
+      var body = jsonDecode(resp.body);
+      String code = body["Code"].toString();
+      if (code == "1") {
+        uiUpdates.ShowToast(Strings.instance.deoAddMessage);
+        Navigator.pop(context);
       } else {
-        var body = jsonDecode(resp.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowToast(Strings.instance.deoAddFailed);
       }
+    } else {
+      var body = jsonDecode(resp.body);
+      String message = body["Message"].toString();
+      uiUpdates.ShowToast(message);
+    }
+    try {
+
     }catch(e){
       uiUpdates.ShowToast(e);
+    }finally{
+      uiUpdates.DismissProgresssDialog();
     }
   }
 
@@ -666,7 +682,7 @@ class _AddDeoState extends State<AddDeo> {
     }
   }
 
-  Information(){ /// information api call and id deo exist in information api then show that in these above fields and edit it otherwise add deo
+  add(){ /// information api call and id deo exist in information api then show that in these above fields and edit it otherwise add deo
 
   }
 }

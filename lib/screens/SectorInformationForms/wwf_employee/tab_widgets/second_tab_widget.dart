@@ -4,6 +4,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/dialogs/banks_dialog_model.dart';
 import 'package:welfare_claims_app/models/CommpanyWorkerBankInformationModel.dart';
+import 'package:welfare_claims_app/models/bankAccountTypeModel.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
 import 'package:welfare_claims_app/screens/general/splash_screen.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
@@ -23,6 +24,8 @@ TextEditingController wWAccountNumberController= TextEditingController();
 
 class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
   String selectedBankName= Strings.instance.selectBankName;
+  String selectedAccountType= Strings.instance.selectedAccount;
+
   UIUpdates uiUpdates;
   Constants constants;
 
@@ -33,7 +36,16 @@ class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
     uiUpdates= new UIUpdates(context);
     constants= new Constants();
   }
-
+  Future<String> BankAccountTypeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: BankAccountTypeDialogModel(),
+          );
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -204,6 +216,68 @@ class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
                 ],
               ),
             ),
+            InkWell(
+              onTap: (){
+
+
+                BankAccountTypeDialog(context).then((value) => {
+                  if(value != null){
+                    setState(() {
+                      selectedAccountType = value;
+                    })
+                  }
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 15),
+                height: 45,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Container(
+                                height: 35,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(selectedAccountType,
+                                        textAlign: TextAlign.start,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: selectedAccountType == Strings.instance.selectedAccount ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                                            fontSize: 14,
+                                            fontFamily: "AppFont",
+                                            fontWeight: FontWeight.normal
+                                        ),
+                                      ),
+                                    ),
+
+                                    Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
+                                  ],
+                                )
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 1,
+                        color: AppTheme.colors.colorDarkGray,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
 
             Container(
               margin: EdgeInsets.only(top: 30, bottom: 60),
@@ -287,7 +361,11 @@ class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
     if(wWAccountTitleController.text.toString() != ""){
       if(wWAccountNumberController.text.toString() != ""){
         if(selectedBankName != Strings.instance.selectBankName){
-          CreateBankModel();
+          if(selectedAccountType!= Strings.instance.selectedAccount){
+            CreateBankModel();
+          }else{
+            uiUpdates.ShowToast(Strings.instance.selectedAccount);
+          }
         }else{
           uiUpdates.ShowToast(Strings.instance.selectBankName);
         }
@@ -301,7 +379,7 @@ class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
 
   void CreateBankModel() {
     CompanyWorkerBankInformationModel companyWorkerBankInformationModel= new CompanyWorkerBankInformationModel(selectedBankName,
-        wWAccountTitleController.text.toString(), wWAccountNumberController.text.toString());
+        wWAccountTitleController.text.toString(), wWAccountNumberController.text.toString(),selectedAccountType);
     EmployeeInformationForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
     ////call Function
     widget.parentFunction(2);

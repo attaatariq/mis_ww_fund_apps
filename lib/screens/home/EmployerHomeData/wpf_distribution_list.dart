@@ -146,12 +146,12 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
 
   void GetAllAnnexA() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.companies+"annexure1/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
+    var url = constants.getApiBaseURL()+constants.companies+"annexure_1/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
     var response = await http.get(Uri.parse(url));
     print(url);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
+    print("response.body:${response.body}");
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

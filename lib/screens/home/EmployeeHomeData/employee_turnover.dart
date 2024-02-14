@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/dialogs/city_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/company_dialog_model.dart';
+import 'package:welfare_claims_app/dialogs/company_types_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/disability_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/district_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/province_dialog_model.dart';
@@ -29,9 +30,10 @@ class EmployeeTurnOver extends StatefulWidget {
 TextEditingController nameController= TextEditingController();
 TextEditingController addressController= TextEditingController();
 TextEditingController cNameController= TextEditingController();
+TextEditingController cLandlineController= TextEditingController();
 
 class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
-  String selectedCompanyName= Strings.instance.selectCompany, selectedCompanyID= "", selectedTurnoverType= Strings.instance.turnOverType,
+  String selectedCompanyName= Strings.instance.selectCompany,selectedType= "Select Type", selectedCompanyID= "", selectedTurnoverType= Strings.instance.turnOverType,
       selectedCityID="", selectedProvinceID="", selectedDistrictID="", selectedCity= Strings.instance.selectCity,
       selectedProvince= Strings.instance.selectProvince, selectedDistrict= Strings.instance.selectDistrict, selectedAppointedDate = Strings.instance.selectedAppointmentDate;
   List<CompanyModel> companiesList= [];
@@ -345,6 +347,116 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
                                         ),
                                         decoration: InputDecoration(
                                           hintText: "Company Name",
+                                          hintStyle: TextStyle(
+                                              fontFamily: "AppFont",
+                                              color: AppTheme.colors.colorDarkGray
+                                          ),
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: 1,
+                              color: AppTheme.colors.colorDarkGray,
+                            ),
+                          )
+                        ],
+                      ),
+                    ) : Container(),
+                    _radioValue == 1?Container():InkWell(
+                      onTap: (){
+                        OpenCompanyTypeDialog(context).then((value) => {
+                          if(value != null){
+                            setState(() {
+                              selectedType = value;
+                            })
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 15),
+                        height: 45,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                        height: 35,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: Text(selectedType,
+                                                textAlign: TextAlign.start,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    color: selectedType == "Select Type" ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                                                    fontSize: 14,
+                                                    fontFamily: "AppFont",
+                                                    fontWeight: FontWeight.normal
+                                                ),
+                                              ),
+                                            ),
+
+                                            Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
+                                          ],
+                                        )
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                height: 1,
+                                color: AppTheme.colors.colorDarkGray,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    _radioValue == 0 ? Container(
+                      margin: EdgeInsets.only(top: 15),
+                      height: 45,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 35,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: TextField(
+                                        controller: cLandlineController,
+                                        cursorColor: AppTheme.colors.newPrimary,
+                                        keyboardType: TextInputType.number,
+                                        maxLines: 1,
+                                        textInputAction: TextInputAction.done,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppTheme.colors.newBlack
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: "Company Landline",
                                           hintStyle: TextStyle(
                                               fontFamily: "AppFont",
                                               color: AppTheme.colors.colorDarkGray
@@ -761,7 +873,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
   }
 
   GetInformation() async{
-    List<String> tagsList= [constants.accountInfo, constants.citiesInfo, constants.statesInfo, constants.districtsInfo];
+    List<String> tagsList= [constants.accountInfo, constants.citiesInfo, constants.statesInfo, constants.districtsInfo,constants.companiesInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "user_token": UserSessions.instance.getToken,
@@ -770,10 +882,10 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-    print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
+    print(data);
+    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
@@ -875,12 +987,17 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     if(_radioValue == 0){
       if(selectedTurnoverType != Strings.instance.turnOverType){
         if(cNameController.text.toString().isNotEmpty){
+          if(selectedType != "Select Type"){
           if(selectedAppointedDate != Strings.instance.selectedAppointmentDate){
             if(selectedCityID.isNotEmpty){
               if(selectedProvinceID.isNotEmpty){
                 if(selectedDistrictID.isNotEmpty) {
                   if(addressController.text.toString().isNotEmpty){
-                    CheckConnection();
+                    if(cLandlineController.text.toString().isNotEmpty){
+                      CheckConnection();
+                    }else{
+                      uiUpdates.ShowToast(Strings.instance.cLandlineMessage);
+                    }
                   }else{
                     uiUpdates.ShowToast(Strings.instance.addressMessage);
                   }
@@ -895,6 +1012,8 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
             }
           }else{
             uiUpdates.ShowToast(Strings.instance.selectedAppointmentDate);
+          }}else{
+            uiUpdates.ShowToast(Strings.instance.cTypeMessage);
           }
         }else{
           uiUpdates.ShowToast(Strings.instance.cNameMessage);
@@ -933,19 +1052,21 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     Map data = {
-      "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
-      "emp_id": UserSessions.instance.getEmployeeID,
-      "comp_name": cNameController.text.toString(),
-      "comp_address": addressController.text.toString(),
-      "comp_city": selectedCityID,
-      "comp_district": selectedDistrictID,
-      "comp_province": selectedProvinceID,
-      "comp_status": selectedTurnoverType,
-      "appointed_at": selectedAppointedDate,
+      "user_id": UserSessions.instance.getUserID,//
+      "user_token": UserSessions.instance.getToken,//
+      "emp_id": UserSessions.instance.getEmployeeID,//
+      "comp_name": cNameController.text.toString(),//
+      "comp_address": addressController.text.toString(),//
+      "comp_city": selectedCityID,//
+      "comp_district": selectedDistrictID,//
+      "comp_province": selectedProvinceID,//
+      "comp_status": selectedTurnoverType,//
+      "appointed_at": selectedAppointedDate,//
+      "comp_type": selectedType,
+      "comp_landline":  cLandlineController.text.toString(),
     };
 
-    var url = constants.getApiBaseURL()+constants.companies+"turnovernew";
+    var url = constants.getApiBaseURL()+constants.companies+"turntonew";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
@@ -973,7 +1094,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
       "appointed_at": selectedAppointedDate,
     };
 
-    var url = constants.getApiBaseURL()+constants.companies+"turnoverexist";
+    var url = constants.getApiBaseURL()+constants.companies+"turntoexist";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
@@ -989,4 +1110,15 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
       uiUpdates.ShowToast(responseCodeModel.message);
     }
   }
+  Future<String> OpenCompanyTypeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context){
+          return Center(
+            child: CompanyTypesDialogModel(constants.GetCompanyTypes()),
+          );
+        }
+    );
+  }
+
 }

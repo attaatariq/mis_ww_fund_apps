@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:welfare_claims_app/models/HajjClaimModel.dart';
+import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/hajj_claim.dart';
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import 'package:http/http.dart' as http;
 
 class HajjClaimsDetail extends StatefulWidget {
   @override
@@ -16,6 +21,7 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
   UIUpdates uiUpdates;
   bool isError= false;
   String errorMessage="";
+  List<HajjClaimModel> list = [];
 
   @override
   void initState() {
@@ -333,16 +339,66 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
   }
 
   void CheckTokenExpiry() {
+    print("here1");
     Future.delayed(const Duration(milliseconds: 1000), () {
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        GetHajjClaims();
+        GetHajjClaim();
       }
     });
   }
 
-  void GetHajjClaims() {
+  void GetHajjClaim() async{
+    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+    var url = constants.getApiBaseURL() + constants.claims +
+        "hajjclaims/" + UserSessions.instance.getUserID + "/" +
+        UserSessions.instance.getToken;
+    var response = await http.get(Uri.parse(url));
+    print(url+response.body);
+    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+        response.statusCode, response);
+    if (responseCodeModel.status == true) {
+      var body = jsonDecode(response.body);
+      String code = body["Code"].toString();
+      if (code == "1") {
+        List<dynamic> claims= body["Data"];
+        if(claims.length > 0){
+          claims.forEach((element) {
+            String claim_year= element["claim_year"].toString();
+            String claim_receipt= element["claim_receipt"].toString();
+            String claim_amount= element["claim_amount"].toString();
+            String created_at= element["created_at"].toString();
+            String user_name= element["user_name"].toString();
+            String comp_name= element["comp_name"].toString();
+            String emp_about= element["emp_about"].toString();
+            list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name, emp_about));
+          });
 
+          uiUpdates.DismissProgresssDialog();
+          setState(() {
+            isError= false;
+          });
+        }else{
+          print("3");
+          uiUpdates.DismissProgresssDialog();
+          setState(() {
+            isError= true;
+            errorMessage = "Claims Not Available";
+          });
+        }
+
+        uiUpdates.DismissProgresssDialog();
+      } else {
+        print("2");
+        var body = jsonDecode(response.body);
+        String message = body["Data"].toString();
+        uiUpdates.ShowToast(message);
+      }
+    } else {
+      print("1");
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(responseCodeModel.message);
+    }
   }
 }

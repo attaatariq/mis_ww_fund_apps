@@ -139,12 +139,13 @@ class _FAQsState extends State<FAQs> {
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
+    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
       if (code == "1") {
         var data= body["Data"];
-        List<dynamic> entitlements = data["FAQs"];
+        List<dynamic> entitlements = data;
         if(entitlements.length > 0)
         {
           list.clear();
@@ -173,8 +174,14 @@ class _FAQsState extends State<FAQs> {
         uiUpdates.ShowToast(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
-    }
+      if(responseCodeModel.message!="null") {
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }else{
+        setState(() {
+          isError= true;
+          errorMessage = "FAQ's Not Available";
+        });
+      }    }
   }
 
   void CheckTokenExpiry() {

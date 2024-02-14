@@ -378,6 +378,7 @@ class _SendFeedbackState extends State<SendFeedback> {
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "user_token": UserSessions.instance.getToken,
+      "comp_id": UserSessions.instance.getRefID,
       "feed_type": feedbackType,
       "feed_quality": selectedFeedback,
       "feed_message": feedBackController.text.toString(),

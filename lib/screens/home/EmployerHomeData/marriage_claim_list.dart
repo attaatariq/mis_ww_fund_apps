@@ -98,7 +98,7 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
                 padding: EdgeInsets.symmetric(horizontal: 0),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
                       MarriageClaimListItem(list[index]),
                   itemCount: this.list.length,
@@ -124,9 +124,9 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   void GetMarriageClaims() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
-    print(url);
     var response = await http.get(Uri.parse(url));
     uiUpdates.DismissProgresssDialog();
+    print(url+":"+response.statusCode.toString()+response.body);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -164,11 +164,22 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
       }
     } else {
       var body = jsonDecode(response.body);
-      String message = body["Message"].toString();
+      String message = (body["Message"]).toString();
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        if(message!="null"){
+          uiUpdates.ShowToast(message);
+        }else{
+          if(body["Data"].toString()=="[]")
+            {
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.notAvail;
+              });
+            }
+
+        }
       }
     }
   }

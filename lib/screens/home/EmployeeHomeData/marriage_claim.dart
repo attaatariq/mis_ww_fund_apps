@@ -8,8 +8,10 @@ import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/dialogs/child_dialog_model.dart';
+import 'package:welfare_claims_app/dialogs/company_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/marriage_category_dialog_model.dart';
 import 'package:welfare_claims_app/models/ChildModel.dart';
+import 'package:welfare_claims_app/models/CompanyModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +33,8 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
   Constants constants;
   UIUpdates uiUpdates;
   List<ChildModel> childModelList= [];
+  List<CompanyModel> companiesList = [];
+  String comp_id='';
 
   @override
   void initState() {
@@ -91,6 +95,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+
                       InkWell(
                         onTap: (){
                           OpenMarriageCategoryDialog(context).then((value) => {
@@ -100,6 +105,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
                           });
                         },
                         child: Container(
+                       //   margin: EdgeInsets.only(top: 15),
                           height: 45,
                           child: Stack(
                             children: [
@@ -233,7 +239,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
                                         child: TextField(
                                           controller: husbandNameController,
                                           cursorColor: AppTheme.colors.newPrimary,
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: TextInputType.text,
                                           maxLines: 1,
                                           textInputAction: TextInputAction.next,
                                           style: TextStyle(
@@ -481,7 +487,15 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
         }
     );
   }
-
+  Future<CompanyModel> OpenCompanyDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: CompaniesDialogModel(companiesList),
+          );
+        });
+  }
   Future<ChildModel> OpenChildDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -533,7 +547,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
   }
 
   void Validation() {
-    if(selectedMarriageCategory != Strings.instance.selectedCategory){
+      if(selectedMarriageCategory != Strings.instance.selectedCategory){
       if(husbandNameController.text.toString().isNotEmpty){
         if(serviceCertificateFilePath.isNotEmpty){
           if(affidavitNotClaimPath.isNotEmpty){
@@ -588,6 +602,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
     var url = constants.getApiBaseURL()+constants.claims+"marriage_claim";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
+    request.fields['comp_id'] =comp_id;
     request.fields['user_id'] = UserSessions.instance.getUserID;
     request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['child_id'] = selectedChildID;
@@ -650,7 +665,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
         String code = body["Code"].toString();
         if (code == "1") {
           uiUpdates.ShowToast(Strings.instance.marriageClaimRequestMessage);
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.failedMarriageClaim);
         }
@@ -676,7 +691,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
   }
 
   GetInformation() async{
-    List<String> tagsList= [constants.accountInfo, constants.empChildren];
+    List<String> tagsList= [constants.accountInfo, constants.empChildren,constants.companiesInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "user_token": UserSessions.instance.getToken,
@@ -685,7 +700,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-    print(response.body+" : "+response.statusCode.toString());
+    print("$data"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -697,12 +712,22 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
         var account= data["account"];
         List<dynamic> childrens= account["emp_children"];
         String empID= account["emp_id"].toString();
+        comp_id=account["comp_id"].toString();
         UserSessions.instance.setEmployeeID(empID);
 
         ///childrens
         if(childrens.length > 0){
           childrens.forEach((element) {
             childModelList.add(new ChildModel(element["child_id"], element["child_name"]));
+          });
+        }
+        ///get companies
+        List<dynamic> entitlementsCompanies = data['companies'];
+        if (entitlementsCompanies.length > 0) {
+          entitlementsCompanies.forEach((row) {
+            String comp_id = row["comp_id"].toString();
+            String comp_name = row["comp_name"].toString();
+            companiesList.add(new CompanyModel(comp_id, comp_name));
           });
         }
       } else {

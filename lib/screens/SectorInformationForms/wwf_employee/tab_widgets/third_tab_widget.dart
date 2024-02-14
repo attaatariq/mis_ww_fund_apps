@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
@@ -26,6 +27,12 @@ class WWFEmployeeThirdTab extends StatefulWidget {
 }
 
 class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
+  String userName='';
+  String userCNIC='';
+  String userGender='';
+  String userEmail='';
+  String userContact='';
+
   String cnicFilePath="", cnicFileName=Strings.instance.uploadCnic;
   String ssnFilePath="", ssnFileName=Strings.instance.uploadSSnFile;
   String eobiFilePath="", eobiFileName=Strings.instance.uploadEobiFile;
@@ -43,8 +50,17 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
+    CheckTokenExpiry();
   }
-
+  void CheckTokenExpiry() {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if(constants.AgentExpiryComperission()){
+        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+      }else{
+        GetInformation();
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -593,29 +609,39 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     var url = constants.getApiBaseURL()+constants.employees+"create";
     print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
-    request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
-    request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;
-    request.fields['father'] = EmployeeInformationForm.companyWorkerInformationModel.fatherName;
-    request.fields['about'] = EmployeeInformationForm.companyWorkerInformationModel.designation;
-    request.fields['ssno'] = EmployeeInformationForm.companyWorkerInformationModel.ssnNumber;
-    request.fields['eobino'] = EmployeeInformationForm.companyWorkerInformationModel.eobiNumber;
-    request.fields['appoint_date'] = EmployeeInformationForm.companyWorkerInformationModel.appointDate;
-    request.fields['scale'] = EmployeeInformationForm.companyWorkerInformationModel.payScale;
-    request.fields['disability'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDisability;
-    request.fields['cnic_issued'] = EmployeeInformationForm.companyWorkerInformationModel.cnicIssueDate;
-    request.fields['cnic_expiry'] = EmployeeInformationForm.companyWorkerInformationModel.cnicExpiryDate;
-    request.fields['birthday'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDOB;
-    request.fields['address'] = EmployeeInformationForm.companyWorkerInformationModel.address;
-    request.fields['city'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCityID;
-    request.fields['district'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDistrictID;
-    request.fields['province'] = EmployeeInformationForm.companyWorkerInformationModel.selectedProvinceID;
-    request.fields['bank'] = EmployeeInformationForm.companyWorkerBankInformationModel.selectedBank;
-    request.fields['account_title'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountTitle;
+    request.fields['user_id'] = UserSessions.instance.getUserID;//
+    request.fields['user_token'] = UserSessions.instance.getToken;//
+    request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;//
+    request.fields['father'] = EmployeeInformationForm.companyWorkerInformationModel.fatherName;//
+    request.fields['about'] = EmployeeInformationForm.companyWorkerInformationModel.designation;//
+    request.fields['ssno'] = EmployeeInformationForm.companyWorkerInformationModel.ssnNumber;//
+    request.fields['eobino'] = EmployeeInformationForm.companyWorkerInformationModel.eobiNumber;//
+    request.fields['appointed'] = EmployeeInformationForm.companyWorkerInformationModel.appointDate;//
+    request.fields['scale'] = EmployeeInformationForm.companyWorkerInformationModel.payScale;//
+    request.fields['disable'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDisability;//
+    request.fields['issued'] = EmployeeInformationForm.companyWorkerInformationModel.cnicIssueDate;//
+    request.fields['expiry'] = EmployeeInformationForm.companyWorkerInformationModel.cnicExpiryDate;//
+    request.fields['birthday'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDOB;//
+    request.fields['address'] = EmployeeInformationForm.companyWorkerInformationModel.address;//
+    request.fields['city'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCityID;//
+    request.fields['district'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDistrictID;//
+    request.fields['province'] = EmployeeInformationForm.companyWorkerInformationModel.selectedProvinceID;//
+    request.fields['bank_name'] = EmployeeInformationForm.companyWorkerBankInformationModel.selectedBank;//
+    request.fields['account_title'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountTitle;//
     request.fields['account_no'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountNumber;
-    request.fields['latitude'] = EmployeeInformationForm.companyWorkerInformationModel.latitude;
-    request.fields['longitude'] = EmployeeInformationForm.companyWorkerInformationModel.longitude;
+    request.fields['account_type'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountType;
+    request.fields['latitude'] = EmployeeInformationForm.companyWorkerInformationModel.latitude;//
+    request.fields['longitude'] = EmployeeInformationForm.companyWorkerInformationModel.longitude;//
+    request.fields['name'] = userName;//
+    request.fields['cnicno'] = userCNIC;//
+    request.fields['gender'] = userGender;//
+    request.fields['email'] = userEmail;//
+    request.fields['contact'] = userContact;//
+    List<Placemark> placemarks = await placemarkFromCoordinates(double.parse(EmployeeInformationForm.companyWorkerInformationModel.latitude),
+        double.parse(EmployeeInformationForm.companyWorkerInformationModel.longitude));
+    request.fields['lladdress'] = placemarks.first.street??''+", "+placemarks.first.thoroughfare??''+", "+placemarks.first.locality??''+", "+placemarks.first.country??"";//
 
+    /// type,  lladdress  , user_image
     request.files.add(
         http.MultipartFile('ssn_upload',
             File(ssnFilePath).readAsBytes().asStream(),
@@ -623,6 +649,15 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
             filename: ssnFilePath.split("/").last
         )
     );
+
+    request.files.add(
+        http.MultipartFile('user_image',
+            File(eobiFilePath).readAsBytes().asStream(),
+            File(eobiFilePath).lengthSync(),
+            filename: eobiFilePath.split("/").last
+        )
+    );
+
     request.files.add(
         http.MultipartFile('eobi_upload',
             File(eobiFilePath).readAsBytes().asStream(),
@@ -645,21 +680,21 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
         )
     );
     request.files.add(
-        http.MultipartFile('affidavit_upload',
+        http.MultipartFile('affi_upload',
             File(affidavitFilePath).readAsBytes().asStream(),
             File(affidavitFilePath).lengthSync(),
             filename: affidavitFilePath.split("/").last
         )
     );
     request.files.add(
-        http.MultipartFile('certificate_upload',
+        http.MultipartFile('reg_upload',
             File(regCertificateFilePath).readAsBytes().asStream(),
             File(regCertificateFilePath).lengthSync(),
             filename: regCertificateFilePath.split("/").last
         )
     );
     request.files.add(
-        http.MultipartFile('prescribed_upload',
+        http.MultipartFile('ira_upload',
             File(ira2012FilePath).readAsBytes().asStream(),
             File(ira2012FilePath).lengthSync(),
             filename: ira2012FilePath.split("/").last
@@ -676,6 +711,7 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     var response = await request.send();
     try{
       final resp= await http.Response.fromStream(response);
+      debugPrint('url:${url}:response:${request.fields}:${resp.body}:${resp.statusCode}',wrapWidth: 1024);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -701,4 +737,56 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
       print(e);
     }
   }
+
+  GetInformation() async{
+
+    List<String> tagsList= [constants.accountInfo];
+    Map data = {
+      "user_id": UserSessions.instance.getUserID,
+      "user_token": UserSessions.instance.getToken,
+      "api_tags": jsonEncode(tagsList).toString(),
+    };
+    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+    var url = constants.getApiBaseURL()+constants.authentication+"information";
+    var response = await http.post(Uri.parse(url), body: data);
+
+
+    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+    // var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
+    // var response = await http.get(Uri.parse(url));
+    print(data);
+    print(url+response.body+" : "+response.statusCode.toString());
+    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+    uiUpdates.DismissProgresssDialog();
+    print(url+response.body);
+    if (responseCodeModel.status == true) {
+      var body = jsonDecode(response.body);
+      String code = body["Code"].toString();
+      if (code == "1") {
+        var data= body["Data"];
+        var account= data["account"];
+         userName=account['user_name'];
+         userCNIC=account['user_cnic'];
+         userGender=account['user_gender'];
+         userEmail=account['user_email'];
+         userContact=account['user_contact'];
+        print(userName);
+        print(userCNIC);
+        print(userGender);
+        print(userEmail);
+        print(userContact);
+      } else {
+        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
+      }
+    } else {
+      var body = jsonDecode(response.body);
+      String message = body["Message"].toString();
+      if(message == constants.expireToken){
+        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+      }else{
+        uiUpdates.ShowToast(message);
+      }
+    }
+  }
+
 }

@@ -27,6 +27,11 @@ class Strings{
   final String passwordMatchMessage= "Password doesn't match";
   final String selectLocation= "Select Location";
   final String internetNotConnected= "Internet not connected";
+  final String noServerResponse= "No response from server";
+  final String badRequestError= "Bad Request Error";
+  final String pageNotFound= "Page Not Found";
+  final String internalServerError= "Internal Server Error";
+  final String somethingWentWrong= "Something went wrong, Please try again";
   final String pleaseWait= "Please Wait...";
   final String invalidEmailVerificationCode= "Invalid email verification code";
   final String invalidNumberVerificationCode= "Invalid number verification code";
@@ -37,6 +42,7 @@ class Strings{
   final String loginFailed= "Login failed, Try Again";
 
   final String cNameMessage= "Company name shouldn't be empty";
+  final String cLandlineMessage= "Company Landline shouldn't be empty";
   final String cEstablishDateMessage= "Select establish date";
   final String cCodeMessage= "Code shouldn't be empty";
   final String cFileMessage= "File number shouldn't be empty";
@@ -63,6 +69,7 @@ class Strings{
 
   ////fields strings
   final String selectYear= "Select Year";
+  final String selectCompany= "Select Company";
   final String selectStatement= "Select Statement";
   final String selectReceivedDate= "Select Received Date";
   final String selectFinancialYear= "Select Financial Year";
@@ -79,11 +86,16 @@ class Strings{
   final String category1AmountNotEmpty= "Category 1 amount shouldn't be empty";
   final String category2AmountNotEmpty= "Category 2 amount shouldn't be empty";
   final String category3AmountNotEmpty= "Category 3 amount shouldn't be empty";
+  final String category1AmountDistributedNotEmpty= "Category 1 amount distributed shouldn't be empty";
+  final String category2AmountDistributedNotEmpty= "Category 2 amount distributed shouldn't be empty";
+  final String category3AmountDistributedNotEmpty= "Category 3 amount distributed shouldn't be empty";
 
   final String amountPaidCompanyNotEmpty= "Amount paid by company shouldn't be empty";
   final String amountEarnedPaidBOTNotEmpty= "Amount earned/paid by BOT shouldn't be empty";
   final String totaInterstNotEmpty= "Total interest shouldn't be empty";
   final String investedByCONotEmpty= "Invested by CO shouldn't be empty";
+  final String totalEmployeesNotEmpty= "Total Employees shouldn't be empty";
+    final String welfareFundNotEmpty= "Welfare Fund shouldn't be empty";
   final String investedByBOTNotEmpty= "Invested by BOT shouldn't be empty";
   final String numberOfWorkersNotEmpty= "Number of workers shouldn't be empty";
   final String amountDistributedNotEmpty= "Amount distributed shouldn't be empty";
@@ -100,7 +112,6 @@ class Strings{
   final String amountDistributed3NotEmpty= "Amount distributed category 3 shouldn't be empty";
 
   final String companiesNotAvail= "Companies Not Available";
-  final String selectCompany= "Select Company";
   final String selectDOB= "Select Date of Birth";
   final String selectedCnicIssueDate= "CNIC Issue Date";
   final String selectedCnicExpiryDate= "CNIC Expiry Date";
@@ -129,6 +140,7 @@ class Strings{
   final String selectDistrict= "Select District";
   final String employeeAddFailed= "Failed to add employee";
   final String selectedIdentity= "Select Identity Type";
+  final String selectedAccount= "Select Account Type";
   final String nameNotEmpty= "Name shouldn't be empty";
   final String selectImage = "Select Image";
   final String selectCnic = "Select CNIC";
@@ -167,6 +179,7 @@ class Strings{
   final String bAccountTitle= "Account title shouldn't be empty";
   final String bAccountNumber= "Account Number shouldn't be empty";
   final String bSelectCnic= "Select CNIC/B-Form";
+  final String bSelectAccount= "Select Account Type";
 
   final String selectedChild= "Select Child";
   final String childNotAvail= "Child Not Available";

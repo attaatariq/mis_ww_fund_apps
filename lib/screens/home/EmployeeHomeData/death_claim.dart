@@ -7,6 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
+import 'package:welfare_claims_app/dialogs/company_dialog_model.dart';
+import 'package:welfare_claims_app/models/CompanyModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -25,7 +27,8 @@ class _DeathClaimState extends State<DeathClaim> {
   String selectedDeathDate= Strings.instance.selectedDeathDate;
   Constants constants;
   UIUpdates uiUpdates;
-
+  List<CompanyModel> companiesList = [];
+  String comp_id='';
   @override
   void initState() {
     // TODO: implement initState
@@ -85,12 +88,14 @@ class _DeathClaimState extends State<DeathClaim> {
                 child: SingleChildScrollView(
                     child: Column(
                       children: [
+
                         InkWell(
                           onTap: (){
                             _selectDate(context, 1);
                           },
                           child: Container(
-                            height: 45,
+                             // margin: EdgeInsets.only(top: 15),
+                          height: 45,
                             child: Stack(
                               children: [
                                 Center(
@@ -359,6 +364,15 @@ class _DeathClaimState extends State<DeathClaim> {
       ),
     );
   }
+  Future<CompanyModel> OpenCompanyDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: CompaniesDialogModel(companiesList),
+          );
+        });
+  }
 
   Future<void> _selectDate(BuildContext context, int position) async {
     Map<int, Color> color =
@@ -489,6 +503,7 @@ class _DeathClaimState extends State<DeathClaim> {
     }else{
       uiUpdates.ShowToast(Strings.instance.selectedDeathDate);
     }
+
   }
 
   void ChecjConnectivity() {
@@ -504,9 +519,10 @@ class _DeathClaimState extends State<DeathClaim> {
   AddDeathClaim() async{
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.claims+"death_claim";
+    var url = constants.getApiBaseURL()+constants.claims+"deceased_claim";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
+    request.fields['comp_id'] =comp_id;
     request.fields['user_id'] = UserSessions.instance.getUserID;
     request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['death_date'] = selectedDeathDate;
@@ -586,6 +602,7 @@ class _DeathClaimState extends State<DeathClaim> {
     uiUpdates.DismissProgresssDialog();
     try {
       final resp = await http.Response.fromStream(response);
+      print('${request.fields}:url:$url :${resp.body}:${resp.statusCode}');
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -593,7 +610,7 @@ class _DeathClaimState extends State<DeathClaim> {
         String code = body["Code"].toString();
         if (code == "1") {
           uiUpdates.ShowToast(Strings.instance.deathClaimRequestMessage);
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.faileddeathClaim);
         }
@@ -612,9 +629,7 @@ class _DeathClaimState extends State<DeathClaim> {
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        if(UserSessions.instance.getEmployeeID == ""){
-          GetInformation();
-        }
+        GetInformation();
       }
     });
   }
@@ -629,7 +644,7 @@ class _DeathClaimState extends State<DeathClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-    print(response.body+" : "+response.statusCode.toString());
+    debugPrint(response.body+" : "+response.statusCode.toString(),wrapWidth: 1024);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -640,7 +655,9 @@ class _DeathClaimState extends State<DeathClaim> {
         var data= body["Data"];
         var account= data["account"];
         String empID= account["emp_id"].toString();
+        comp_id=account["comp_id"].toString();
         UserSessions.instance.setEmployeeID(empID);
+
       } else {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }

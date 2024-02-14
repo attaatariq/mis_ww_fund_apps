@@ -31,6 +31,7 @@ TextEditingController classController= TextEditingController();
 TextEditingController placeNameController= TextEditingController();
 TextEditingController placeAddressController= TextEditingController();
 TextEditingController placeContactController= TextEditingController();
+TextEditingController fileNoController= TextEditingController();
 
 class _AddChildEducationState extends State<AddChildEducation> {
   String studentCardFilePath="", studentCardFileName="Select Student Card", affiliateFilePath="", affiliateFileName="Select Affiliate";
@@ -453,6 +454,56 @@ class _AddChildEducationState extends State<AddChildEducation> {
                                 )
                               ],
                             ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 15),
+                          height: 45,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 35,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: TextField(
+                                            controller: fileNoController,
+                                            cursorColor: AppTheme.colors.newPrimary,
+                                            keyboardType: TextInputType.number,
+                                            maxLines: 1,
+                                            textInputAction: TextInputAction.next,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppTheme.colors.newBlack
+                                            ),
+                                            decoration: InputDecoration(
+                                              hintText: "File No.",
+                                              hintStyle: TextStyle(
+                                                  fontFamily: "AppFont",
+                                                  color: AppTheme.colors.colorDarkGray
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  height: 1,
+                                  color: AppTheme.colors.colorDarkGray,
+                                ),
+                              )
+                            ],
                           ),
                         ),
 
@@ -1222,7 +1273,12 @@ class _AddChildEducationState extends State<AddChildEducation> {
                                   if(placeContactController.text.isNotEmpty) {
                                     if(selectMessOffering.isNotEmpty) {
                                       if(selectedTransportUse.isNotEmpty) {
-                                        CheckConnectivity();
+                                        if(fileNoController.text.isNotEmpty) {
+                                          CheckConnectivity();
+                                        }else{
+                                          uiUpdates.ShowToast(
+                                              Strings.instance.cFileMessage);
+                                        }
                                       }else{
                                         uiUpdates.ShowToast(
                                             Strings.instance.transportDetailReq);
@@ -1393,6 +1449,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
     request.fields['ended'] = selectedEndedDate;
     request.fields['living'] = selectedLiving;
     request.fields['whom'] = "Child";
+    request.fields['fileno'] = fileNoController.text.toString();
     request.fields['hostel'] = placeNameController.text.toString();
     request.fields['address'] = placeAddressController.text.toString();
     request.fields['contact'] = placeContactController.text.toString();

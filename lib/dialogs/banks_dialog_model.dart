@@ -26,7 +26,6 @@ class _BanksDialogModelState extends State<BanksDialogModel> {
           color: AppTheme.colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
-
         child: Container(
           child: Column(
             children: [

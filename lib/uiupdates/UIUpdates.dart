@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 //import 'package:progress_dialog/progress_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:welfare_claims_app/colors/colors.dart';
 
 class UIUpdates{
   BuildContext context;
@@ -18,7 +19,7 @@ class UIUpdates{
   {
     Future.delayed(const Duration(milliseconds: 100), () {
       _dialog = SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
-      _dialog.show(message: message, type: SimpleFontelicoProgressDialogType.normal);
+      _dialog.show(message: message, type: SimpleFontelicoProgressDialogType.normal,indicatorColor: AppColors().newPrimary);
     });
 
     // progressDialog= new ProgressDialog(context, isDismissible: false, type: ProgressDialogType.Normal);

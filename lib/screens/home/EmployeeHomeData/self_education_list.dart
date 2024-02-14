@@ -82,8 +82,12 @@ class _SelfEducationListState extends State<SelfEducationList> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => AddSelfEducation()
-                        )).then((value) => {
-                          setState(() {})
+                        )).then((value)  {
+                          setState(() {});
+                          if(value==true){
+                            selfEducationModelList.clear();
+                            CheckTokenExpiry();
+                          }
                         });
                       },
                       child: Padding(

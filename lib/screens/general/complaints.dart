@@ -107,7 +107,7 @@ class _ComplaintsState extends State<Complaints> {
                           errorMessage,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: AppTheme.colors.white,
+                              color: AppTheme.colors.black,
                               fontSize: 14,
                               fontFamily: "AppFont",
                               fontWeight: FontWeight.normal),
@@ -123,8 +123,9 @@ class _ComplaintsState extends State<Complaints> {
                             await GetComplaints(true);
                           },
                           child: ListView.builder(
+
                             shrinkWrap: true,
-                            padding: EdgeInsets.all(0),
+                            padding: EdgeInsets.only(bottom: 50),
                             itemBuilder: (_, int index) =>
                                 ComplaintItem(list[index]),
                             itemCount: this.list.length,
@@ -150,6 +151,7 @@ class _ComplaintsState extends State<Complaints> {
         "complaints/" + UserSessions.instance.getUserID + "/" +
         UserSessions.instance.getToken;
     var response = await http.get(Uri.parse(url));
+    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
@@ -158,7 +160,8 @@ class _ComplaintsState extends State<Complaints> {
       String code = body["Code"].toString();
       if (code == "1") {
         var data= body["Data"];
-        List<dynamic> entitlements = data["Complaint Responses"];
+//        List<dynamic> entitlements = data["Complaint Responses"];
+        List<dynamic> entitlements = data;
         if(entitlements.length > 0)
         {
           list.clear();
@@ -195,7 +198,14 @@ class _ComplaintsState extends State<Complaints> {
         uiUpdates.ShowToast(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      if(responseCodeModel.message!="null") {
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }else{
+        setState(() {
+          isError= true;
+          errorMessage = "Complaints Not Available";
+        });
+      }
     }
   }
 }

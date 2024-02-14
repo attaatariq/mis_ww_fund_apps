@@ -375,6 +375,8 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
             ),
           ),
 
+
+
           Container(
             margin: EdgeInsets.only(top: 15),
             height: 45,
@@ -1097,13 +1099,26 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
   }
 
   GetInformation() async{
+
+    List<String> tagsList= [constants.accountInfo, constants.citiesInfo, constants.statesInfo, constants.districtsInfo,constants.companiesInfo];
+    Map data = {
+      "user_id": UserSessions.instance.getUserID,
+      "user_token": UserSessions.instance.getToken,
+      "api_tags": jsonEncode(tagsList).toString(),
+    };
+    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+    var url = constants.getApiBaseURL()+constants.authentication+"information";
+    var response = await http.post(Uri.parse(url), body: data);
+
+
     //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
-    print(response.body+" : "+response.statusCode.toString());
+    // var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
+    // var response = await http.get(Uri.parse(url));
+    print(data);
+    print(url+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
+    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

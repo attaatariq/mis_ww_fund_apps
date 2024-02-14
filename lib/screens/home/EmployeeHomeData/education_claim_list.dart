@@ -317,20 +317,21 @@ class _EducationClaimListState extends State<EducationClaimList> {
   void GetCEducationClaims() async{
     //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL() + constants.claims +
-        "edu_claims/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
+        "fee_claim/" + UserSessions.instance.getUserID + "/" +
+        UserSessions.instance.getToken+"/E/${UserSessions.instance.getRefID}";
     print(url);
     var response = await http.get(Uri.parse(url));
+    print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
       if (code == "1") {
-        var data= body["Data"];
+//        var data= body["Data"];
 
         /// fee claims
-        List<dynamic> entitlements = data["Fee"];
+        List<dynamic> entitlements = body["Data"];
         if(entitlements.length > 0)
         {
           listFee.clear();
@@ -358,7 +359,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
         }
 
         /// others claims
-        List<dynamic> entitlementsOthers = data["Other"];
+        List<dynamic> entitlementsOthers = [];
         if(entitlementsOthers.length > 0)
         {
           listOther.clear();

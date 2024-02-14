@@ -81,7 +81,8 @@ class _ContactPersonState extends State<ContactPerson> {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => AddContactPerson()
                         )).then((value) => {
-                          setState(() {})
+                          setState(() {}),
+                          CheckTokenExpiry()
                         });
                       },
                       child: Padding(
@@ -348,7 +349,8 @@ class _ContactPersonState extends State<ContactPerson> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-    print(response.body+" : "+response.statusCode.toString());
+    print(data);
+    print(url+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);

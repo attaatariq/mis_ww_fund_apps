@@ -82,8 +82,12 @@ class _ChildrenListState extends State<ChildrenList> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => AddChild()
-                        )).then((value) => {
-                          setState(() {})
+                        )).then((value)  {
+                          setState(() {});
+                          if(value){
+                            childrenModelList.clear();
+                            CheckTokenExpiry();
+                          }
                         });
                       },
                       child: Padding(

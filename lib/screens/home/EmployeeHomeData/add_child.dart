@@ -393,7 +393,7 @@ class _AddChildState extends State<AddChild> {
                                             children: [
                                               Expanded(
                                                 flex: 1,
-                                                child: Text(selectedIdentity,
+                                                child: Text(selectedIdentity??Strings.instance.selectedIdentity,
                                                   textAlign: TextAlign.start,
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
@@ -684,16 +684,19 @@ class _AddChildState extends State<AddChild> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.children+"create";
     var request = http.MultipartRequest('POST', Uri.parse(url));
-    request.fields['name'] = nameController.text.toString();
-    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
-    request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
-    request.fields['cnic'] = cnicController.text.toString();
-    request.fields['cnic_issued'] = selectedCNICIssueDate;
-    request.fields['cnic_expiry'] = selectedCNICExpiryDate;
+    request.fields['name'] = nameController.text.toString();//
+    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
+    request.fields['user_id'] = UserSessions.instance.getUserID;//
+    request.fields['user_token'] = UserSessions.instance.getToken;//
+    request.fields['cnicno'] = cnicController.text.toString();
+    request.fields['issued'] = selectedCNICIssueDate;
+    request.fields['expiry'] = selectedCNICExpiryDate;
     request.fields['gender'] = selectedGender;
-    request.fields['birthday'] = selectedDobDate;
-    request.fields['identity'] = selectedIdentity;
+    request.fields['birthday'] = selectedDobDate;//
+//    request.fields['identity'] = selectedIdentity;
+    request.fields['type'] = selectedIdentity;
+
+    ///type
     request.files.add(
         http.MultipartFile(
             'image',
@@ -705,7 +708,7 @@ class _AddChildState extends State<AddChild> {
 
     request.files.add(
         http.MultipartFile(
-            'identity_upload',
+            'cnic',
             File(cnicFilePath).readAsBytes().asStream(),
             File(cnicFilePath).lengthSync(),
             filename: cnicFilePath.split("/").last
@@ -723,7 +726,7 @@ class _AddChildState extends State<AddChild> {
         String code = body["Code"].toString();
         if (code == "1") {
           uiUpdates.ShowToast(Strings.instance.childAddMessage);
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.childAddFailed);
         }

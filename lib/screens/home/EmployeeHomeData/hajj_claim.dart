@@ -111,7 +111,9 @@ class _HajjClaimState extends State<HajjClaim> {
   }
 
   void CheckTokenExpiry() {
+    print('here1');
     Future.delayed(const Duration(milliseconds: 1000), () {
+      print('here');
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
@@ -123,10 +125,10 @@ class _HajjClaimState extends State<HajjClaim> {
   void GetHajjClaim() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL() + constants.claims +
-        "hajjclaims/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
+        "hajj_claim/" + UserSessions.instance.getUserID + "/" +
+        UserSessions.instance.getToken+"/C/4";
     var response = await http.get(Uri.parse(url));
-    print(response);
+    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {

@@ -83,8 +83,12 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => MarraiageClaim()
-                        )).then((value) => {
-                          setState(() {})
+                        )).then((value){
+                          setState(() {});
+                          if(value==true){
+                            list.clear();
+                            CheckTokenExpiry();
+                          }
                         });
                       },
                       child: Padding(
@@ -114,7 +118,7 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
                 padding: EdgeInsets.symmetric(horizontal: 0),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
                       MarriageClaimListItem(list[index]),
                   itemCount: this.list.length,
@@ -140,8 +144,8 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   void GetMarriageClaims() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/E/"+UserSessions.instance.getRefID;
-    print(url);
     var response = await http.get(Uri.parse(url));
+    print('url:$url :response:${response.body}:${response.statusCode}');
     uiUpdates.DismissProgresssDialog();
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();

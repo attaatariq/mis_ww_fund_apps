@@ -30,6 +30,7 @@ class AddSelfEducation extends StatefulWidget {
 TextEditingController degreeController= TextEditingController();
 TextEditingController classController= TextEditingController();
 TextEditingController placeNameController= TextEditingController();
+TextEditingController fileNoController= TextEditingController();
 TextEditingController placeAddressController= TextEditingController();
 TextEditingController placeContactController= TextEditingController();
 
@@ -387,6 +388,56 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
                                 )
                               ],
                             ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 15),
+                          height: 45,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 35,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: TextField(
+                                            controller: fileNoController,
+                                            cursorColor: AppTheme.colors.newPrimary,
+                                            keyboardType: TextInputType.number,
+                                            maxLines: 1,
+                                            textInputAction: TextInputAction.next,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppTheme.colors.newBlack
+                                            ),
+                                            decoration: InputDecoration(
+                                              hintText: "File No.",
+                                              hintStyle: TextStyle(
+                                                  fontFamily: "AppFont",
+                                                  color: AppTheme.colors.colorDarkGray
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  height: 1,
+                                  color: AppTheme.colors.colorDarkGray,
+                                ),
+                              )
+                            ],
                           ),
                         ),
 
@@ -1178,7 +1229,12 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
                                   if(placeContactController.text.isNotEmpty) {
                                     if(selectMessOffering.isNotEmpty) {
                                       if(selectedTransportUse.isNotEmpty) {
-                                        CheckConnectivity();
+                                        if(fileNoController.text.isNotEmpty) {
+                                          CheckConnectivity();
+                                        }else{
+                                          uiUpdates.ShowToast(
+                                              Strings.instance.cFileMessage);
+                                        }
                                       }else{
                                         uiUpdates.ShowToast(
                                             Strings.instance.transportDetailReq);
@@ -1258,24 +1314,31 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.education+"create";
     var request = http.MultipartRequest('POST', Uri.parse(url));
-    request.fields['child_id'] = "";
-    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
-    request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
-    request.fields['school_id'] = selectedSchoolID;
-    request.fields['nature'] = selectedNature;
-    request.fields['level'] = selectedLevel;
-    request.fields['degree'] = degreeController.text.toString();
-    request.fields['class'] = classController.text.toString();
-    request.fields['started'] = selectedStartedDate;
-    request.fields['ended'] = selectedEndedDate;
-    request.fields['living'] = selectedLiving;
-    request.fields['whom'] = "Self";
-    request.fields['hostel'] = placeNameController.text.toString();
-    request.fields['address'] = placeAddressController.text.toString();
-    request.fields['contact'] = placeContactController.text.toString();
-    request.fields['offering'] = selectMessOffering;
-    request.fields['transport'] = selectedTransportUse;
+//    request.fields['child_id'] = "";
+    request.fields['child'] = "";//
+    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
+    request.fields['user_id'] = UserSessions.instance.getUserID;//
+    request.fields['user_token'] = UserSessions.instance.getToken;//
+    request.fields['fileno'] = fileNoController.text.toString();
+    request.fields['school'] = selectedSchoolID;//
+    request.fields['nature'] = selectedNature;//
+    request.fields['level'] = selectedLevel;//
+    request.fields['degree'] = degreeController.text.toString();//
+    request.fields['class'] = classController.text.toString();//
+//    request.fields['started'] = selectedStartedDate;
+    request.fields['start'] = selectedStartedDate;//
+    request.fields['ended'] = selectedEndedDate;//
+    request.fields['living'] = selectedLiving;//
+    request.fields['whom'] = "Self";//
+    request.fields['hostel'] = placeNameController.text.toString();//
+    request.fields['address'] = placeAddressController.text.toString();//
+    request.fields['contact'] = placeContactController.text.toString();//
+    request.fields['offering'] = selectMessOffering;//
+    request.fields['transport'] = selectedTransportUse;//
+
+
+    ///  ,
+
 
     request.files.add(
         http.MultipartFile(
@@ -1317,6 +1380,7 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
     uiUpdates.DismissProgresssDialog();
     try {
       final resp = await http.Response.fromStream(response);
+      debugPrint('url:$url :${request.fields} :${resp.body}:${resp.statusCode}',wrapWidth: 1024);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -1324,7 +1388,7 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
         String code = body["Code"].toString();
         if (code == "1") {
           uiUpdates.ShowToast(Strings.instance.selfEducationMessage);
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.failedSelfEducation);
         }
@@ -1339,7 +1403,7 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
   }
 
   GetInformation() async{
-    List<String> tagsList= [constants.schoolsInfo];
+    List<String> tagsList= [constants.accountInfo,constants.schoolsInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "user_token": UserSessions.instance.getToken,
@@ -1358,6 +1422,10 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
       String code = body["Code"].toString();
       if (code == "1") {
         var data= body["Data"];
+        var account= data["account"];
+        String empID= account["emp_id"].toString();
+        UserSessions.instance.setEmployeeID(empID);
+
         List<dynamic> schools= data["schools"];
         if(schools.length > 0){
           schools.forEach((element) { 

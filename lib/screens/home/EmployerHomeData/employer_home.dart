@@ -1262,7 +1262,6 @@ class _EmployerHomeState extends State<EmployerHome> {
                                           ),
 
                                           SizedBox(height: 8,),
-
                                           Text("Total Amount",
                                             maxLines: 1,
                                             textAlign: TextAlign.center,
@@ -1590,9 +1589,10 @@ class _EmployerHomeState extends State<EmployerHome> {
   }
 
   GetDashBoardData() async{
-    var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeCompanies+"/"+UserSessions.instance.getRefID+"/"
-        +UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
+    var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeCompanies+"/"+UserSessions.instance.getUserID+"/"
+        +UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
     var response = await http.get(Uri.parse(url));
+    print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {
@@ -1674,6 +1674,7 @@ class _EmployerHomeState extends State<EmployerHome> {
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);
+      print('$url :response:${resp.statusCode}:${resp.body}');
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -1686,10 +1687,13 @@ class _EmployerHomeState extends State<EmployerHome> {
         }
       } else {
         var body = jsonDecode(resp.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        if(!(body["Message"].toString().contains('Your request has same device ID'))){
+          String message = body["Message"].toString();
+          uiUpdates.ShowToast(message);
+        }
       }
     }catch(e){
+      print('its here 1');
       uiUpdates.ShowToast(e);
     }
   }

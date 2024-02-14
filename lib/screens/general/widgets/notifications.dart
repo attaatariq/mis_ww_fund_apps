@@ -31,18 +31,16 @@ class _NotificationsState extends State<Notifications> {
             ),
           )
         ],
-      ) : Expanded(
-        child: Center(
-          child: Text(
-            "Notifications Not Available",
-            maxLines: 1,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                color: AppTheme.colors.newBlack,
-                fontSize: 13,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.normal),
-          ),
+      ) : Center(
+        child: Text(
+          "Notifications Not Available",
+          maxLines: 1,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 13,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.normal),
         ),
       ),
     );

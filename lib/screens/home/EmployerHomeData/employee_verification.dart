@@ -139,10 +139,11 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
 
   GetEmployees() async {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.companies +
-        "list_employees/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
+    var url = constants.getApiBaseURL() + constants.employees +
+        "index/" + UserSessions.instance.getUserID + "/" +
+        UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
     var response = await http.get(Uri.parse(url));
+    debugPrint("url:$url:${response.body}",wrapWidth: 1024);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -151,8 +152,11 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
       String code = body["Code"].toString();
       if (code == "1") {
         print("1");
+/*
         var message= body["Message"];
         List<dynamic> entitlements = message["Unverified_Employees"];
+*/
+        List<dynamic> entitlements = body["Data"];
         if(entitlements.length > 0)
         {
           print("2");

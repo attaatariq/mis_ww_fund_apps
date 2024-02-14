@@ -19,6 +19,7 @@ import 'package:welfare_claims_app/models/CityModel.dart';
 import 'package:welfare_claims_app/models/DistritModel.dart';
 import 'package:welfare_claims_app/models/ProvinceModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/models/bankAccountTypeModel.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -39,7 +40,9 @@ TextEditingController bAccountNumberController= TextEditingController();
 
 class _AddBeneficiaryState extends State<AddBeneficiary> {
   String cnicFilePath="", cnicFileName="Select CNIC/B-Form";
-  String selectedIdentity= Strings.instance.selectedIdentity, selectedBeneficiaryRelation = Strings.instance.beneficiaryRelation,
+  String selectedIdentity= Strings.instance.selectedIdentity,
+      selectedAccountType= Strings.instance.selectedAccount,
+      selectedBeneficiaryRelation = Strings.instance.beneficiaryRelation,
       selectedCity= Strings.instance.selectCity, selectedProvince= Strings.instance.selectProvince, selectedDistrict= Strings.instance.selectDistrict;
   String selectedCNICIssueDate= Strings.instance.selectedCnicIssueDate, selectedCNICExpiryDate= Strings.instance.selectedCnicExpiryDate;
   var cnicMask = new MaskTextInputFormatter(mask: '#####-#######-#',);
@@ -918,6 +921,67 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
                           ],
                         ),
                       ),
+                      InkWell(
+                        onTap: (){
+
+                          BankAccountTypeDialog(context).then((value) => {
+                            if(value != null){
+                              setState(() {
+                                selectedAccountType = value;
+                              })
+                            }
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 15),
+                          height: 45,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                          height: 35,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Text(selectedAccountType,
+                                                  textAlign: TextAlign.start,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: selectedAccountType == Strings.instance.selectedAccount ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                                                      fontSize: 14,
+                                                      fontFamily: "AppFont",
+                                                      fontWeight: FontWeight.normal
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
+                                            ],
+                                          )
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  height: 1,
+                                  color: AppTheme.colors.colorDarkGray,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
 
                       Container(
                         margin: EdgeInsets.only(top: 15),
@@ -1031,6 +1095,17 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
         builder: (context) {
           return Center(
             child: IdentityDialogModel(),
+          );
+        }
+    );
+  }
+
+  Future<String> BankAccountTypeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: BankAccountTypeDialogModel(),
           );
         }
     );
@@ -1181,7 +1256,11 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
                               if(bAccountTitleController.text.toString().isNotEmpty){
                                 if(bAccountNumberController.text.toString().isNotEmpty){
                                   if(cnicFilePath.isNotEmpty){
-                                    CheckConnectivity();
+                                    if(selectedAccountType != Strings.instance.selectedAccount){
+                                      CheckConnectivity();
+                                    }else{
+                                      uiUpdates.ShowToast(Strings.instance.bSelectAccount);
+                                    }
                                   }else{
                                     uiUpdates.ShowToast(Strings.instance.bSelectCnic);
                                   }
@@ -1326,28 +1405,29 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.claims+"beneficiary";
     var request = http.MultipartRequest('POST', Uri.parse(url));
-    request.fields['name'] = bNameController.text.toString();
-    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
-    request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
-    request.fields['cnic'] = bCnicController.text.toString();
-    request.fields['cnic_issued'] = selectedCNICIssueDate;
-    request.fields['cnic_expiry'] = selectedCNICExpiryDate;
-    request.fields['guardian'] = bGuardiaNameController.text.toString();
-    request.fields['relation'] = selectedBeneficiaryRelation;
-    request.fields['contact'] = bNumberController.text.toString();
-    request.fields['address'] = bAddressController.text.toString();
-    request.fields['city'] = selectedCityID;
-    request.fields['district'] = selectedDistrictID;
-    request.fields['province'] = selectedProvinceID;
-    request.fields['bank'] = selectedBankName;
+    request.fields['name'] = bNameController.text.toString();//
+    request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
+    request.fields['user_id'] = UserSessions.instance.getUserID;//
+    request.fields['user_token'] = UserSessions.instance.getToken;//
+    request.fields['cnic'] = bCnicController.text.toString();//
+    request.fields['bissued'] = selectedCNICIssueDate;//
+    request.fields['bexpiry'] = selectedCNICExpiryDate;//
+    request.fields['guardian'] = bGuardiaNameController.text.toString();//
+    request.fields['relation'] = selectedBeneficiaryRelation;//
+    request.fields['contact'] = bNumberController.text.toString();//
+    request.fields['address'] = bAddressController.text.toString();//
+    request.fields['city'] = selectedCityID;//
+    request.fields['district'] = selectedDistrictID;//
+    request.fields['province'] = selectedProvinceID;//
+    request.fields['bank'] = selectedBankName;//
     request.fields['title'] = bAccountTitleController.text.toString();
-    request.fields['account_no'] = bAccountNumberController.text.toString();
-    request.fields['identity'] = selectedIdentity;
+    request.fields['account'] = bAccountNumberController.text.toString();
+    request.fields['itype'] = selectedIdentity;
+    request.fields['type'] = selectedAccountType;
 
     request.files.add(
         http.MultipartFile(
-            'upload',
+            'bene_upload',
             File(cnicFilePath).readAsBytes().asStream(),
             File(cnicFilePath).lengthSync(),
             filename: cnicFilePath.split("/").last
@@ -1365,7 +1445,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
         String code = body["Code"].toString();
         if (code == "1") {
           uiUpdates.ShowToast(Strings.instance.beneficiaryMessage);
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.failedbeneficiary);
         }

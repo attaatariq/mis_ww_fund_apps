@@ -564,9 +564,10 @@ class _EstateClaimState extends State<EstateClaim> {
   void GetEstateClaim() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL() + constants.claims +
-        "estateclaims/" + UserSessions.instance.getUserID + "/" +
+        "estate_claim/" + UserSessions.instance.getUserID + "/" +
         UserSessions.instance.getToken;
     var response = await http.get(Uri.parse(url));
+    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -630,7 +631,14 @@ class _EstateClaimState extends State<EstateClaim> {
         uiUpdates.ShowToast(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
-    }
+      if(responseCodeModel.message!="null") {
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }else{
+        setState(() {
+          isError= true;
+          errorMessage = "Installment Not Available";
+        });
+      }    }
+    uiUpdates.DismissProgresssDialog();
   }
 }

@@ -85,8 +85,11 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) => AddBeneficiary()
-                        )).then((value) => {
-                          setState(() {})
+                        )).then((value)  {
+                          setState(() {});
+                          if(value){
+                            CheckTokenExpiry();
+                          }
                         });
                       },
                       child: Padding(

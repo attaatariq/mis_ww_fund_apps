@@ -203,7 +203,9 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
         uiUpdates.ShowToast(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      if(responseCodeModel.message!="null") {
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }
     }
   }
 
@@ -214,6 +216,7 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
         UserSessions.instance.getToken;
     var response = await http.get(Uri.parse(url));
     uiUpdates.DismissProgresssDialog();
+    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -241,7 +244,9 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
         uiUpdates.ShowToast(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      if(responseCodeModel.message!="null"){
+        uiUpdates.ShowToast(responseCodeModel.message);
+      }
     }
   }
 
