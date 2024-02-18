@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +30,8 @@ void main() async {
   runApp(MaterialApp(
     theme: new ThemeData(
         primaryColor: AppTheme.colors.newPrimary,
-        accentColor: AppTheme.colors.colorAccent,
+        // accentColor: AppTheme.colors.colorAccent, // It's deprecated and shouldn't be used.
+        colorScheme: ThemeData().colorScheme.copyWith(secondary: AppTheme.colors.colorAccent),
         primaryColorDark: AppTheme.colors.newPrimary,
         unselectedWidgetColor: AppTheme.colors.white),
     debugShowCheckedModeBanner: false,

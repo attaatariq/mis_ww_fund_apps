@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/src/internals.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:new_version/new_version.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
@@ -225,7 +223,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  Future<Void> FirebaseNotificationInit() async{
+  Future FirebaseNotificationInit() async{
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
