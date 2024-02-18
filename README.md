@@ -1,5 +1,16 @@
 # Management Information System (Mobile Apps)
 
+![MIS Logo](https://freepngimg.com/thumb/categories/1424.png)
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Key Features](#key-features)
+- [Installation Guide](#installation-guide)
+- [Usage Guidelines](#usage-guidelines)
+- [Getting Started](#getting-started)
+- [Support and Issues](#support-and-issues)
+- [License](#license)
+
 ## Introduction
 
 Welcome to the Management Information System (WWF-MIS). This project aims to simplify and enhance the administration of grants provided by the Workers Welfare Fund under the **Ministry of Overseas Pakistanis and Human Resource Development, Government of Pakistan**. WWF-MIS efficiently handles claims for Marriage, Death, Estate, Hajj, and Educational grants, benefiting both government and private workers nationwide.
@@ -7,8 +18,6 @@ Welcome to the Management Information System (WWF-MIS). This project aims to sim
 ## Key Features
 
 1. **Grant Management**
-
-   The system focuses on managing claims for five different grants:
    - Marriage Grant: Streamlines grant processing for workers or their dependents' marriages.
    - Death Grant: Manages claims for financial assistance in the event of a worker's demise.
    - Estate Grant: Assists in handling grants related to the distribution of a worker's estate posthumously.
@@ -16,20 +25,16 @@ Welcome to the Management Information System (WWF-MIS). This project aims to sim
    - Educational Grant: Facilitates the disbursement of grants for the education of workers' children.
 
 2. **Multi-Sector Roles**
-
-   WWF-MIS caters to various sectors with 22+ roles, ensuring secure access and authority levels for different users. This promotes an organized workflow for diverse stakeholders within the system.
+   - WWF-MIS caters to various sectors with 22+ roles, ensuring secure access and authority levels for different users. This promotes an organized workflow for diverse stakeholders within the system.
 
 3. **Contribution Tracking**
-
-   The system tracks contributions made by multiple companies to the Workers Welfare Fund, ensuring transparency and accountability in financial transactions.
+   - The system tracks contributions made by multiple companies to the Workers Welfare Fund, ensuring transparency and accountability in financial transactions.
 
 4. **PHP CodeIgniter Backend**
-
-   The backend of WWF-MIS is developed using the PHP CodeIgniter framework, providing a robust and scalable foundation. CodeIgniter promotes code organization, modularity, and maintainability.
+   - The backend of WWF-MIS is developed using the PHP CodeIgniter framework, providing a robust and scalable foundation. CodeIgniter promotes code organization, modularity, and maintainability.
 
 5. **Flutter Mobile Apps**
-
-   The project includes Flutter-based mobile applications for a seamless user experience on Android and iOS platforms, enabling users to access system features on the go.
+   - The project includes Flutter-based mobile applications for a seamless user experience on Android and iOS platforms, enabling users to access system features on the go.
 
 ## Installation Guide
 
@@ -68,6 +73,35 @@ Follow these steps to set up the Workers Welfare Fund MIS on your server:
 5. **Reports and Analytics:**
    - Generate reports and analytics to monitor grant distribution and contributions.
 
+## Getting Started
+
+To set up and run the Workers Welfare Fund MIS for the CodeIgniter 3, follow these steps:
+
+1. Clone the repository:
+
+    ```bash
+    git clone git@github.com:attaatariq/mis_ww_fund_apps.git
+    ```
+
+2. Change into the project directory:
+
+    ```bash
+    cd mis_ww_fund_apps
+    ```
+
+3. Install any necessary dependencies using Flutter:
+
+    ```bash
+    flutter pub get
+    ```
+
+4. Configure the Flutter project according to your environment.
+5. Run the application using an emulator or a connected device:
+
+    ```bash
+    flutter run
+    ```
+
 ## Support and Issues
 
 For any issues, queries, or support requests, please contact the project maintainers:
@@ -78,7 +112,3 @@ For any issues, queries, or support requests, please contact the project maintai
 ## License
 
 This project is licensed under MIT License. See the **MIT License** file for details.
-
----
-
-Thank you for choosing the **Workers Welfare Fund MIS**. We trust that this system will contribute to the efficient management of grants, promoting the welfare of workers across Pakistan.
