@@ -1,5 +1,5 @@
 import 'dart:convert';
-// import 'dart:ffi';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
@@ -29,8 +29,8 @@ import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
 class Constants {
 ///demo
-String ApiBaseURL = "https://inixioworld.live/api/";
-String ImageBaseURL = "https://inixioworld.live/";
+String ApiBaseURL = "https://mis.wwf.gov.pk/xerox/api/";
+String ImageBaseURL = "https://mis.wwf.gov.pk/xerox/";
 
 ///live
 //  String ApiBaseURL = "https://mis.wwf.gov.pk/api/";
