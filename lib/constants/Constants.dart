@@ -28,18 +28,15 @@ import 'package:welfare_claims_app/screens/general/splash_screen.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
 class Constants {
-///demo
-String ApiBaseURL = "https://mis.wwf.gov.pk/xerox/api/";
-String ImageBaseURL = "https://mis.wwf.gov.pk/xerox/";
+  // APIs base urls
+  String ApiBaseURL = "https://mis.wwf.gov.pk/api/";
+  String ImageBaseURL = "https://mis.wwf.gov.pk/";
 
-///live
-//  String ApiBaseURL = "https://mis.wwf.gov.pk/api/";
-//  String ImageBaseURL = "https://mis.wwf.gov.pk/";
   String ConnectionMessage = "Internet Not Connected, Try Again";
   String ErrorOccurMessage = "Error Occur, Try Again";
   String ExceptionOccurMessage = "Exception Occur, Try Again";
 
-  ///api's folder names
+  // APIs folder names
   String authentication = "authenticate/";
   String companies = "companies/";
   String employees = "employees/";
