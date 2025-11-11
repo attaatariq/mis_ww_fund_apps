@@ -41,89 +41,106 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
       child: Column(
         children: [
           Container(
-            height: 180,
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppTheme.colors.newPrimary,
-                    AppTheme.colors.colorD4,
-                  ],
-                )
+              color: AppTheme.colors.newPrimary,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-            child: Align(
-                alignment: Alignment.bottomLeft,
-                child:  Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: UserSessions.instance.getUserImage != "null" && UserSessions.instance.getUserImage != "" && UserSessions.instance.getUserImage != "NULL" && UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
-                              image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppTheme.colors.newWhite,
+                        border: Border.all(
+                          color: AppTheme.colors.newWhite,
+                          width: 3,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(45),
+                        child: UserSessions.instance.getUserImage != "null" && 
+                               UserSessions.instance.getUserImage != "" && 
+                               UserSessions.instance.getUserImage != "NULL" && 
+                               UserSessions.instance.getUserImage != "N/A" 
+                          ? FadeInImage(
+                              image: NetworkImage(constants.getImageBaseURL() + UserSessions.instance.getUserImage),
                               placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
-                              fit: BoxFit.fill,
-                            ) : Image.asset("assets/images/no_image_placeholder.jpg",
-                              height: 60.0,
-                              width: 60,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  "assets/images/no_image_placeholder.jpg",
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              "assets/images/no_image_placeholder.jpg",
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                        ),
                       ),
-
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                          child: Text(
-                            UserSessions.instance.getUserName,
-                            maxLines: 1,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      UserSessions.instance.getUserName,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite,
+                        fontSize: 18,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
                       ),
-
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 2),
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.badge_outlined,
+                          color: AppTheme.colors.newWhite.withOpacity(0.9),
+                          size: 16,
+                        ),
+                        SizedBox(width: 6),
+                        Flexible(
                           child: Text(
                             UserSessions.instance.getUserCNIC,
                             maxLines: 1,
-                            textAlign: TextAlign.start,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 10,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.normal),
+                              color: AppTheme.colors.newWhite.withOpacity(0.9),
+                              fontSize: 13,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-
-                      Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Container(
-                            height: 0.5,
-                            color: AppTheme.colors.colorDarkGray,
-                            width: double.infinity,
-                          )
-                      ),
-                    ],
-                  ),
-                )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -133,875 +150,182 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
               child: ListView(
                 padding: EdgeInsets.all(0),
                 children: [
-                  InkWell(
-                    onTap: (){
+                  _buildSectionHeader("Management"),
+
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    iconAsset: "assets/images/deo.png",
+                    title: "Data Entry Operator",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => DeoDetail()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/deo.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Data Entry Operator",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.contact_phone_outlined,
+                    iconAsset: "assets/images/conact_person.png",
+                    title: "Contact Person",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => ContactPerson()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/conact_person.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Contact Person",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.verified_user_outlined,
+                    iconAsset: "assets/images/verified.png",
+                    title: "Workers Verification",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => EmployeeVerification()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/verified.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Workers Verification",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.notifications_outlined,
+                    iconAsset: "assets/images/bell.png",
+                    title: "Notifications",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => NotificationsAndAlerts()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/bell.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Notifications",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
+                  _buildSectionHeader("Claims"),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left : 15.0, right: 15, top: 20),
-                    child: Text(
-                      "Claims",
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newBlack,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.favorite,
+                    iconAsset: "assets/images/merriage.png",
+                    title: "Marriage Claim",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => MarriageClaimList()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/merriage.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Marriage Claim",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.help_outline,
+                    iconAsset: "assets/images/death.png",
+                    title: "Death Claim",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => DeathClaimList()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/death.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Death Claim",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
+                  _buildSectionHeader("Contribute Us"),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left : 15.0, right: 15, top: 20),
-                    child: Text(
-                      "Contribute Us",
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newBlack,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.description_outlined,
+                    iconAsset: "assets/images/annexure.png",
+                    title: "WPF Distribution Sheet",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => WpfDistributionList()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/annexure.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "WPF Distribution Sheet",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.account_balance_wallet_outlined,
+                    iconAsset: "assets/images/annexure.png",
+                    title: "Interest Distribution Sheet",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => InterstDistributionList()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/annexure.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Interest Distribution Sheet",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
+                  _buildSectionHeader("Settings"),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left : 15.0, right: 15, top: 20),
-                    child: Text(
-                      "Settings",
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newBlack,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.business_outlined,
+                    iconAsset: "assets/images/company.png",
+                    title: "Company Detail",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => AddContactPerson()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/company.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Company Detail",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    iconAsset: "assets/images/profile.png",
+                    title: "My Profile",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => AddContactPerson()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/profile.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "My Profile",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.lock_outline,
+                    iconAsset: "assets/images/key.png",
+                    title: "Change Password",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => AddContactPerson()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/key.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Change Password",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
+                  _buildSectionHeader("Preferences"),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left : 15.0, right: 15, top: 20),
-                    child: Text(
-                      "Preferences",
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newBlack,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.report_problem_outlined,
+                    iconAsset: "assets/images/complaint.png",
+                    title: "Complaints",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Complaints()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/complaint.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Complaints",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.feedback_outlined,
+                    iconAsset: "assets/images/feedback.png",
+                    title: "Send Feedback",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => SendFeedback()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/feedback.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "Send Feedback",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
                   ),
 
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
-                  ),
-
-                  InkWell(
-                    onTap: (){
+                  _buildMenuItem(
+                    icon: Icons.help_outline,
+                    iconAsset: "assets/images/faqs.png",
+                    title: "FAQs",
+                    onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => FAQs()
                       ));
                     },
-                    child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/images/faqs.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newBlack,
-                                  ),
-                                ),
-
-                                SizedBox(width: 10,),
-
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    "FAQs",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                    ),
-                  ),
-
-                  Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    height: 0.5,
-                    width: double.infinity,
-                    color: AppTheme.colors.colorDarkGray,
                   ),
                 ],
               ),
@@ -1009,6 +333,107 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
           )
         ],
       ),
+    );
+  }
+
+  // Helper widget for section headers
+  Widget _buildSectionHeader(String title) {
+    return Container(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 3,
+            height: 16,
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppTheme.colors.newPrimary,
+              fontSize: 14,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper widget for menu items
+  Widget _buildMenuItem({
+    IconData icon,
+    String iconAsset,
+    String title,
+    VoidCallback onTap,
+  }) {
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: iconAsset != null
+                          ? Image.asset(
+                              iconAsset,
+                              height: 18,
+                              width: 18,
+                              color: AppTheme.colors.newPrimary,
+                            )
+                          : Icon(
+                              icon,
+                              color: AppTheme.colors.newPrimary,
+                              size: 18,
+                            ),
+                    ),
+                  ),
+                  SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 12,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: AppTheme.colors.colorDarkGray,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Container(
+          height: 1,
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: AppTheme.colors.colorLightGray.withOpacity(0.5),
+        ),
+      ],
     );
   }
 }
