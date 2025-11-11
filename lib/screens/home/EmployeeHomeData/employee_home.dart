@@ -65,21 +65,37 @@ class _EmployeeHomeState extends State<EmployeeHome> {
 
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: InkWell(
-              onTap: (){
-                constants.LogoutUser(context);
-              },
-              child: Container(
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppTheme.colors.newWhite.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.power_settings_new,
-                  color: AppTheme.colors.newWhite,
-                  size: 18,
+            padding: EdgeInsets.only(right: 12),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: (){
+                  constants.LogoutUser(context);
+                },
+                borderRadius: BorderRadius.circular(6),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppTheme.colors.newWhite.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: AppTheme.colors.newWhite.withOpacity(0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.power_settings_new,
+                    color: AppTheme.colors.newWhite,
+                    size: 16,
+                  ),
                 ),
               ),
             ),
