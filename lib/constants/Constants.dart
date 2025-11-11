@@ -53,9 +53,9 @@ class Constants {
   String expireToken = "TOKEN_EXPIRED";
 
   ///selector category
-  String selectorCategoryFirstName = "Company / Employer";
-  String selectorCategorySecondName = "Company's Worker";
-  String selectorCategoryThirdName = "WWF's Employee";
+  String selectorCategoryFirstName = "Register as an Employer / Company";
+  String selectorCategorySecondName = "Register as a Worker (Non-WWF Company)";
+  String selectorCategoryThirdName = "Register as a WWF Employee";
 
   ///disability
   String disable = "Yes";

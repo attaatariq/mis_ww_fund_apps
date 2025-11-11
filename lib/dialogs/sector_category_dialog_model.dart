@@ -24,32 +24,46 @@ class _SectorCategoryDialogModelState extends State<SectorCategoryDialogModel> {
     return Material(
       type: MaterialType.transparency,
       child: Container(
-        height: 163,
+        height: 200,
         margin: EdgeInsets.only(left: 30, right: 30),
         decoration: BoxDecoration(
           color: AppTheme.colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: Offset(0, 10),
+            ),
+          ],
         ),
 
         child: Container(
           child: Column(
             children: [
               Container(
-                height: 40,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: AppTheme.colors.newPrimary,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppTheme.colors.newPrimary,
+                      Color.lerp(AppTheme.colors.newPrimary, Colors.black, 0.1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))
                 ),
                 child: Stack(
                   children: [
                     Align(
                       alignment: Alignment.center,
-                      child: Text("Selector Category",
+                      child: Text("Please Select Registration Type",
                         style: TextStyle(
                             color: AppTheme.colors.white,
-                            fontSize: 13,
+                            fontSize: 14,
                             fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.w600
                         ),),
                     ),
 
@@ -69,91 +83,31 @@ class _SectorCategoryDialogModelState extends State<SectorCategoryDialogModel> {
                 child: Container(
                   child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: (){
+                      _buildDialogOption(
+                        onTap: () {
                           Navigator.of(context).pop(constants.selectorCategoryFirstName);
                         },
-                        child: Container(
-                          height: 40,
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(constants.selectorCategoryFirstName,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.colorAccent,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 0.5,
-                                  width: double.infinity,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        text: constants.selectorCategoryFirstName,
+                        icon: Icons.business_center,
+                        hasDivider: true,
                       ),
 
-                      GestureDetector(
-                        onTap: (){
+                      _buildDialogOption(
+                        onTap: () {
                           Navigator.of(context).pop(constants.selectorCategorySecondName);
                         },
-                        child: Container(
-                          height: 40,
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(constants.selectorCategorySecondName,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.colorAccent,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 0.5,
-                                  width: double.infinity,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        text: constants.selectorCategorySecondName,
+                        icon: Icons.work_outline,
+                        hasDivider: true,
                       ),
 
-                      GestureDetector(
-                        onTap: (){
+                      _buildDialogOption(
+                        onTap: () {
                           Navigator.of(context).pop(constants.selectorCategoryThirdName);
                         },
-                        child: Container(
-                          height: 40,
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(constants.selectorCategoryThirdName,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.colorAccent,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.bold
-                                  ),),
-                              ),
-                            ],
-                          ),
-                        ),
+                        text: constants.selectorCategoryThirdName,
+                        icon: Icons.badge_outlined,
+                        hasDivider: false,
                       ),
                     ],
                   ),
@@ -161,6 +115,69 @@ class _SectorCategoryDialogModelState extends State<SectorCategoryDialogModel> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDialogOption({
+    Function onTap,
+    String text,
+    IconData icon,
+    bool hasDivider,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 50,
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: AppTheme.colors.newPrimary,
+                        size: 20,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        text,
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 14,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppTheme.colors.colorDarkGray,
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (hasDivider)
+              Container(
+                height: 1,
+                margin: EdgeInsets.symmetric(horizontal: 16),
+                color: AppTheme.colors.colorLightGray,
+              ),
+          ],
         ),
       ),
     );
