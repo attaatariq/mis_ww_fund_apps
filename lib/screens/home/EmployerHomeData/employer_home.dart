@@ -58,7 +58,7 @@ class _EmployerHomeState extends State<EmployerHome> {
             color: AppTheme.colors.newPrimary,
           ),
         ),
-        title: Text("Company Dashboard",
+        title: Text("Dashboard",
             style: TextStyle(
                 color: AppTheme.colors.newWhite,
                 fontFamily: "AppFont",
