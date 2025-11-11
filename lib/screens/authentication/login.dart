@@ -522,34 +522,52 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void Validation() {
-    if (loginController.cnicController.text.isNotEmpty) {
-      if (loginController.cnicController.text.toString().length == 15) {
-        if (loginController.passwordController.text.isNotEmpty) {
-          setState(() {
-            _isLoading = true;
-          });
-          CheckConnectivity();
-        } else {
-          uiUpdates.DismissProgresssDialog();
-          uiUpdates.ShowToast(Strings.instance.passwordMessage);
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      } else {
-        uiUpdates.DismissProgresssDialog();
-        uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } else {
+    // Validate CNIC
+    if (loginController.cnicController.text.trim().isEmpty) {
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.cnicMessage);
       setState(() {
         _isLoading = false;
       });
+      return;
     }
+
+    // Validate CNIC length
+    if (loginController.cnicController.text.toString().length != 15) {
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Password
+    if (loginController.passwordController.text.trim().isEmpty) {
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.passwordMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Password length (4-20 characters)
+    String password = loginController.passwordController.text.trim();
+    if (password.length < 4 || password.length > 20) {
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.invalidPasswordLengthMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // All validations passed
+    setState(() {
+      _isLoading = true;
+    });
+    CheckConnectivity();
   }
 
   void CheckConnectivity() {

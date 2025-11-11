@@ -23,6 +23,7 @@ class Strings{
   final String cnicMessage= "CNIC shouldn't be empty";
   final String invalidCNICMessage= "Invalid CNIC";
   final String passwordMessage= "Password shouldn't be empty";
+  final String invalidPasswordLengthMessage= "Password must be between 4 and 20 characters";
   final String confirmPasswordMessage= "Confirm password shouldn't be empty";
   final String passwordMatchMessage= "Password doesn't match";
   final String selectLocation= "Select Location";

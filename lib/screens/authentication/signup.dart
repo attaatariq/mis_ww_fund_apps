@@ -749,88 +749,120 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
   }
 
   void Validation() {
-    if (selectedSectorCategory != "Please Select Registration Type") {
-      if (fullNameController.text.isNotEmpty) {
-        if (emailController.text.isNotEmpty) {
-          if (constants.IsValidEmail(emailController.text.toString())) {
-            if (numberController.text.isNotEmpty) {
-              if (numberController.text.toString().length == 11) {
-                if (cnicController.text.isNotEmpty) {
-                  if (cnicController.text.toString().length == 15) {
-                    if (passwordController.text.isNotEmpty) {
-                      if (confirmPasswordController.text.isNotEmpty) {
-                        if (passwordController.text.toString() ==
-                            confirmPasswordController.text.toString()) {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          CheckConnectivity();
-                        } else {
-                          uiUpdates.ShowToast(Strings.instance.passwordMatchMessage);
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      } else {
-                        uiUpdates.ShowToast(Strings.instance.confirmPasswordMessage);
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }
-                    } else {
-                      uiUpdates.ShowToast(Strings.instance.passwordMessage);
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    }
-                  } else {
-                    uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  }
-                } else {
-                  uiUpdates.ShowToast(Strings.instance.cnicMessage);
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
-              } else {
-                uiUpdates.ShowToast(Strings.instance.invalidNumberMessage);
-                setState(() {
-                  _isLoading = false;
-                });
-              }
-            } else {
-              uiUpdates.ShowToast(Strings.instance.numberMessage);
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          } else {
-            uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
-            setState(() {
-              _isLoading = false;
-            });
-          }
-        } else {
-          uiUpdates.ShowToast(Strings.instance.emailMessage);
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      } else {
-        uiUpdates.ShowToast(Strings.instance.fullnameMessage);
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } else {
+    // Validate Registration Type
+    if (selectedSectorCategory == "Please Select Registration Type") {
       uiUpdates.ShowToast(Strings.instance.companyCategoryMessage);
       setState(() {
         _isLoading = false;
       });
+      return;
     }
+
+    // Validate Full Name
+    if (fullNameController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.fullnameMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Email
+    if (emailController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.emailMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Email Format
+    if (!constants.IsValidEmail(emailController.text.trim())) {
+      uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Contact Number
+    if (numberController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.numberMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Contact Number Length
+    if (numberController.text.toString().length != 11) {
+      uiUpdates.ShowToast(Strings.instance.invalidNumberMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate CNIC
+    if (cnicController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.cnicMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate CNIC Length
+    if (cnicController.text.toString().length != 15) {
+      uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Password
+    if (passwordController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.passwordMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Password Length (4-20 characters)
+    String password = passwordController.text.trim();
+    if (password.length < 4 || password.length > 20) {
+      uiUpdates.ShowToast(Strings.instance.invalidPasswordLengthMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Confirm Password
+    if (confirmPasswordController.text.trim().isEmpty) {
+      uiUpdates.ShowToast(Strings.instance.confirmPasswordMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Validate Password Match
+    if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
+      uiUpdates.ShowToast(Strings.instance.passwordMatchMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // All validations passed
+    setState(() {
+      _isLoading = true;
+    });
+    CheckConnectivity();
   }
 
   void CheckConnectivity() {

@@ -373,24 +373,29 @@ class _ForgotPasswordState extends State<ForgotPassword>
   }
 
   void Validation() {
-    if (emailController.text.toString().isNotEmpty) {
-      if (constants.IsValidEmail(emailController.text.toString())) {
-        setState(() {
-          _isLoading = true;
-        });
-        CheckConnectivity();
-      } else {
-        uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } else {
+    // Validate Email is not empty
+    if (emailController.text.trim().isEmpty) {
       uiUpdates.ShowToast(Strings.instance.emailMessage);
       setState(() {
         _isLoading = false;
       });
+      return;
     }
+
+    // Validate Email format
+    if (!constants.IsValidEmail(emailController.text.trim())) {
+      uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // All validations passed
+    setState(() {
+      _isLoading = true;
+    });
+    CheckConnectivity();
   }
 
   void CheckConnectivity() {
