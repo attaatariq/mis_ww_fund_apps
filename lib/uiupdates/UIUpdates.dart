@@ -17,9 +17,18 @@ class UIUpdates{
   }
   void ShowProgressDialog(String message)
   {
+    // Dismiss any existing dialog first to prevent multiple dialogs
+    DismissProgresssDialog();
+    
     Future.delayed(const Duration(milliseconds: 100), () {
-      _dialog = SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
-      _dialog.show(message: message, type: SimpleFontelicoProgressDialogType.normal,indicatorColor: AppColors().newPrimary);
+      if (context != null) {
+        try {
+          _dialog = SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
+          _dialog.show(message: message, type: SimpleFontelicoProgressDialogType.normal,indicatorColor: AppColors().newPrimary);
+        } catch (e) {
+          print('Error showing progress dialog: $e');
+        }
+      }
     });
 
     // progressDialog= new ProgressDialog(context, isDismissible: false, type: ProgressDialogType.Normal);
@@ -47,7 +56,13 @@ class UIUpdates{
   {
     if(_dialog != null)
     {
-      _dialog.hide();
+      try {
+        _dialog.hide();
+        _dialog = null;
+      } catch (e) {
+        print('Error dismissing progress dialog: $e');
+        _dialog = null;
+      }
     }
 
     // if(progressDialog != null)

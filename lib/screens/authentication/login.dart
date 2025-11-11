@@ -111,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildHeaderSection() {
     return Container(
-      height: 280,
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -135,75 +134,79 @@ class _LoginScreenState extends State<LoginScreen>
         ],
       ),
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo with professional styling
-            Container(
-              width: 130,
-              height: 130,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.colors.newWhite.withOpacity(0.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Container(
-                margin: EdgeInsets.all(8),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 30),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo with professional styling
+              Container(
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.colors.newWhite.withOpacity(0.15),
-                  border: Border.all(
-                    color: AppTheme.colors.newWhite.withOpacity(0.3),
-                    width: 2,
+                  color: AppTheme.colors.newWhite.withOpacity(0.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppTheme.colors.newWhite.withOpacity(0.15),
+                    border: Border.all(
+                      color: AppTheme.colors.newWhite.withOpacity(0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      width: 75,
+                      height: 75,
+                      color: AppTheme.colors.newWhite,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
                   ),
                 ),
-                child: Center(
-                  child: Image.asset(
-                    "assets/images/logo.png",
-                    width: 80,
-                    height: 80,
-                    color: AppTheme.colors.newWhite,
-                    colorBlendMode: BlendMode.srcIn,
-                  ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Welcome Back",
+                style: TextStyle(
+                  color: AppTheme.colors.newWhite,
+                  fontSize: 26,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.2),
+                      offset: Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Welcome Back",
-              style: TextStyle(
-                color: AppTheme.colors.newWhite,
-                fontSize: 28,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withOpacity(0.2),
-                    offset: Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
+              SizedBox(height: 6),
+              Text(
+                "Sign in to continue",
+                style: TextStyle(
+                  color: AppTheme.colors.newWhite.withOpacity(0.9),
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: 0.3,
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Sign in to continue",
-              style: TextStyle(
-                color: AppTheme.colors.newWhite.withOpacity(0.9),
-                fontSize: 15,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.normal,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -558,7 +561,12 @@ class _LoginScreenState extends State<LoginScreen>
             platform: platform,
             deviceModel: deviceModel,
             context: context,
-            uiUpdates: uiUpdates);
+            uiUpdates: uiUpdates,
+            onComplete: (success) {
+              setState(() {
+                _isLoading = false;
+              });
+            });
       } else {
         uiUpdates.DismissProgresssDialog();
         uiUpdates.ShowToast(Strings.instance.internetNotConnected);
@@ -566,28 +574,80 @@ class _LoginScreenState extends State<LoginScreen>
           _isLoading = false;
         });
       }
+    }).catchError((error) {
+      print('CheckConnectivity error: $error');
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
   GetIPAddress() {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    constants.GetIPAddress(context).then((value) => {
-          ipAddress = value,
-          GetDeviceinfo()
+    constants.GetIPAddress(context).then((value) {
+      if (value != null) {
+        ipAddress = value;
+        GetDeviceinfo();
+      } else {
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        setState(() {
+          _isLoading = false;
         });
+      }
+    }).catchError((error) {
+      print('GetIPAddress error: $error');
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   GetDeviceinfo() {
-    constants.GetDeviceInfo(context).then((value) => {
-          deviceModel = value,
-          GetPalform()
+    constants.GetDeviceInfo(context).then((value) {
+      if (value != null) {
+        deviceModel = value;
+        GetPalform();
+      } else {
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        setState(() {
+          _isLoading = false;
         });
+      }
+    }).catchError((error) {
+      print('GetDeviceinfo error: $error');
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   GetPalform() {
-    constants.GetPlatForm(context).then((value) => {
-          platform = value,
-          Validation()
+    constants.GetPlatForm(context).then((value) {
+      if (value != null) {
+        platform = value;
+        Validation();
+      } else {
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        setState(() {
+          _isLoading = false;
         });
+      }
+    }).catchError((error) {
+      print('GetPalform error: $error');
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 }

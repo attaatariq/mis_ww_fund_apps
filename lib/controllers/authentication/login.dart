@@ -23,7 +23,7 @@ class LoginController extends GetxController{
   TextEditingController cnicController= TextEditingController();
   TextEditingController passwordController= TextEditingController();
 
-  loginData({String ipAddress,String platform,String deviceModel,UIUpdates uiUpdates,BuildContext context}) async {
+  loginData({String ipAddress,String platform,String deviceModel,UIUpdates uiUpdates,BuildContext context, Function(bool) onComplete}) async {
     uiUpdates.HideKeyBoard();
     Map<String,dynamic> data = {
       "cnic": cnicController.text.toString(),
@@ -35,61 +35,74 @@ class LoginController extends GetxController{
     print(data.toString());
     var url = constants.authentication+"login";
 
-
-    ///http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8")
-    var response = await APIService.postRequest(apiName: url,mapData: data,uiUpdates: uiUpdates);
-    print(response);
+    try {
+      ///http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8")
+      var response = await APIService.postRequest(apiName: url,mapData: data,uiUpdates: uiUpdates);
+      print(response);
 //    print(url+response.body+" : "+response.statusCode.toString());
-    try{
+      
+      // Always dismiss dialog first
       uiUpdates.DismissProgresssDialog();
-      if (response !=null) {
-        var body = jsonDecode(response);
-        String code = body["Code"].toString();
-        if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.loginSuccess);
-          var dataObject = body["Data"];
-          String userID = dataObject["user_id"].toString();
-          String user_name = dataObject["user_name"].toString();
-          String user_cnic = dataObject["user_cnic"].toString();
-          String user_email = dataObject["user_email"].toString();
-          String user_contact = dataObject["user_contact"].toString();
-          String user_sector = dataObject["user_sector"].toString();
-          String sector_name = dataObject["sector_name"].toString();
-          String user_role = dataObject["user_role"].toString();
-          String role_name = dataObject["role_name"].toString();
-          String user_image = dataObject["user_image"].toString();
-          String user_about = dataObject["user_about"].toString();
-          String user_token = dataObject["user_token"].toString();
-          String user_account = dataObject["user_account"].toString();
-          String ref_id = dataObject["ref_id"].toString();
-          String agent_expiry = dataObject["agent_expiry"].toString();
-          SetSession(
-              userID,
-              user_name,
-              user_cnic,
-              user_email,
-              user_contact,
-              user_image,
-              user_about,
-              user_token,
-              user_account,
-              user_sector,
-              user_role,
-              ref_id,
-              agent_expiry);
-          passwordController.clear();
-          SetScreen(user_sector, user_role, user_account,context,ref_id);
-        } else {
-          uiUpdates.ShowToast(Strings.instance.loginFailed);
+      
+      if (response != null && response.isNotEmpty) {
+        try {
+          var body = jsonDecode(response);
+          String code = body["Code"].toString();
+          if (code == "1") {
+            uiUpdates.ShowToast(Strings.instance.loginSuccess);
+            var dataObject = body["Data"];
+            String userID = dataObject["user_id"].toString();
+            String user_name = dataObject["user_name"].toString();
+            String user_cnic = dataObject["user_cnic"].toString();
+            String user_email = dataObject["user_email"].toString();
+            String user_contact = dataObject["user_contact"].toString();
+            String user_sector = dataObject["user_sector"].toString();
+            String sector_name = dataObject["sector_name"].toString();
+            String user_role = dataObject["user_role"].toString();
+            String role_name = dataObject["role_name"].toString();
+            String user_image = dataObject["user_image"].toString();
+            String user_about = dataObject["user_about"].toString();
+            String user_token = dataObject["user_token"].toString();
+            String user_account = dataObject["user_account"].toString();
+            String ref_id = dataObject["ref_id"].toString();
+            String agent_expiry = dataObject["agent_expiry"].toString();
+            SetSession(
+                userID,
+                user_name,
+                user_cnic,
+                user_email,
+                user_contact,
+                user_image,
+                user_about,
+                user_token,
+                user_account,
+                user_sector,
+                user_role,
+                ref_id,
+                agent_expiry);
+            passwordController.clear();
+            SetScreen(user_sector, user_role, user_account,context,ref_id);
+            if (onComplete != null) onComplete(true);
+          } else {
+            String errorMessage = body["Message"]?.toString() ?? Strings.instance.loginFailed;
+            uiUpdates.ShowToast(errorMessage);
+            if (onComplete != null) onComplete(false);
+          }
+        } catch (e) {
+          print('JSON decode error: $e');
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          if (onComplete != null) onComplete(false);
         }
+      } else {
+        // Response is null or empty - error already shown by APIService
+        if (onComplete != null) onComplete(false);
       }
-    }catch(e){
-      print('error:$e');
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
-    }finally{
+    } catch(e) {
+      print('Login error: $e');
       uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      if (onComplete != null) onComplete(false);
     }
-
   }
 
   void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String ref_id, String agent_expiry) {
