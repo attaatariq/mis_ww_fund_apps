@@ -433,7 +433,7 @@ class _LoginScreenState extends State<LoginScreen>
       shadowColor: AppTheme.colors.newPrimary.withOpacity(0.4),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        onTap: _isLoading ? null : () => GetIPAddress(),
+        onTap: _isLoading ? null : () => _handleLogin(),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           height: 56,
@@ -521,52 +521,64 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  void Validation() {
+  void _handleLogin() {
+    // Hide keyboard first
+    uiUpdates.HideKeyBoard();
+    
+    // Validate first before showing any dialogs
+    if (!_validateForm()) {
+      return; // Validation failed, error already shown
+    }
+
+    // All validations passed, proceed with login
+    setState(() {
+      _isLoading = true;
+    });
+    GetIPAddress();
+  }
+
+  bool _validateForm() {
     // Validate CNIC
     if (loginController.cnicController.text.trim().isEmpty) {
-      uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.cnicMessage);
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      return false;
     }
 
     // Validate CNIC length
     if (loginController.cnicController.text.toString().length != 15) {
-      uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      return false;
     }
 
     // Validate Password
     if (loginController.passwordController.text.trim().isEmpty) {
-      uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.passwordMessage);
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      return false;
     }
 
     // Validate Password length (4-20 characters)
     String password = loginController.passwordController.text.trim();
     if (password.length < 4 || password.length > 20) {
-      uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.invalidPasswordLengthMessage);
+      return false;
+    }
+
+    // All validations passed
+    return true;
+  }
+
+  void Validation() {
+    // This method is called after getting device info
+    // Re-validate to ensure data is still valid
+    if (!_validateForm()) {
+      uiUpdates.DismissProgresssDialog();
       setState(() {
         _isLoading = false;
       });
       return;
     }
 
-    // All validations passed
-    setState(() {
-      _isLoading = true;
-    });
+    // All validations passed, proceed with connectivity check
     CheckConnectivity();
   }
 
