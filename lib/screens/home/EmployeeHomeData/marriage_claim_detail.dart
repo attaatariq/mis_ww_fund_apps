@@ -29,12 +29,15 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
   String created_at = "-",
       claim_stage = "-",
       claim_amount = "-",
+      claim_payment = "-",
       claim_dated = "-",
       claim_category = "-",
       daughter_name = "-",
       husband_name = "-",
       daughter_age = "-",
-      bank_name = "-", account_title="-", account_number="-", user_image="-",
+      child_cnic = "-",
+      child_image = "-",
+      bank_name = "-", account_title="-", account_number="-", account_nature="-", user_image="-",
       user_name="-", user_cnic="-";
   bool isError = false;
   String errorMessage = "";
@@ -700,6 +703,40 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
                                 ],
                               ),
                             ),
+
+                            Container(
+                              height: 40,
+                              width: 1,
+                              color: AppTheme.colors.colorDarkGray,
+                            ),
+
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  Text("Account Nature",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: AppTheme.colors.newBlack,
+                                        fontSize: 10,
+                                        fontFamily: "AppFont",
+                                        fontWeight: FontWeight.normal
+                                    ),
+                                  ),
+
+                                  Text(account_nature,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        color: AppTheme.colors.newBlack,
+                                        fontSize: 12,
+                                        fontFamily: "AppFont",
+                                        fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -1191,26 +1228,35 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
                 noteParahList));
           });
         }
-        user_name= body["user_name"].toString();
-        user_image= body["user_image"].toString();
-        user_cnic= body["user_cnic"].toString();
-        claim_stage = body["claim_stage"].toString();
-        created_at = body["created_at"].toString();
-        claim_dated = body["claim_dated"].toString();
-        claim_category = body["claim_category"].toString();
-        claim_amount = body["claim_amount"].toString();
-        bank_name= body["emp_bank"].toString();
-        account_number= body["emp_account"].toString();
-        account_title= body["emp_title"].toString();
-        serviceCertificate = body["claim_certificate"].toString();
-        affidavit = body["claim_affidavit"].toString();
-        awards = body["claim_award"].toString();
-        nikahNama = body["claim_nikahnama"].toString();
-        accumulativeService = body["claim_service"].toString();
+        user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
+        user_image= body["user_image"] != null ? body["user_image"].toString() : "-";
+        user_cnic= body["user_cnic"] != null ? body["user_cnic"].toString() : "-";
+        claim_stage = body["claim_stage"] != null ? body["claim_stage"].toString() : "-";
+        created_at = body["created_at"] != null ? body["created_at"].toString() : "-";
+        claim_dated = body["claim_dated"] != null ? body["claim_dated"].toString() : "-";
+        claim_category = body["claim_category"] != null ? body["claim_category"].toString() : "-";
+        claim_amount = body["claim_amount"] != null ? body["claim_amount"].toString() : "-";
+        claim_payment = body["claim_payment"] != null ? body["claim_payment"].toString() : "-";
+        bank_name= body["emp_bank"] != null ? body["emp_bank"].toString() : "-";
+        account_number= body["emp_account"] != null ? body["emp_account"].toString() : "-";
+        account_title= body["emp_title"] != null ? body["emp_title"].toString() : "-";
+        account_nature= body["emp_nature"] != null ? body["emp_nature"].toString() : "-";
+        serviceCertificate = body["claim_certificate"] != null ? body["claim_certificate"].toString() : "";
+        affidavit = body["claim_affidavit"] != null ? body["claim_affidavit"].toString() : "";
+        awards = body["claim_award"] != null ? body["claim_award"].toString() : "";
+        nikahNama = body["claim_nikahnama"] != null ? body["claim_nikahnama"].toString() : "";
+        accumulativeService = body["claim_service"] != null ? body["claim_service"].toString() : "";
         if (claim_category != "Self") {
-          daughter_name = body["child_name"].toString();
-          husband_name = body["claim_husband"].toString();
-          daughter_age = GetDaughterAge(created_at, body["child_birthday"].toString()) ?? "-";
+          daughter_name = body["child_name"] != null ? body["child_name"].toString() : "-";
+          child_cnic = body["child_cnic"] != null ? body["child_cnic"].toString() : "-";
+          child_image = body["child_image"] != null ? body["child_image"].toString() : "-";
+          husband_name = body["claim_husband"] != null ? body["claim_husband"].toString() : "-";
+          String childBirthday = body["child_birthday"] != null ? body["child_birthday"].toString() : "";
+          if(childBirthday.isNotEmpty && childBirthday != "null") {
+            daughter_age = GetDaughterAge(created_at, childBirthday) ?? "-";
+          } else {
+            daughter_age = "-";
+          }
         }
         setState(() {
           isError = false;
@@ -1219,7 +1265,7 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
         setState(() {
           isError = true;
-          errorMessage = Strings.instance.notAvail;
+          errorMessage = Strings.instance.notFound;
         });
       }
     } else {

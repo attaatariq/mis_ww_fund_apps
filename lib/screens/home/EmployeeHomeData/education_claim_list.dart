@@ -387,27 +387,27 @@ class _EducationClaimListState extends State<EducationClaimList> {
           print('JSON parsing error: $e');
           setState(() {
             isErrorFee= true;
-            errorMessageFee = Strings.instance.notAvail;
+            errorMessageFee = Strings.instance.notFound;
             isErrorOthers= true;
-            errorMessageOthers = Strings.instance.notAvail;
+            errorMessageOthers = Strings.instance.notFound;
           });
         }
       } else {
         uiUpdates.ShowToast(responseCodeModel.message);
         setState(() {
           isErrorFee= true;
-          errorMessageFee = Strings.instance.notAvail;
+          errorMessageFee = Strings.instance.notFound;
           isErrorOthers= true;
-          errorMessageOthers = Strings.instance.notAvail;
+          errorMessageOthers = Strings.instance.notFound;
         });
       }
     } catch (e) {
       print('Network or request error: $e');
       setState(() {
         isErrorFee= true;
-        errorMessageFee = Strings.instance.notAvail;
+        errorMessageFee = Strings.instance.notFound;
         isErrorOthers= true;
-        errorMessageOthers = Strings.instance.notAvail;
+        errorMessageOthers = Strings.instance.notFound;
       });
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
