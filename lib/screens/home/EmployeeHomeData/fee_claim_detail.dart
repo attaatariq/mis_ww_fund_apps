@@ -8,6 +8,7 @@ import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/utils/claim_stages_helper.dart';
 import 'package:http/http.dart' as http;
 
 class FeeClaimDetail extends StatefulWidget {
@@ -248,43 +249,68 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
   }
 
   Widget _buildStatusCard() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.colors.newWhite,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+    return Column(
+      children: [
+        // Dynamic Claim Status Card
+        ClaimStagesHelper.buildDetailStatusCard(claim_stage),
+        SizedBox(height: 12),
+        // Submission Date Card
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.colors.newWhite,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatusItem(
-              icon: Icons.calendar_today,
-              label: "Submitted Date",
-              value: created_at,
-            ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.calendar_today,
+                  size: 20,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+              SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Submitted Date",
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray,
+                      fontSize: 11,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    created_at,
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 14,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          Container(
-            height: 50,
-            width: 1,
-            color: Colors.grey.withOpacity(0.2),
-          ),
-          Expanded(
-            child: _buildStatusItem(
-              icon: Icons.track_changes,
-              label: "Claim Stage",
-              value: claim_stage,
-              valueColor: AppTheme.colors.colorExelent,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

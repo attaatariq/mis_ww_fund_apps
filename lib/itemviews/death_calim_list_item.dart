@@ -3,6 +3,7 @@ import 'package:welfare_claims_app/models/DeathClaimModel.dart';
 
 import '../colors/app_colors.dart';
 import '../screens/home/EmployeeHomeData/death_claim_detail.dart';
+import '../utils/claim_stages_helper.dart';
 
 class DeathClaimListItem extends StatefulWidget {
   DeathClaimModel deathClaimModel;
@@ -148,16 +149,11 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                           fontFamily: "AppFont",
                           fontWeight: FontWeight.normal),
                     ),
-
-                    Text(
+                    SizedBox(height: 4),
+                    ClaimStagesHelper.buildListStatusBadge(
                       widget.deathClaimModel.claim_stage,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: AppTheme.colors.black,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.normal),
+                      fontSize: 10,
+                      showTooltip: true,
                     ),
                   ],
                 ),

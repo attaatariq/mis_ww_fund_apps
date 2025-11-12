@@ -11,6 +11,7 @@ import '../../../models/NoteModel.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../utils/claim_stages_helper.dart';
 import 'package:intl/intl.dart';
 
 class MarriageClaimDetail extends StatefulWidget {
@@ -56,185 +57,180 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          // Modern Header with Shadow
+          Container(
+            decoration: BoxDecoration(
               color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
                         child: Icon(
-                          Icons.arrow_back, color: AppTheme.colors.newWhite,
-                          size: 20,),
+                          Icons.arrow_back,
+                          color: AppTheme.colors.newWhite,
+                          size: 22,
+                        ),
                       ),
                     ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Detail",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),
+                    SizedBox(width: 12),
+                    Text(
+                      "Marriage Claim Details",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite,
+                        fontSize: 18,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
 
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  margin: EdgeInsets.only(
-                      left: 15, right: 15, top: 15, bottom: 50),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colors.white,
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(10),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                      // User Info Card
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.colors.newWhite,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.06),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
                         child: Row(
                           children: [
                             Container(
-                              height: 40,
-                              width: 40,
+                              height: 56,
+                              width: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(28),
+                                border: Border.all(
+                                  color: AppTheme.colors.newPrimary.withOpacity(0.2),
+                                  width: 2,
+                                ),
+                              ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: BorderRadius.circular(26),
                                 child: user_image != "null" &&
                                     user_image != "" &&
                                     user_image != "NULL" &&
                                     user_image != "-"
                                     ? FadeInImage(
-                                  image: NetworkImage(
-                                      constants.getImageBaseURL() +
-                                          user_image),
-                                  placeholder: AssetImage(
-                                      "assets/images/no_image_placeholder.jpg"),
-                                  fit: BoxFit.fill,
-                                )
+                                        image: NetworkImage(constants.getImageBaseURL() + user_image),
+                                        placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
+                                        fit: BoxFit.cover,
+                                      )
                                     : Image.asset(
-                                  "assets/images/no_image_placeholder.jpg",
-                                  height: 40.0,
-                                  width: 40,
-                                  fit: BoxFit.fill,
-                                ),
+                                        "assets/images/no_image_placeholder.jpg",
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
-
-                            SizedBox(width: 10,),
-
+                            SizedBox(width: 12),
                             Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                                  Text(
+                                    user_name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppTheme.colors.newBlack,
+                                      fontSize: 16,
+                                      fontFamily: "AppFont",
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
                                     children: [
-                                      Text(
-                                        user_name,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newBlack,
-                                            fontSize: 13,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
+                                      Icon(
+                                        Icons.badge_outlined,
+                                        size: 14,
+                                        color: AppTheme.colors.colorDarkGray,
                                       ),
-
+                                      SizedBox(width: 4),
                                       Text(
                                         user_cnic,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
                                         style: TextStyle(
-                                            color: AppTheme.colors
-                                                .colorDarkGray,
-                                            fontSize: 10,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.normal
+                                          color: AppTheme.colors.colorDarkGray,
+                                          fontSize: 12,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ],
                                   ),
-
-                                  Container(
-                                    height: 28,
-                                    width: 70,
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: AppTheme.colors.colorExelent
-                                    ),
-
-                                    child: Center(
-                                      child: Text(
-                                        claim_stage,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newWhite,
-                                            fontSize: 10,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
-                            )
+                            ),
+                            ClaimStagesHelper.buildListStatusBadge(claim_stage, fontSize: 10, showTooltip: true),
                           ],
                         ),
                       ),
+                      SizedBox(height: 16),
 
-                      SizedBox(height: 10,),
+                      // Detailed Status Card with dynamic color and info
+                      ClaimStagesHelper.buildDetailStatusCard(claim_stage),
+                      SizedBox(height: 16),
 
-                      Container(
-                        height: 30,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            color: AppTheme.colors.newPrimary
-                        ),
-
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10),
-                            child: Text("Claim Information",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  color: AppTheme.colors.newWhite,
-                                  fontSize: 12,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.bold
-                              ),
+                      // Section Header Helper Method (to be used throughout)
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 18,
+                              color: AppTheme.colors.newPrimary,
                             ),
                           ),
-                        ),
+                          SizedBox(width: 12),
+                          Text(
+                            "Claim Information",
+                            style: TextStyle(
+                              color: AppTheme.colors.newBlack,
+                              fontSize: 15,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-
-                      SizedBox(height: 10,),
+                      SizedBox(height: 12),
 
                       Container(
                         padding: EdgeInsets.all(10),
@@ -282,7 +278,7 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
                               flex: 1,
                               child: Column(
                                 children: [
-                                  Text("Claim Stage",
+                                  Text("Claim Amount",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: AppTheme.colors.newBlack,
@@ -292,7 +288,7 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
                                     ),
                                   ),
 
-                                  Text(claim_stage,
+                                  Text(claim_amount + " PKR",
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     style: TextStyle(
@@ -1185,98 +1181,138 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
   }
 
   void GetMarriageClaimsDetail() async {
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "marriage_detail/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken + "/" + widget.calim_ID;
-    print(url);
-    var response = await http.get(Uri.parse(url));
-    uiUpdates.DismissProgresssDialog();
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
-    if (responseCodeModel.status == true) {
-      var bodyData = jsonDecode(response.body);
-      String code = bodyData["Code"].toString();
-      if (code == "1") {
-        var body = bodyData["Data"];
-        List<dynamic> noteListData = body["notings"];
-        if (noteListData.isNotEmpty) {
-          noteListData.forEach((element) {
-            noteParahList.clear();
-            List<dynamic> noteParaListData = element["note_paras"];
-            if (noteParaListData.isNotEmpty) {
-              noteParaListData.forEach((element1) {
-                String para_no = element1["para_no"].toString();
-                String remarks = element1["remarks"].toString();
-                noteParahList.add(Note(para_no, remarks));
-              });
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL() + constants.claims +
+          "marriage_detail/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken + "/" + widget.calim_ID;
+      print(url);
+      
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var bodyData = jsonDecode(response.body);
+          String code = bodyData["Code"].toString();
+          
+          if (code == "1") {
+            var body = bodyData["Data"];
+            
+            // Handle notings field (may not exist in employer response)
+            if (body["notings"] != null) {
+              List<dynamic> noteListData = body["notings"];
+              if (noteListData.isNotEmpty) {
+                noteList.clear();
+                noteListData.forEach((element) {
+                  noteParahList.clear();
+                  List<dynamic> noteParaListData = element["note_paras"] != null ? element["note_paras"] : [];
+                  if (noteParaListData.isNotEmpty) {
+                    noteParaListData.forEach((element1) {
+                      String para_no = element1["para_no"] != null ? element1["para_no"].toString() : "";
+                      String remarks = element1["remarks"] != null ? element1["remarks"].toString() : "";
+                      noteParahList.add(Note(para_no, remarks));
+                    });
+                  }
+                  String user_name_to = element["user_name_to"] != null ? element["user_name_to"].toString() : "";
+                  String role_name_to = element["role_name_to"] != null ? element["role_name_to"].toString() : "";
+                  String sector_name_to = element["sector_name_to"] != null ? element["sector_name_to"].toString() : "";
+                  String user_name_by = element["user_name_by"] != null ? element["user_name_by"].toString() : "";
+                  String role_name_by = element["role_name_by"] != null ? element["role_name_by"].toString() : "";
+                  String sector_name_by = element["sector_name_by"] != null ? element["sector_name_by"].toString() : "";
+                  String noting_created_at = element["created_at"] != null ? element["created_at"].toString() : "";
+                  noteList.add(NoteModel(
+                      user_name_to,
+                      role_name_to,
+                      sector_name_to,
+                      user_name_by,
+                      role_name_by,
+                      sector_name_by,
+                      noting_created_at,
+                      noteParahList));
+                });
+              }
             }
-            String user_name_to = element["user_name_to"].toString();
-            String role_name_to = element["role_name_to"].toString();
-            String sector_name_to = element["sector_name_to"].toString();
-            String user_name_by = element["user_name_by"].toString();
-            String role_name_by = element["role_name_by"].toString();
-            String sector_name_by = element["sector_name_by"].toString();
-            String created_at = element["created_at"].toString();
-            noteList.add(NoteModel(
-                user_name_to,
-                role_name_to,
-                sector_name_to,
-                user_name_by,
-                role_name_by,
-                sector_name_by,
-                created_at,
-                noteParahList));
+            
+            user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
+            user_image= body["user_image"] != null ? body["user_image"].toString() : "-";
+            user_cnic= body["user_cnic"] != null ? body["user_cnic"].toString() : "-";
+            claim_stage = body["claim_stage"] != null ? body["claim_stage"].toString() : "-";
+            created_at = body["created_at"] != null ? body["created_at"].toString() : "-";
+            claim_dated = body["claim_dated"] != null ? body["claim_dated"].toString() : "-";
+            claim_category = body["claim_category"] != null ? body["claim_category"].toString() : "-";
+            claim_amount = body["claim_amount"] != null ? body["claim_amount"].toString() : "-";
+            claim_payment = body["claim_payment"] != null ? body["claim_payment"].toString() : "-";
+            bank_name= body["emp_bank"] != null ? body["emp_bank"].toString() : "-";
+            account_number= body["emp_account"] != null ? body["emp_account"].toString() : "-";
+            account_title= body["emp_title"] != null ? body["emp_title"].toString() : "-";
+            account_nature= body["emp_nature"] != null ? body["emp_nature"].toString() : "-";
+            serviceCertificate = body["claim_certificate"] != null ? body["claim_certificate"].toString() : "";
+            affidavit = body["claim_affidavit"] != null ? body["claim_affidavit"].toString() : "";
+            awards = body["claim_award"] != null ? body["claim_award"].toString() : "";
+            nikahNama = body["claim_nikahnama"] != null ? body["claim_nikahnama"].toString() : "";
+            accumulativeService = body["claim_service"] != null ? body["claim_service"].toString() : "";
+            
+            if (claim_category != "Self") {
+              daughter_name = body["child_name"] != null ? body["child_name"].toString() : "-";
+              child_cnic = body["child_cnic"] != null ? body["child_cnic"].toString() : "-";
+              child_image = body["child_image"] != null ? body["child_image"].toString() : "-";
+              husband_name = body["claim_husband"] != null ? body["claim_husband"].toString() : "-";
+              String childBirthday = body["child_birthday"] != null ? body["child_birthday"].toString() : "";
+              if(childBirthday.isNotEmpty && childBirthday != "null") {
+                daughter_age = GetDaughterAge(created_at, childBirthday) ?? "-";
+              } else {
+                daughter_age = "-";
+              }
+            }
+            
+            setState(() {
+              isError = false;
+            });
+          } else {
+            uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
+            setState(() {
+              isError = true;
+              errorMessage = Strings.instance.notFound;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          setState(() {
+            isError = true;
+            errorMessage = Strings.instance.somethingWentWrong;
           });
         }
-        user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
-        user_image= body["user_image"] != null ? body["user_image"].toString() : "-";
-        user_cnic= body["user_cnic"] != null ? body["user_cnic"].toString() : "-";
-        claim_stage = body["claim_stage"] != null ? body["claim_stage"].toString() : "-";
-        created_at = body["created_at"] != null ? body["created_at"].toString() : "-";
-        claim_dated = body["claim_dated"] != null ? body["claim_dated"].toString() : "-";
-        claim_category = body["claim_category"] != null ? body["claim_category"].toString() : "-";
-        claim_amount = body["claim_amount"] != null ? body["claim_amount"].toString() : "-";
-        claim_payment = body["claim_payment"] != null ? body["claim_payment"].toString() : "-";
-        bank_name= body["emp_bank"] != null ? body["emp_bank"].toString() : "-";
-        account_number= body["emp_account"] != null ? body["emp_account"].toString() : "-";
-        account_title= body["emp_title"] != null ? body["emp_title"].toString() : "-";
-        account_nature= body["emp_nature"] != null ? body["emp_nature"].toString() : "-";
-        serviceCertificate = body["claim_certificate"] != null ? body["claim_certificate"].toString() : "";
-        affidavit = body["claim_affidavit"] != null ? body["claim_affidavit"].toString() : "";
-        awards = body["claim_award"] != null ? body["claim_award"].toString() : "";
-        nikahNama = body["claim_nikahnama"] != null ? body["claim_nikahnama"].toString() : "";
-        accumulativeService = body["claim_service"] != null ? body["claim_service"].toString() : "";
-        if (claim_category != "Self") {
-          daughter_name = body["child_name"] != null ? body["child_name"].toString() : "-";
-          child_cnic = body["child_cnic"] != null ? body["child_cnic"].toString() : "-";
-          child_image = body["child_image"] != null ? body["child_image"].toString() : "-";
-          husband_name = body["claim_husband"] != null ? body["claim_husband"].toString() : "-";
-          String childBirthday = body["child_birthday"] != null ? body["child_birthday"].toString() : "";
-          if(childBirthday.isNotEmpty && childBirthday != "null") {
-            daughter_age = GetDaughterAge(created_at, childBirthday) ?? "-";
+      } else {
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"] != null ? body["Message"].toString() : "";
+          
+          if (message == constants.expireToken) {
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle,
+                Strings.instance.expireSessionMessage);
+          } else if (message.isNotEmpty && message != "null") {
+            uiUpdates.ShowToast(message);
           } else {
-            daughter_age = "-";
+            uiUpdates.ShowToast(responseCodeModel.message);
           }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          uiUpdates.ShowToast(responseCodeModel.message);
         }
-        setState(() {
-          isError = false;
-        });
-      } else {
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-        setState(() {
-          isError = true;
-          errorMessage = Strings.instance.notFound;
-        });
       }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = body["Message"].toString();
-      if (message == constants.expireToken) {
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle,
-            Strings.instance.expireSessionMessage);
-      } else {
-        uiUpdates.ShowToast(message);
-      }
+    } catch (e) {
+      print('Network or request error: $e');
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        isError = true;
+        errorMessage = Strings.instance.somethingWentWrong;
+      });
+    } finally {
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
   }
 

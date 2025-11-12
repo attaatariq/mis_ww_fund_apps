@@ -4,6 +4,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/HajjClaimModel.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/utils/claim_stages_helper.dart';
 
 class HajjClaimItem extends StatefulWidget {
   Constants constants;
@@ -94,7 +95,15 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                       ),
                     ],
                   ),
-                )
+                ),
+
+                SizedBox(width: 8),
+                
+                ClaimStagesHelper.buildListStatusBadge(
+                  widget.hajjClaimModel.claim_stage,
+                  fontSize: 10,
+                  showTooltip: true,
+                ),
               ],
             ),
           ),

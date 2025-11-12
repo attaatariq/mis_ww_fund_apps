@@ -12,6 +12,7 @@ import '../../../models/NoteModel.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../utils/claim_stages_helper.dart';
 
 class DeathClaimDetail extends StatefulWidget {
   String calim_ID = "";
@@ -188,6 +189,10 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
 
                       SizedBox(height: 10,),
 
+                      // Detailed Status Card with dynamic color and info
+                      ClaimStagesHelper.buildDetailStatusCard(claim_stage),
+                      SizedBox(height: 16),
+
                       Container(
                         height: 30,
                         width: double.infinity,
@@ -259,7 +264,7 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
                               flex: 1,
                               child: Column(
                                 children: [
-                                  Text("Claim Stage",
+                                  Text("Claim Amount",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: AppTheme.colors.newBlack,
@@ -269,7 +274,7 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
                                     ),
                                   ),
 
-                                  Text(claim_stage,
+                                  Text(claim_amount + " PKR",
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     style: TextStyle(

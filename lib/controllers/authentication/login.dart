@@ -66,6 +66,18 @@ class LoginController extends GetxController{
             String user_account = dataObject["user_account"].toString();
             String ref_id = dataObject["ref_id"].toString();
             String agent_expiry = dataObject["agent_expiry"].toString();
+            
+            // Load claim stages data if available
+            if (dataObject["claim_stages"] != null) {
+              try {
+                Map<String, dynamic> claimStagesJson = dataObject["claim_stages"];
+                ClaimStagesData.instance.loadFromJson(claimStagesJson);
+                print('Claim stages loaded: ${ClaimStagesData.instance.stages.length} stages');
+              } catch (e) {
+                print('Error loading claim stages: $e');
+              }
+            }
+            
             SetSession(
                 userID,
                 user_name,

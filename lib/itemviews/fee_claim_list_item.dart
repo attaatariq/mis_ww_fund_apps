@@ -3,6 +3,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/FeeClaimModel.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/utils/claim_stages_helper.dart';
 
 class FeeClaimListItem extends StatefulWidget {
   Constants constants;
@@ -91,28 +92,10 @@ class _FeeClaimListItemState extends State<FeeClaimListItem> {
                       ],
                     ),
 
-                    Container(
-                      height: 28,
-                      width: 70,
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: AppTheme.colors.colorExelent
-                      ),
-
-                      child: Center(
-                        child: Text(
-                          widget.educationClaimModel.claim_stage,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 10,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
+                    ClaimStagesHelper.buildListStatusBadge(
+                      widget.educationClaimModel.claim_stage,
+                      fontSize: 10,
+                      showTooltip: true,
                     ),
                   ],
                 ),

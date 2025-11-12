@@ -3,6 +3,7 @@ import 'package:welfare_claims_app/models/MarriageClaimModel.dart';
 
 import '../colors/app_colors.dart';
 import '../screens/home/EmployeeHomeData/marriage_claim_detail.dart';
+import '../utils/claim_stages_helper.dart';
 
 class MarriageClaimListItem extends StatefulWidget {
   MarriageClaimModel marriageClaimModel;
@@ -146,17 +147,11 @@ class _MarriageClaimListItemState extends State<MarriageClaimListItem> {
                           fontFamily: "AppFont",
                           fontWeight: FontWeight.normal),
                     ),
-
-                    Text(
+                    SizedBox(height: 4),
+                    ClaimStagesHelper.buildListStatusBadge(
                       widget.marriageClaimModel.claim_stage,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.colorPoor,
-                          fontSize: 13,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.normal),
+                      fontSize: 10,
+                      showTooltip: true,
                     ),
                   ],
                 ),
