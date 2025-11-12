@@ -84,16 +84,10 @@ class _FAQsState extends State<FAQs> {
                 child: Column(
                   children: [
                     isError ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.white,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
+                      child: EmptyStateWidget(
+                        icon: Icons.help_outline,
+                        message: 'No FAQs Available',
+                        description: 'Frequently asked questions will appear here once available.',
                       ),
                     ) : Flexible(
                       child: Padding(

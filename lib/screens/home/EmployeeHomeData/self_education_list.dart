@@ -10,6 +10,7 @@ import 'package:welfare_claims_app/models/SelfEducationModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/add_self_education.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 
 class SelfEducationList extends StatefulWidget {
@@ -101,17 +102,7 @@ class _SelfEducationListState extends State<SelfEducationList> {
             ),
 
             isError ? Expanded(
-              child: Center(
-                child: Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: AppTheme.colors.colorDarkGray,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
+              child: EmptyStates.noEducation(),
             ) : Flexible(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),

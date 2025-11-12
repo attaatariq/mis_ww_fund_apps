@@ -12,6 +12,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 
 class EstateClaim extends StatefulWidget {
   @override
@@ -523,28 +524,12 @@ class _EstateClaimState extends State<EstateClaim> {
                     ) : Container(),
 
                     !hasEstateData ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
+                      child: EmptyStates.noClaims(type: 'Estate'),
                     ) : hasInstallmentError ? Expanded(
-                      child: Center(
-                        child: Text(
-                          installmentErrorMessage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
+                      child: EmptyStateWidget(
+                        icon: Icons.receipt_long_outlined,
+                        message: 'No Installments Available',
+                        description: 'There are no installments for this estate claim.',
                       ),
                     ) : Flexible(
                       child: Padding(

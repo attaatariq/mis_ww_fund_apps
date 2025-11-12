@@ -10,6 +10,7 @@ import '../../../itemviews/marriage_claim_list_item.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../widgets/empty_state_widget.dart';
 
 class MarriageClaimList extends StatefulWidget {
   @override
@@ -82,17 +83,7 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
             ),
 
             isError ? Expanded(
-              child: Center(
-                child: Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: AppTheme.colors.colorDarkGray,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
+              child: EmptyStates.noClaims(type: 'Marriage'),
             ) : Flexible(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),

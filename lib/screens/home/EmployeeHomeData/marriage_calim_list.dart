@@ -11,6 +11,7 @@ import '../../../itemviews/marriage_claim_list_item.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../widgets/empty_state_widget.dart';
 import 'marriage_claim.dart';
 
 class MarriageClaimList extends StatefulWidget {
@@ -24,6 +25,7 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   bool isError= false;
   String errorMessage="";
   List<MarriageClaimModel> list= [];
+  final GlobalKey<RefreshIndicatorState> refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -102,26 +104,25 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
             ),
 
             isError ? Expanded(
-              child: Center(
-                child: Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: AppTheme.colors.colorDarkGray,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
+              child: EmptyStates.noClaims(type: 'Marriage'),
             ) : Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(bottom: 50),
-                  itemBuilder: (_, int index) =>
-                      MarriageClaimListItem(list[index]),
-                  itemCount: this.list.length,
+              child: RefreshIndicator(
+                key: refreshKey,
+                color: AppTheme.colors.newPrimary,
+                onRefresh: () async {
+                  list.clear();
+                  await Future.delayed(Duration(milliseconds: 500));
+                  GetMarriageClaims();
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(bottom: 50),
+                    itemBuilder: (_, int index) =>
+                        MarriageClaimListItem(list[index]),
+                    itemCount: this.list.length,
+                  ),
                 ),
               ),
             )

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/itemviews/notification_list_item.dart';
 import 'package:welfare_claims_app/models/NotificationModel.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 
 class Notifications extends StatefulWidget {
   List<NotificationModel> list;
@@ -31,18 +32,7 @@ class _NotificationsState extends State<Notifications> {
             ),
           )
         ],
-      ) : Center(
-        child: Text(
-          "Notifications Not Available",
-          maxLines: 1,
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: AppTheme.colors.newBlack,
-              fontSize: 13,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.normal),
-        ),
-      ),
+      ) : EmptyStates.noNotifications(),
     );
   }
 }

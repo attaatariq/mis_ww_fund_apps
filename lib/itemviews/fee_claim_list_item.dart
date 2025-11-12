@@ -19,12 +19,19 @@ class _FeeClaimListItemState extends State<FeeClaimListItem> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(top: 12, left: 16, right: 16),
       decoration: BoxDecoration(
-          color: AppTheme.colors.newWhite,
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppTheme.colors.colorDarkGray, width: 1)
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+            spreadRadius: 0,
+          ),
+        ],
       ),
 
       child: Column(

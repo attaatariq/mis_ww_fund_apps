@@ -20,11 +20,19 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
   Widget build(BuildContext context) {
     String reciptDocURL= widget.constants.getImageBaseURL()+widget.hajjClaimModel.claim_receipt;
     return Container(
-      margin: EdgeInsets.only(top: 15, right: 10, left: 10, bottom: 10),
-      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.only(top: 12, right: 16, left: 16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: AppTheme.colors.white,
-          border: Border.all(color: AppTheme.colors.colorDarkGray, width: 1)
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+            spreadRadius: 0,
+          ),
+        ],
       ),
 
       child: Column(

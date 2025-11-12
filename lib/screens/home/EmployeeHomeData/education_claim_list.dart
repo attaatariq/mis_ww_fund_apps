@@ -14,6 +14,7 @@ import 'package:welfare_claims_app/screens/home/EmployeeHomeData/fee_claim_detai
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/other_claim_detail.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 
 import 'create_other_claim.dart';
@@ -242,17 +243,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
                 child: isEducationClaimSelected ? Column(
                   children: [
                     isErrorFee ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessageFee,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
+                      child: EmptyStates.noClaims(type: 'Fee'),
                     ) : Flexible(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 0),
@@ -275,17 +266,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
                 ) : Column(
                   children: [
                     isErrorOthers ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessageOthers,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
+                      child: EmptyStates.noClaims(type: 'Other Education'),
                     ) : Flexible(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 0),

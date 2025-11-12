@@ -88,16 +88,89 @@ class UIUpdates{
         ),),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // Fluttertoast.showToast(
-    //     msg: message,
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.BOTTOM,
-    //     timeInSecForIosWeb: 1,
-    //     backgroundColor: AppTheme.colors.newPrimary,
-    //     textColor: Colors.white,
-    //     fontSize: 14.0
-    // );
-    // Toast.show(message, context,
-    //     duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  }
+
+  /// Show success message with green background and check icon
+  void ShowSuccess(String message, {Duration duration = const Duration(seconds: 3)})
+  {
+    _showColoredSnackBar(
+      message: message,
+      backgroundColor: AppTheme.colors.colorExelent,
+      icon: Icons.check_circle_outline,
+      duration: duration,
+    );
+  }
+
+  /// Show error message with red background and error icon
+  void ShowError(String message, {Duration duration = const Duration(seconds: 4)})
+  {
+    _showColoredSnackBar(
+      message: message,
+      backgroundColor: AppTheme.colors.colorPoor,
+      icon: Icons.error_outline,
+      duration: duration,
+    );
+  }
+
+  /// Show warning message with orange background and warning icon
+  void ShowWarning(String message, {Duration duration = const Duration(seconds: 3)})
+  {
+    _showColoredSnackBar(
+      message: message,
+      backgroundColor: AppTheme.colors.colorBad,
+      icon: Icons.warning_amber_outlined,
+      duration: duration,
+    );
+  }
+
+  /// Show info message with blue background and info icon
+  void ShowInfo(String message, {Duration duration = const Duration(seconds: 3)})
+  {
+    _showColoredSnackBar(
+      message: message,
+      backgroundColor: AppTheme.colors.colorGood,
+      icon: Icons.info_outline,
+      duration: duration,
+    );
+  }
+
+  /// Internal method to show colored snackbar with icon
+  void _showColoredSnackBar({
+    String message,
+    Color backgroundColor,
+    IconData icon,
+    Duration duration = const Duration(seconds: 3),
+  })
+  {
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(icon, color: AppTheme.colors.newWhite, size: 20),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: AppTheme.colors.newWhite,
+                fontSize: 14,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: backgroundColor,
+      duration: duration,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      elevation: 4,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

@@ -10,6 +10,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/general/add_complaint.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 
 class Complaints extends StatefulWidget {
@@ -102,16 +103,10 @@ class _ComplaintsState extends State<Complaints> {
                 child: Column(
                   children: [
                     isError ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.black,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
+                      child: EmptyStateWidget(
+                        icon: Icons.receipt_long_outlined,
+                        message: 'No Complaints',
+                        description: 'You haven\'t submitted any complaints yet.',
                       ),
                     ) : Flexible(
                       child: Padding(

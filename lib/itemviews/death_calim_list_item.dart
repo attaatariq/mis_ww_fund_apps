@@ -18,10 +18,19 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.only(top: 15, left: 15, right: 15),
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(top: 12, left: 16, right: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.colors.colorDarkGray),
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+            spreadRadius: 0,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,19 +174,23 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
               ));
             },
             child: Container(
-              height: 40,
+              height: 44,
               width: double.infinity,
-              color: AppTheme.colors.newPrimary,
+              decoration: BoxDecoration(
+                color: AppTheme.colors.newPrimary,
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Center(
                 child: Text(
-                  "Detail",
-                  maxLines: 2,
+                  "View Details",
+                  maxLines: 1,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AppTheme.colors.white,
-                      fontSize: 13,
+                      fontSize: 14,
                       fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3),
                 ),
               ),
             ),

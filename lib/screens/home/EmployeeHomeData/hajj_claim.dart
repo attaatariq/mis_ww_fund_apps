@@ -10,6 +10,7 @@ import 'package:welfare_claims_app/models/HajjClaimModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 
 class HajjClaim extends StatefulWidget {
@@ -79,17 +80,7 @@ class _HajjClaimState extends State<HajjClaim> {
             ),
 
             isError ? Expanded(
-              child: Center(
-                child: Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: AppTheme.colors.colorDarkGray,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
+              child: EmptyStates.noClaims(type: 'Hajj'),
             ) : Flexible(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 0),
