@@ -8,6 +8,7 @@ import 'package:welfare_claims_app/itemviews/faq_list_item.dart';
 import 'package:welfare_claims_app/models/FaqModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -123,59 +124,93 @@ class _FAQsState extends State<FAQs> {
   }
 
   GetFaqs(bool isRefresh) async {
-    if(!isRefresh) {
-      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    }
-    var url = constants.getApiBaseURL() + constants.assessments +
-        "faqs/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
-        response.statusCode, response);
-    uiUpdates.DismissProgresssDialog();
-    print(url+response.body);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        var data= body["Data"];
-        List<dynamic> entitlements = data;
-        if(entitlements.length > 0)
-        {
-          list.clear();
-          entitlements.forEach((row) {
-            String faq_question= row["faq_question"].toString();
-            String faq_answer= row["faq_answer"].toString();
-            String created_at= row["created_at"].toString();
-            list.add(new FaqModel(faq_question, faq_answer, created_at, false));
-          });
+    try {
+      if(!isRefresh) {
+        uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      }
+      var url = constants.getApiBaseURL() + constants.assessments +
+          "faqs/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken;
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue != null ? codeValue.toString() : "0";
+          
+          if (code == "1" || codeValue == 1) {
+            var data= body["Data"];
+            List<dynamic> entitlements = data != null ? data : [];
+            if(entitlements.length > 0)
+            {
+              list.clear();
+              entitlements.forEach((row) {
+                String faq_question= row["faq_question"] != null ? row["faq_question"].toString() : "";
+                String faq_answer= row["faq_answer"] != null ? row["faq_answer"].toString() : "";
+                String created_at= row["created_at"] != null ? row["created_at"].toString() : "";
+                list.add(new FaqModel(faq_question, faq_answer, created_at, false));
+              });
 
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
-            isError= false;
-          });
-        }else
-        {
-          uiUpdates.DismissProgresssDialog();
+              setState(() {
+                isError= false;
+              });
+            }else
+            {
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.notAvail;
+              });
+            }
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
             isError= true;
-            errorMessage = "FAQ's Not Available";
+            errorMessage = Strings.instance.notAvail;
           });
         }
       } else {
-        var body = jsonDecode(response.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"] != null ? body["Message"].toString() : "";
+          
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError= true;
+            errorMessage = Strings.instance.notAvail;
+          });
+        }
       }
-    } else {
-      if(responseCodeModel.message!="null") {
-        uiUpdates.ShowToast(responseCodeModel.message);
-      }else{
-        setState(() {
-          isError= true;
-          errorMessage = "FAQ's Not Available";
-        });
-      }    }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isError= true;
+        errorMessage = Strings.instance.notAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
+    }
   }
 
   void CheckTokenExpiry() {

@@ -12,6 +12,7 @@ import '../../../constants/Constants.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../widgets/empty_state_widget.dart';
 
 class InterstDistributionList extends StatefulWidget {
 
@@ -97,19 +98,10 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             ),
 
             isError ? Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
-                  child: Text(
-                    errorMessage,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: AppTheme.colors.colorDarkGray,
-                        fontSize: 14,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal),
-                  ),
-                ),
+              child: EmptyStateWidget(
+                icon: Icons.account_balance_outlined,
+                message: 'No Interest Distribution Available',
+                description: 'Interest distribution records will appear here once available.',
               ),
             ) : Flexible(
               child: Padding(
@@ -146,21 +138,23 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
   }
 
   void GetAllAnnexA() async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.companies+"annexure_2/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
-    var response = await http.get(Uri.parse(url));
-    print(url);
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-    uiUpdates.DismissProgresssDialog();
-    print(response.body);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        List<dynamic> entitlements= body["Data"];
-        if(entitlements.isNotEmpty){
-          list.clear();
-          entitlements.forEach((row) {
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL()+constants.companies+"annexure_2/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue != null ? codeValue.toString() : "0";
+          
+          if (code == "1" || codeValue == 1) {
+            List<dynamic> entitlements= body["Data"] != null ? body["Data"] : [];
+            if(entitlements.isNotEmpty){
+              list.clear();
+              entitlements.forEach((row) {
             String anx_id= row["anx_id"].toString();
             String comp_id= row["comp_id"].toString();
             String anx_year= row["anx_year"].toString();
@@ -193,28 +187,60 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             String created_at= row["created_at"].toString();
             list.add(InterstDistributionModel(anx_id, comp_id, anx_year, anx_statement, anx_received, anx_financial, anx_net_profit, anx_allocated, anx_count_cat1, anx_count_cat2, anx_count_cat3, anx_workers, anx_dispense_1, anx_dispense_2, anx_dispense_3, anx_dispensed, anx_paid_com, anx_paid_bot, anx_interest, anx_invest_co, anx_invest_bot, anx_transfered, anx_mode, anx_number, anx_proof, anx_bank, anx_payment, anx_paid_at, anx_medium, created_at));
           });
-        }else{
-          isError = true;
-          errorMessage = Strings.instance.notAvail;
+              setState(() {
+                isError = false;
+              });
+            }else{
+              setState(() {
+                isError = true;
+                errorMessage = Strings.instance.notAvail;
+              });
+            }
+          } else {
+            setState(() {
+              isError = true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
+          setState(() {
+            isError = true;
+            errorMessage = Strings.instance.notAvail;
+          });
         }
       } else {
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Data"] != null ? body["Data"].toString() : "";
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
+            setState(() {
+              isError = true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError = true;
+            errorMessage = Strings.instance.notAvail;
+          });
+        }
+      }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
         isError = true;
         errorMessage = Strings.instance.notAvail;
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-      }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = body["Data"].toString();
-      if(message == constants.expireToken){
-        isError = true;
-        errorMessage = Strings.instance.notAvail;
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        isError = true;
-        errorMessage = message;
-      }
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
-
-    setState(() {});
   }
 }

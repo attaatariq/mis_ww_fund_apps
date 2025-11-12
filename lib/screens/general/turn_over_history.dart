@@ -10,6 +10,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/models/TurnoverHistoryModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 
 class TurnOverHistory extends StatefulWidget {
@@ -255,16 +256,10 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
                     ),
 
                     isError ? Expanded(
-                      child: Center(
-                        child: Text(
-                          errorMessage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppTheme.colors.white,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal),
-                        ),
+                      child: EmptyStateWidget(
+                        icon: Icons.history_outlined,
+                        message: 'No History Available',
+                        description: 'Previous employment history will appear here once available.',
                       ),
                     ) : Flexible(
                       child: Padding(
@@ -289,64 +284,110 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
   }
 
   void GetTurnOverHistory() async{
-    print("turn");
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.companies +
-        "turnovers/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken+"/7/4";
-    var response = await http.get(Uri.parse(url));
-    print(url+response.body);
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
-        response.statusCode, response);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        var data= body["Data"];
-        var currentEmployee= data["current"];
-        var currentComp= currentEmployee[0];
-          comp_name = currentComp["comp_name"].toString();
-          comp_type = currentComp["comp_type"].toString();
-          comp_landline = currentComp["comp_landline"].toString();
-          comp_fax_no = currentComp["comp_fax_no"]??"";
-          comp_logo = currentComp["comp_logo"].toString();
-          comp_address= currentComp["comp_address"].toString();
-          print(currentComp.toString());
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL() + constants.companies +
+          "turnovers/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken+"/7/4";
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue != null ? codeValue.toString() : "0";
+          
+          if (code == "1" || codeValue == 1) {
+            var data= body["Data"];
+            if(data != null) {
+              var currentEmployee= data["current"];
+              if(currentEmployee != null && currentEmployee.length > 0) {
+                var currentComp= currentEmployee[0];
+                comp_name = currentComp["comp_name"] != null ? currentComp["comp_name"].toString() : "-";
+                comp_type = currentComp["comp_type"] != null ? currentComp["comp_type"].toString() : "-";
+                comp_landline = currentComp["comp_landline"] != null ? currentComp["comp_landline"].toString() : "-";
+                comp_fax_no = currentComp["comp_fax_no"] != null ? currentComp["comp_fax_no"].toString() : "-";
+                comp_logo = currentComp["comp_logo"] != null ? currentComp["comp_logo"].toString() : "-";
+                comp_address= currentComp["comp_address"] != null ? currentComp["comp_address"].toString() : "-";
+              }
 
-        //instalemnts
-        List<dynamic> entitlements = data["previous"];
-        if(entitlements.length > 0)
-        {
-          list.clear();
-          entitlements.forEach((row) {
-            String comp_name= row["comp_name"].toString();
-            String comp_address= row["comp_address"].toString();
-            String city_name= row["city_name"].toString();
-            list.add(new TurnoverHistoryModel(comp_name, comp_address+", "+city_name));
-          });
+              // Previous employment
+              List<dynamic> entitlements = data["previous"] != null ? data["previous"] : [];
+              if(entitlements.length > 0)
+              {
+                list.clear();
+                entitlements.forEach((row) {
+                  String comp_name= row["comp_name"] != null ? row["comp_name"].toString() : "";
+                  String comp_address= row["comp_address"] != null ? row["comp_address"].toString() : "";
+                  String city_name= row["city_name"] != null ? row["city_name"].toString() : "";
+                  list.add(new TurnoverHistoryModel(comp_name, comp_address+", "+city_name));
+                });
 
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
-            isError= false;
-          });
-        }else
-        {
-          uiUpdates.DismissProgresssDialog();
+                setState(() {
+                  isError= false;
+                });
+              }else
+              {
+                setState(() {
+                  isError= true;
+                  errorMessage = Strings.instance.notAvail;
+                });
+              }
+            } else {
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.notAvail;
+              });
+            }
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
             isError= true;
-            errorMessage = "History Not Available";
+            errorMessage = Strings.instance.notAvail;
           });
         }
       } else {
-        var body = jsonDecode(response.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"] != null ? body["Message"].toString() : "";
+          
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError= true;
+            errorMessage = Strings.instance.notAvail;
+          });
+        }
       }
-    } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isError= true;
+        errorMessage = Strings.instance.notAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
-    uiUpdates.DismissProgresssDialog();
-
   }
 
   void CheckTokenExpiry() {
