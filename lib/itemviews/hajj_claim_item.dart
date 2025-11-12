@@ -98,12 +98,6 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                 ),
 
                 SizedBox(width: 8),
-                
-                ClaimStagesHelper.buildListStatusBadge(
-                  widget.hajjClaimModel.claim_stage,
-                  fontSize: 10,
-                  showTooltip: true,
-                ),
               ],
             ),
           ),

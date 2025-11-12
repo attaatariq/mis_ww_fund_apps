@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/models/ClaimStageModel.dart';
 import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employer/CompanyInformationFrom.dart';
