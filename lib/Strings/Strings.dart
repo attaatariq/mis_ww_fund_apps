@@ -289,5 +289,6 @@ class Strings{
   final String educationListNotAvail= "Education Not Available";
   final String childrenListNotAvail= "Children Not Available";
   final String notAvail= "Not Available";
+  final String notFound= "No Data Found";
   final String contactPerson= "Contact Person";
 }

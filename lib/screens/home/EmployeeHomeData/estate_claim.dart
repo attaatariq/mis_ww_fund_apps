@@ -25,6 +25,9 @@ class _EstateClaimState extends State<EstateClaim> {
   UIUpdates uiUpdates;
   bool isError= false;
   String errorMessage="";
+  bool hasEstateData = false;
+  bool hasInstallmentError = false;
+  String installmentErrorMessage = "";
   List<InstallmentModel> list= [];
 
   @override
@@ -91,7 +94,7 @@ class _EstateClaimState extends State<EstateClaim> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    hasEstateData ? Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.only(top: 20, left: 10, right: 10),
                       decoration: BoxDecoration(
@@ -500,11 +503,11 @@ class _EstateClaimState extends State<EstateClaim> {
                           )
                         ],
                       ),
-                    ),
+                    ) : Container(),
 
-                    SizedBox(height: 20,),
+                    hasEstateData ? SizedBox(height: 20,) : Container(),
 
-                    Padding(
+                    hasEstateData ? Padding(
                       padding: EdgeInsets.only(left: 10, right: 10),
                       child: Text(
                         "Installments ("+list.length.toString()+")",
@@ -517,15 +520,27 @@ class _EstateClaimState extends State<EstateClaim> {
                             fontWeight: FontWeight.bold
                         ),
                       ),
-                    ),
+                    ) : Container(),
 
-                    isError ? Expanded(
+                    !hasEstateData ? Expanded(
                       child: Center(
                         child: Text(
                           errorMessage,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: AppTheme.colors.white,
+                              color: AppTheme.colors.colorDarkGray,
+                              fontSize: 14,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                    ) : hasInstallmentError ? Expanded(
+                      child: Center(
+                        child: Text(
+                          installmentErrorMessage,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: AppTheme.colors.colorDarkGray,
                               fontSize: 14,
                               fontFamily: "AppFont",
                               fontWeight: FontWeight.normal),
@@ -562,83 +577,130 @@ class _EstateClaimState extends State<EstateClaim> {
   }
 
   void GetEstateClaim() async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "estate_claim/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
-    print(url+response.body);
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
-        response.statusCode, response);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        var data= body["Data"];
-        var allotments= data["Allotment"];
-        claim_balloting= allotments["claim_balloting"];
-        claim_scheme= allotments["claim_scheme"];
-        claim_location= allotments["claim_location"];
-        claim_quota= allotments["claim_quota"];
-        claim_dated= allotments["claim_dated"];
-        claim_abode= allotments["claim_abode"];
-        claim_number= allotments["claim_number"];
-        claim_floor= allotments["claim_floor"];
-        claim_street= allotments["claim_street"];
-        claim_block= allotments["claim_block"];
-        claim_impound= allotments["claim_impound"];
-        claim_amount= allotments["claim_amount"];
-        claim_payment= allotments["claim_payment"];
-        claim_balance= allotments["claim_balance"];
-        created_at= allotments["created_at"];
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL() + constants.claims +
+          "estate_claim/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken;
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      print(url+response.body);
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+          
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            var data= body["Data"];
+            if(data != null) {
+              var allotments= data["Allotment"];
+              if(allotments != null) {
+                claim_balloting= allotments["claim_balloting"]?.toString() ?? "";
+                claim_scheme= allotments["claim_scheme"]?.toString() ?? "";
+                claim_location= allotments["claim_location"]?.toString() ?? "";
+                claim_quota= allotments["claim_quota"]?.toString() ?? "";
+                claim_dated= allotments["claim_dated"]?.toString() ?? "";
+                claim_abode= allotments["claim_abode"]?.toString() ?? "";
+                claim_number= allotments["claim_number"]?.toString() ?? "";
+                claim_floor= allotments["claim_floor"]?.toString() ?? "";
+                claim_street= allotments["claim_street"]?.toString() ?? "";
+                claim_block= allotments["claim_block"]?.toString() ?? "";
+                claim_impound= allotments["claim_impound"]?.toString() ?? "";
+                claim_amount= allotments["claim_amount"]?.toString() ?? "";
+                claim_payment= allotments["claim_payment"]?.toString() ?? "";
+                claim_balance= allotments["claim_balance"]?.toString() ?? "";
+                created_at= allotments["created_at"]?.toString() ?? "";
 
-        ///instalemnts
-        List<dynamic> entitlements = data["installments"];
-        if(entitlements.length > 0)
-        {
-          list.clear();
-          entitlements.forEach((row) {
-            String ins_id= row["ins_id"].toString();
-            String ins_number= row["ins_number"].toString();
-            String ins_amount= row["ins_amount"].toString();
-            String ins_payment= row["ins_payment"].toString();
-            String ins_balance= row["ins_balance"].toString();
-            String ins_duedate= row["ins_duedate"].toString();
-            String deposited_at= row["deposited_at"].toString();
-            String ins_bank_name= row["ins_bank_name"].toString();
-            String ins_challan_no= row["ins_challan_no"].toString();
-            String ins_challan= row["ins_challan"].toString();
-            String ins_remarks= row["ins_remarks"].toString();
-            String created_at= row["created_at"].toString();
-            list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
-          });
+                ///instalemnts
+                List<dynamic> entitlements = data["installments"] != null ? data["installments"] : [];
+                if(entitlements.length > 0)
+                {
+                  list.clear();
+                  entitlements.forEach((row) {
+                    String ins_id= row["ins_id"]?.toString() ?? "";
+                    String ins_number= row["ins_number"]?.toString() ?? "";
+                    String ins_amount= row["ins_amount"]?.toString() ?? "";
+                    String ins_payment= row["ins_payment"]?.toString() ?? "";
+                    String ins_balance= row["ins_balance"]?.toString() ?? "";
+                    String ins_duedate= row["ins_duedate"]?.toString() ?? "";
+                    String deposited_at= row["deposited_at"]?.toString() ?? "";
+                    String ins_bank_name= row["ins_bank_name"]?.toString() ?? "";
+                    String ins_challan_no= row["ins_challan_no"]?.toString() ?? "";
+                    String ins_challan= row["ins_challan"]?.toString() ?? "";
+                    String ins_remarks= row["ins_remarks"]?.toString() ?? "";
+                    String created_at= row["created_at"]?.toString() ?? "";
+                    list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
+                  });
 
-          uiUpdates.DismissProgresssDialog();
+                  setState(() {
+                    hasEstateData = true;
+                    hasInstallmentError = false;
+                    isError= false;
+                  });
+                }else
+                {
+                  setState(() {
+                    hasEstateData = true;
+                    hasInstallmentError = true;
+                    installmentErrorMessage = Strings.instance.notFound;
+                    isError= false;
+                  });
+                }
+              } else {
+                setState(() {
+                  hasEstateData = false;
+                  isError= true;
+                  errorMessage = Strings.instance.notFound;
+                });
+              }
+            } else {
+              setState(() {
+                hasEstateData = false;
+                isError= true;
+                errorMessage = Strings.instance.notFound;
+              });
+            }
+          } else {
+            setState(() {
+              hasEstateData = false;
+              isError= true;
+              errorMessage = Strings.instance.notFound;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
-            isError= false;
-          });
-        }else
-        {
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
+            hasEstateData = false;
             isError= true;
-            errorMessage = "Installment Not Available";
+            errorMessage = Strings.instance.notFound;
           });
         }
       } else {
-        var body = jsonDecode(response.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
-      }
-    } else {
-      if(responseCodeModel.message!="null") {
-        uiUpdates.ShowToast(responseCodeModel.message);
-      }else{
+        if(responseCodeModel.message != null && responseCodeModel.message != "null") {
+          uiUpdates.ShowToast(responseCodeModel.message);
+        }
         setState(() {
+          hasEstateData = false;
           isError= true;
-          errorMessage = "Installment Not Available";
+          errorMessage = Strings.instance.notFound;
         });
-      }    }
-    uiUpdates.DismissProgresssDialog();
+      }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        hasEstateData = false;
+        isError= true;
+        errorMessage = Strings.instance.notFound;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      // Add small delay to ensure dialog is shown before dismissing
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
+    }
   }
 }

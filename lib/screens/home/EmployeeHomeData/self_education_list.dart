@@ -141,72 +141,117 @@ class _SelfEducationListState extends State<SelfEducationList> {
   }
 
   GetInformation() async{
-    List<String> tagsList= [constants.accountInfo, constants.empEduList];
-    Map data = {
-      "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
-      "api_tags": jsonEncode(tagsList).toString(),
-    };
-    print(jsonEncode(tagsList).toString());
-    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.authentication+"information";
-    print(url);
-    var response = await http.post(Uri.parse(url), body: data);
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-    uiUpdates.DismissProgresssDialog();
-    print(response.body);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        var data= body["Data"]["account"];
-        List<dynamic> schools= data["emp_edu_ls"];
-        if(schools.length > 0){
-          schools.forEach((element) {
-            selfEducationModelList.add(new SelfEducationModel(
-              element["edu_id"],
-              element["emp_id"],
-              element["child_id"],
-              element["school_id"],
-              element["edu_nature"],
-              element["edu_level"],
-              element["edu_degree"],
-              element["edu_class"],
-              element["edu_started"],
-              element["edu_ended"],
-              element["edu_living"],
-              element["edu_card"],
-              element["edu_affiliate"],
-              element["edu_challan"],
-              element["edu_result"],
-              element["school_name"],));
-          });
+    try {
+      List<String> tagsList= [constants.accountInfo, constants.empEduList];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "user_token": UserSessions.instance.getToken,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      print(jsonEncode(tagsList).toString());
+      
+      var url = constants.getApiBaseURL()+constants.authentication+"information";
+      print(url);
+      var response = await http.post(Uri.parse(url), body: data).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      print(response.body);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            var dataBody = body["Data"];
+            if(dataBody != null && dataBody["account"] != null) {
+              var data = dataBody["account"];
+              List<dynamic> schools= data["emp_edu_ls"] != null ? data["emp_edu_ls"] : [];
+              if(schools.length > 0){
+                selfEducationModelList.clear();
+                schools.forEach((element) {
+                  selfEducationModelList.add(new SelfEducationModel(
+                    element["edu_id"]?.toString() ?? "",
+                    element["emp_id"]?.toString() ?? "",
+                    element["child_id"]?.toString() ?? "",
+                    element["school_id"]?.toString() ?? "",
+                    element["edu_nature"]?.toString() ?? "",
+                    element["edu_level"]?.toString() ?? "",
+                    element["edu_degree"]?.toString() ?? "",
+                    element["edu_class"]?.toString() ?? "",
+                    element["edu_started"]?.toString() ?? "",
+                    element["edu_ended"]?.toString() ?? "",
+                    element["edu_living"]?.toString() ?? "",
+                    element["edu_card"]?.toString() ?? "",
+                    element["edu_affiliate"]?.toString() ?? "",
+                    element["edu_challan"]?.toString() ?? "",
+                    element["edu_result"]?.toString() ?? "",
+                    element["school_name"]?.toString() ?? "",));
+                });
 
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
-            isError= false;
-          });
-        }else{
+                setState(() {
+                  isError= false;
+                });
+              }else{
+                setState(() {
+                  isError= true;
+                  errorMessage = Strings.instance.educationListNotAvail;
+                });
+              }
+            } else {
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.educationListNotAvail;
+              });
+            }
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.educationListNotAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.educationListNotAvail;
           });
         }
       } else {
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-        setState(() {
-          isError= true;
-          errorMessage = Strings.instance.educationListNotAvail;
-        });
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"]?.toString() ?? "";
+          
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.educationListNotAvail;
+            });
+          }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError= true;
+            errorMessage = Strings.instance.educationListNotAvail;
+          });
+        }
       }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = body["Message"].toString();
-      if(message == constants.expireToken){
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        uiUpdates.ShowToast(message);
-      }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isError= true;
+        errorMessage = Strings.instance.educationListNotAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      // Add small delay to ensure dialog is shown before dismissing
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
   }
 }

@@ -122,67 +122,92 @@ class _DeathClaimListState extends State<DeathClaimList> {
   }
 
   void GetDeathClaims() async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.claims+"deceased_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
-    print(url);
-    var response = await http.get(Uri.parse(url));
-    uiUpdates.DismissProgresssDialog();
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-    uiUpdates.DismissProgresssDialog();
-    print(response.body);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        List<dynamic> marriageList= body["Data"];
-        if(marriageList.length > 0){
-          marriageList.forEach((element) {
-            String claim_id= element["claim_id"].toString();
-            String claim_dated= element["claim_dated"].toString();
-            String claim_amount= element["claim_amount"].toString();
-            String claim_payment= element["claim_payment"].toString();
-            String claim_stage= element["claim_stage"].toString();
-            String bene_name= element["bene_name"].toString();
-            String bene_relation= element["bene_relation"].toString();
-            list.add(DeathClaimModel(claim_id, claim_dated, claim_amount, claim_payment, claim_stage, bene_name, bene_relation));
-          });
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL()+constants.claims+"deceased_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
+      print(url);
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      print(response.body);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            List<dynamic> deathList= body["Data"] ?? [];
+            if(deathList.length > 0){
+              list.clear();
+              deathList.forEach((element) {
+                String claim_id= element["claim_id"]?.toString() ?? "";
+                String claim_dated= element["claim_dated"]?.toString() ?? "";
+                String claim_amount= element["claim_amount"]?.toString() ?? "";
+                String claim_payment= element["claim_payment"]?.toString() ?? "";
+                String claim_stage= element["claim_stage"]?.toString() ?? "";
+                String bene_name= element["bene_name"]?.toString() ?? "";
+                String bene_relation= element["bene_relation"]?.toString() ?? "";
+                list.add(DeathClaimModel(claim_id, claim_dated, claim_amount, claim_payment, claim_stage, bene_name, bene_relation));
+              });
 
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
-            isError= false;
-          });
-        }else{
+              setState(() {
+                isError= false;
+              });
+            }else{
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.notFound;
+              });
+            }
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
           });
         }
       } else {
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-        setState(() {
-          isError= true;
-          errorMessage = Strings.instance.notAvail;
-        });
-      }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = body["Message"].toString();
-      if(message == constants.expireToken){
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        if(message!="null"){
-          uiUpdates.ShowToast(message);
-        }else{
-          if(body["Data"].toString()=="[]")
-          {
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"]?.toString() ?? "";
+          
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
             setState(() {
               isError= true;
               errorMessage = Strings.instance.notAvail;
             });
           }
-
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError= true;
+            errorMessage = Strings.instance.notAvail;
+          });
         }
       }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isError= true;
+        errorMessage = Strings.instance.notAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      // Add small delay to ensure dialog is shown before dismissing
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
   }
 }

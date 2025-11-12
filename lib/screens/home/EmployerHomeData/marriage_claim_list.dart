@@ -122,65 +122,90 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   }
 
   void GetMarriageClaims() async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
-    var response = await http.get(Uri.parse(url));
-    uiUpdates.DismissProgresssDialog();
-    print(url+":"+response.statusCode.toString()+response.body);
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-    uiUpdates.DismissProgresssDialog();
-    print(response.body);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        List<dynamic> marriageList= body["Data"];
-        if(marriageList.length > 0){
-          marriageList.forEach((element) {
-            String claim_id= element["claim_id"].toString();
-            String claim_husband= element["claim_husband"].toString();
-            String claim_dated= element["claim_dated"].toString();
-            String claim_category= element["claim_category"].toString();
-            String claim_stage= element["claim_stage"].toString();
-            list.add(MarriageClaimModel(claim_id, claim_husband, claim_dated, claim_category, claim_stage));
-          });
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      print(url+":"+response.statusCode.toString()+response.body);
+      
+      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      print(response.body);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            List<dynamic> marriageList= body["Data"] ?? [];
+            if(marriageList.length > 0){
+              list.clear();
+              marriageList.forEach((element) {
+                String claim_id= element["claim_id"]?.toString() ?? "";
+                String claim_husband= element["claim_husband"]?.toString() ?? "";
+                String claim_dated= element["claim_dated"]?.toString() ?? "";
+                String claim_category= element["claim_category"]?.toString() ?? "";
+                String claim_stage= element["claim_stage"]?.toString() ?? "";
+                list.add(MarriageClaimModel(claim_id, claim_husband, claim_dated, claim_category, claim_stage));
+              });
 
-          uiUpdates.DismissProgresssDialog();
-          setState(() {
-            isError= false;
-          });
-        }else{
+              setState(() {
+                isError= false;
+              });
+            }else{
+              setState(() {
+                isError= true;
+                errorMessage = Strings.instance.notFound;
+              });
+            }
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
           });
         }
       } else {
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-        setState(() {
-          isError= true;
-          errorMessage = Strings.instance.notAvail;
-        });
-      }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = (body["Message"]).toString();
-      if(message == constants.expireToken){
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        if(message!="null"){
-          uiUpdates.ShowToast(message);
-        }else{
-          if(body["Data"].toString()=="[]")
-            {
-              setState(() {
-                isError= true;
-                errorMessage = Strings.instance.notAvail;
-              });
-            }
-
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"]?.toString() ?? "";
+          
+          if(message == constants.expireToken){
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+          }else if(message.isNotEmpty && message != "null"){
+            uiUpdates.ShowToast(message);
+          } else {
+            setState(() {
+              isError= true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+        } catch (e) {
+          print('Error parsing error response: $e');
+          setState(() {
+            isError= true;
+            errorMessage = Strings.instance.notAvail;
+          });
         }
       }
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isError= true;
+        errorMessage = Strings.instance.notAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
+      // Add small delay to ensure dialog is shown before dismissing
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
   }
 }

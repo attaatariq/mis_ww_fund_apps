@@ -315,85 +315,122 @@ class _EducationClaimListState extends State<EducationClaimList> {
   }
 
   void GetCEducationClaims() async{
-    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "fee_claim/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken+"/E/${UserSessions.instance.getRefID}";
-    print(url);
-    var response = await http.get(Uri.parse(url));
-    print('url:$url :response:${response.body}:${response.statusCode}');
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
-        response.statusCode, response);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-//        var data= body["Data"];
+    try {
+      var url = constants.getApiBaseURL() + constants.claims +
+          "fee_claim/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken+"/E/${UserSessions.instance.getRefID}";
+      print(url);
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      print('url:$url :response:${response.body}:${response.statusCode}');
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+          
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            /// fee claims
+            List<dynamic> entitlements = body["Data"] ?? [];
+            if(entitlements.length > 0)
+            {
+              listFee.clear();
+              entitlements.forEach((row) {
+                String claim_id= row["claim_id"]?.toString() ?? "";
+                String for_whom= row["for_whom"]?.toString() ?? "";
+                String child_id= row["child_id"]?.toString() ?? "";
+                String child_name= row["child_name"]?.toString() ?? "";
+                String claim_started= row["claim_started"]?.toString() ?? "";
+                String claim_ended= row["claim_ended"]?.toString() ?? "";
+                String claim_amount= row["claim_amount"]?.toString() ?? "";
+                String other_charges= row["other_charges"]?.toString() ?? "";
+                String tuition_fee= row["tuition_fee"]?.toString() ?? "";
+                String claim_payment= row["claim_payment"]?.toString() ?? "";
+                String claim_stage= row["claim_stage"]?.toString() ?? "";
+                String created_at= row["created_at"]?.toString() ?? "";
+                listFee.add(new FeeClaimModel(claim_id, for_whom, child_id, child_name, claim_started, claim_ended, claim_amount, other_charges, tuition_fee, claim_payment, claim_stage, created_at));
+              });
 
-        /// fee claims
-        List<dynamic> entitlements = body["Data"];
-        if(entitlements.length > 0)
-        {
-          listFee.clear();
-          entitlements.forEach((row) {
-            String claim_id= row["claim_id"].toString();
-            String for_whom= row["for_whom"].toString();
-            String child_id= row["child_id"].toString();
-            String child_name= row["child_name"].toString();
-            String claim_started= row["claim_started"].toString();
-            String claim_ended= row["claim_ended"].toString();
-            String claim_amount= row["claim_amount"].toString();
-            String other_charges= row["other_charges"].toString();
-            String tuition_fee= row["tuition_fee"].toString();
-            String claim_payment= row["claim_payment"].toString();
-            String claim_stage= row["claim_stage"].toString();
-            String created_at= row["created_at"].toString();
-            listFee.add(new FeeClaimModel(claim_id, for_whom, child_id, child_name, claim_started, claim_ended, claim_amount, other_charges, tuition_fee, claim_payment, claim_stage, created_at));
+              isErrorFee= false;
+            }else
+            {
+              isErrorFee= true;
+              errorMessageFee = Strings.instance.notFound;
+            }
+
+            /// others claims - Currently always empty, will be populated when available
+            List<dynamic> entitlementsOthers = [];
+            if(entitlementsOthers.length > 0)
+            {
+              listOther.clear();
+              entitlementsOthers.forEach((row) {
+                String claim_id= row["claim_id"]?.toString() ?? "";
+                String for_whom= row["for_whom"]?.toString() ?? "";
+                String child_name= row["child_name"]?.toString() ?? "";
+                String child_id= row["child_id"]?.toString() ?? "";
+                String claim_year= row["claim_year"]?.toString() ?? "";
+                String claim_biannual= row["claim_biannual"]?.toString() ?? "";
+                String claim_amount= row["claim_amount"]?.toString() ?? "";
+                String claim_excluded= row["claim_excluded"]?.toString() ?? "";
+                String claim_payment= row["claim_payment"]?.toString() ?? "";
+                String claim_stage= row["claim_stage"]?.toString() ?? "";
+                String created_at= row["created_at"]?.toString() ?? "";
+                listOther.add(new OtherClaimModel(claim_id, for_whom, child_name, child_id, claim_year, claim_biannual, claim_amount, claim_excluded, claim_payment, claim_stage, created_at));
+              });
+
+              isErrorOthers= false;
+            }else
+            {
+              isErrorOthers= true;
+              errorMessageOthers = Strings.instance.notFound;
+            }
+
+            setState(() {
+            });
+          } else {
+            String message = body["Message"]?.toString() ?? "";
+            if(message.isNotEmpty && message != "null") {
+              uiUpdates.ShowToast(message);
+            }
+            setState(() {
+              isErrorFee= true;
+              errorMessageFee = Strings.instance.notFound;
+              isErrorOthers= true;
+              errorMessageOthers = Strings.instance.notFound;
+            });
+          }
+        } catch (e) {
+          print('JSON parsing error: $e');
+          setState(() {
+            isErrorFee= true;
+            errorMessageFee = Strings.instance.notAvail;
+            isErrorOthers= true;
+            errorMessageOthers = Strings.instance.notAvail;
           });
-
-          isErrorFee= false;
-        }else
-        {
-          isErrorFee= true;
-          errorMessageFee = "Fee Claims Not Available";
         }
-
-        /// others claims
-        List<dynamic> entitlementsOthers = [];
-        if(entitlementsOthers.length > 0)
-        {
-          listOther.clear();
-          entitlementsOthers.forEach((row) {
-            String claim_id= row["claim_id"].toString();
-            String for_whom= row["for_whom"].toString();
-            String child_name= row["child_name"].toString();
-            String child_id= row["child_id"].toString();
-            String claim_year= row["claim_year"].toString();
-            String claim_biannual= row["claim_biannual"].toString();
-            String claim_amount= row["claim_amount"].toString();
-            String claim_excluded= row["claim_excluded"].toString();
-            String claim_payment= row["claim_payment"].toString();
-            String claim_stage= row["claim_stage"].toString();
-            String created_at= row["created_at"].toString();
-            listOther.add(new OtherClaimModel(claim_id, for_whom, child_name, child_id, claim_year, claim_biannual, claim_amount, claim_excluded, claim_payment, claim_stage, created_at));
-          });
-
-          isErrorOthers= false;
-        }else
-        {
-          isErrorOthers= true;
-          errorMessageOthers = "Other Claims Not Available";
-        }
-
-        setState(() {
-        });
       } else {
-        var body = jsonDecode(response.body);
-        String message = body["Message"].toString();
+        uiUpdates.ShowToast(responseCodeModel.message);
+        setState(() {
+          isErrorFee= true;
+          errorMessageFee = Strings.instance.notAvail;
+          isErrorOthers= true;
+          errorMessageOthers = Strings.instance.notAvail;
+        });
       }
-    } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+    } catch (e) {
+      print('Network or request error: $e');
+      setState(() {
+        isErrorFee= true;
+        errorMessageFee = Strings.instance.notAvail;
+        isErrorOthers= true;
+        errorMessageOthers = Strings.instance.notAvail;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
+    // Note: No progress dialog for this method as it was commented out
   }
 
   void CheckTokenExpiry() {
@@ -409,58 +446,105 @@ class _EducationClaimListState extends State<EducationClaimList> {
   }
 
   void CheckEducationDetail(bool isFromFee) async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "edu_check/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken + "/emp_id--" +UserSessions.instance.getRefID;
-    print(url);
-    var response = await http.get(Uri.parse(url));
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
-        response.statusCode, response);
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      uiUpdates.DismissProgresssDialog();
-      if (code == "1") {
-        var data= body["Data"];
-        if(data != null){
-          String edu_living= data["edu_living"].toString();
-          String edu_mess= data["edu_mess"].toString();
-          String edu_transport= data["edu_transport"].toString();
-          String edu_nature= data["edu_nature"].toString();
-          String edu_level= data["edu_level"].toString();
-          String stip_amount= data["stip_amount"].toString();
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL() + constants.claims +
+          "edu_check/" + UserSessions.instance.getUserID + "/" +
+          UserSessions.instance.getToken + "/emp_id--" +UserSessions.instance.getRefID;
+      print(url);
+      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+          
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue?.toString() ?? "0";
+          
+          if (code == "1" || codeValue == 1) {
+            var data= body["Data"];
+            if(data != null){
+              String edu_living= data["edu_living"]?.toString() ?? "0";
+              String edu_mess= data["edu_mess"]?.toString() ?? "0";
+              String edu_transport= data["edu_transport"]?.toString() ?? "0";
+              String edu_nature= data["edu_nature"]?.toString() ?? "";
+              String edu_level= data["edu_level"]?.toString() ?? "";
+              String stip_amount= data["stip_amount"]?.toString() ?? "0";
 
-          if(isFromFee) {
-            uiUpdates.DismissProgresssDialog();
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) =>
-                    CreateFeeClaim(
-                        edu_living, edu_mess, edu_transport, edu_nature,
-                        edu_level, stip_amount)
-            ));
-          }else{
-            uiUpdates.DismissProgresssDialog();
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) =>
-                    CreateOtherClaim(
-                        edu_living, edu_mess, edu_transport, edu_nature,
-                        edu_level, stip_amount)
-            ));
+              if(isFromFee) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateFeeClaim(
+                            edu_living, edu_mess, edu_transport, edu_nature,
+                            edu_level, stip_amount)
+                ));
+              }else{
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateOtherClaim(
+                            edu_living, edu_mess, edu_transport, edu_nature,
+                            edu_level, stip_amount)
+                ));
+              }
+            }else{
+              // Navigate anyway with default values - allows adding child claims
+              String defaultValue = "0";
+              String defaultString = "";
+              if(isFromFee) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateFeeClaim(
+                            defaultValue, defaultValue, defaultValue, defaultString,
+                            defaultString, defaultValue)
+                ));
+              }else{
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateOtherClaim(
+                            defaultValue, defaultValue, defaultValue, defaultString,
+                            defaultString, defaultValue)
+                ));
+              }
+            }
+          } else {
+            String message = body["Message"]?.toString() ?? "";
+            if(message.isNotEmpty && message != "null") {
+              uiUpdates.ShowToast(message);
+            } else {
+              // Navigate anyway with default values
+              String defaultValue = "0";
+              String defaultString = "";
+              if(isFromFee) {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateFeeClaim(
+                            defaultValue, defaultValue, defaultValue, defaultString,
+                            defaultString, defaultValue)
+                ));
+              }else{
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        CreateOtherClaim(
+                            defaultValue, defaultValue, defaultValue, defaultString,
+                            defaultString, defaultValue)
+                ));
+              }
+            }
           }
-        }else{
-          uiUpdates.DismissProgresssDialog();
-          uiUpdates.ShowToast(Strings.instance.please_add_education_first);
+        } catch (e) {
+          print('JSON parsing error: $e');
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
-        uiUpdates.DismissProgresssDialog();
-        var body = jsonDecode(response.body);
-        String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowToast(responseCodeModel.message);
       }
-    } else {
+    } catch (e) {
+      print('Network or request error: $e');
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    } finally {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.please_add_education_first);
     }
   }
 }
