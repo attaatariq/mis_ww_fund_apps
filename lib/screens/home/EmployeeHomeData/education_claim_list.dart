@@ -16,6 +16,7 @@ import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
+import 'package:welfare_claims_app/network/api_service.dart';
 
 import 'create_other_claim.dart';
 
@@ -297,11 +298,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
 
   void GetCEducationClaims() async{
     try {
-      var url = constants.getApiBaseURL() + constants.claims +
-          "fee_claim/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken+"/E/${UserSessions.instance.getRefID}";
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "fee_claim/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: "E/${UserSessions.instance.getRefID}");
       print(url);
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       print('url:$url :response:${response.body}:${response.statusCode}');
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
@@ -429,11 +431,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
   void CheckEducationDetail(bool isFromFee) async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.claims +
-          "edu_check/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/emp_id--" +UserSessions.instance.getRefID;
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "edu_check/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: "emp_id--" + UserSessions.instance.getRefID);
       print(url);
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);

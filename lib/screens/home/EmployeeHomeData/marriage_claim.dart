@@ -16,6 +16,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 
 class MarraiageClaim extends StatefulWidget {
   @override
@@ -604,7 +605,8 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
     request.fields['comp_id'] =comp_id;
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
+    // Token now sent in Authorization header, not in fields
+    APIService.addAuthHeaderToMultipartRequest(request);
     request.fields['child_id'] = selectedChildID;
     request.fields['category'] = selectedMarriageCategory;
     request.fields['husband'] = husbandNameController.text.toString();

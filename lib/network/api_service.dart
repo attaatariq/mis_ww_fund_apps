@@ -10,9 +10,28 @@ import 'package:get/get.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/screens/general/splash_screen.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+
 class APIService {
   static var client=http.Client();
 
+  /// Get default headers with Bearer token authorization
+  static Map<String, String> getDefaultHeaders({Map<String, String> additionalHeaders}) {
+    Map<String, String> headers = {};
+    
+    // Add Bearer token if available
+    String token = UserSessions.instance.getToken;
+    if (token != null && token.isNotEmpty && token != "null") {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    
+    // Add any additional headers
+    if (additionalHeaders != null) {
+      headers.addAll(additionalHeaders);
+    }
+    
+    return headers;
+  }
 
 static Future<String> postRequest({
    String apiName,
@@ -26,8 +45,12 @@ static Future<String> postRequest({
         uiUpdates.ShowToast(Strings.instance.internetNotConnected);
         return null;
       }
+      
+      // Merge default headers (with Bearer token) with provided headers
+      Map<String, String> finalHeaders = getDefaultHeaders(additionalHeaders: headers);
+      
       var response = await client.post(
-          Uri.parse(constants.getApiBaseURL() + apiName), body: isJson??false?json.encode(mapData):mapData, headers: headers,encoding: Encoding.getByName("UTF-8"))
+          Uri.parse(constants.getApiBaseURL() + apiName), body: isJson??false?json.encode(mapData):mapData, headers: finalHeaders,encoding: Encoding.getByName("UTF-8"))
           .timeout(const Duration(seconds: 30));
       print("url:${Uri.parse(constants.getApiBaseURL() + apiName)}:code:${response.statusCode}:${response.body}");
       var statusCode = response.statusCode;
@@ -78,9 +101,13 @@ static Future<String> postRequest({
         uiUpdates.ShowToast(Strings.instance.internetNotConnected);
         return null;
       }
+      
+      // Merge default headers (with Bearer token) with provided headers
+      Map<String, String> finalHeaders = getDefaultHeaders(additionalHeaders: headers);
+      
       if(kDebugMode) print("response:$apiName");
       var response = await client.get(
-          Uri.parse(constants.getApiBaseURL() + apiName), headers: headers,)
+          Uri.parse(constants.getApiBaseURL() + apiName), headers: finalHeaders,)
           .timeout(const Duration(seconds: 30));
 
       if(kDebugMode)print(response.body);
@@ -235,4 +262,12 @@ static Future<String> postRequest({
       return null;
     }
   }*/
+
+  /// Helper method to add Authorization header to MultipartRequest
+  static void addAuthHeaderToMultipartRequest(http.MultipartRequest request) {
+    String token = UserSessions.instance.getToken;
+    if (token != null && token.isNotEmpty && token != "null") {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+  }
 }

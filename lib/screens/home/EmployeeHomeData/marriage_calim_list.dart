@@ -12,6 +12,7 @@ import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
 import '../../../widgets/empty_state_widget.dart';
+import '../../../network/api_service.dart';
 import 'marriage_claim.dart';
 
 class MarriageClaimList extends StatefulWidget {
@@ -145,8 +146,8 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   void GetMarriageClaims() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/E/"+UserSessions.instance.getRefID;
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"marriage_claim/", UserSessions.instance.getUserID, additionalPath: "E/"+UserSessions.instance.getRefID);
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       print('url:$url :response:${response.body}:${response.statusCode}');
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);

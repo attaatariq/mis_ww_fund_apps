@@ -13,6 +13,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
+import 'package:welfare_claims_app/network/api_service.dart';
 
 class CreateFeeClaim extends StatefulWidget {
   String edu_living="", edu_mess="", edu_transport="", edu_nature="", edu_level="", stip_amount="0";
@@ -2120,7 +2121,8 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
     var url = constants.getApiBaseURL()+constants.claims+"fee_claim";
     var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['user_id'] = UserSessions.instance.getUserID;
-      request.fields['user_token'] = UserSessions.instance.getToken;
+      // Token now sent in Authorization header, not in fields
+      APIService.addAuthHeaderToMultipartRequest(request);
       request.fields['emp_id'] = UserSessions.instance.getRefID;
       request.fields['company_1'] = companyID;
       if(selectedClaimType == constants.calimSelf) { /// data for self claim

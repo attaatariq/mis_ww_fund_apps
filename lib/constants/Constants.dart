@@ -127,6 +127,26 @@ class Constants {
     return ImageBaseURL;
   }
 
+  /// Build API URL with user_id but without token (token goes in Authorization header)
+  /// Example: buildApiUrl("claims/fee_claim/", user_id) -> "claims/fee_claim/{user_id}/"
+  String buildApiUrl(String endpoint, String userId, {String additionalPath = ""}) {
+    String url = endpoint;
+    if (!url.endsWith("/")) {
+      url += "/";
+    }
+    url += userId;
+    if (additionalPath.isNotEmpty) {
+      if (!additionalPath.startsWith("/")) {
+        url += "/";
+      }
+      url += additionalPath;
+    }
+    if (!url.endsWith("/")) {
+      url += "/";
+    }
+    return url;
+  }
+
   String getConnectionMessage() {
     return ConnectionMessage;
   }
