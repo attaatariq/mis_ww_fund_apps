@@ -37,10 +37,7 @@ class LoginController extends GetxController{
     var url = constants.authentication+"login";
 
     try {
-      ///http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8")
       var response = await APIService.postRequest(apiName: url,mapData: data,uiUpdates: uiUpdates);
-      print(response);
-//    print(url+response.body+" : "+response.statusCode.toString());
       
       // Always dismiss dialog first
       uiUpdates.DismissProgresssDialog();
@@ -65,7 +62,7 @@ class LoginController extends GetxController{
             String user_about = dataObject["user_about"].toString();
             String user_token = dataObject["user_token"].toString();
             String user_account = dataObject["user_account"].toString();
-            String ref_id = dataObject["ref_id"].toString();
+            String user_backing = dataObject["user_backing"].toString();
             String agent_expiry = dataObject["agent_expiry"].toString();
             
             // Load claim stages data if available
@@ -91,10 +88,12 @@ class LoginController extends GetxController{
                 user_account,
                 user_sector,
                 user_role,
-                ref_id,
-                agent_expiry);
+                user_backing,
+                agent_expiry
+            );
+
             passwordController.clear();
-            SetScreen(user_sector, user_role, user_account,context,ref_id);
+            SetScreen(user_sector, user_role, user_account, context, user_backing);
             if (onComplete != null) onComplete(true);
           } else {
             String errorMessage = body["Message"]?.toString() ?? Strings.instance.loginFailed;
@@ -118,7 +117,7 @@ class LoginController extends GetxController{
     }
   }
 
-  void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String ref_id, String agent_expiry) {
+  void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String user_backing, String agent_expiry) {
     UserSessions.instance.setUserID(userID);
     UserSessions.instance.setUserName(user_name);
     UserSessions.instance.setUserCNIC(user_cnic);
@@ -130,23 +129,23 @@ class LoginController extends GetxController{
     UserSessions.instance.setUserAccount(user_account);
     UserSessions.instance.setUserSector(user_sector);
     UserSessions.instance.setUserRole(user_role);
-    UserSessions.instance.setRefID(ref_id);
+    UserSessions.instance.setRefID(user_backing);
     UserSessions.instance.setAgentExpiry(agent_expiry);
     if(user_sector == "8" && user_role == "8"){
       UserSessions.instance.setDeoID(true);
     }
   }
-  void SetScreen(String user_sector, String user_role, String user_account,BuildContext context, String ref_id) {
+  void SetScreen(String user_sector, String user_role, String user_account,BuildContext context, String user_backing) {
     print("user_account:$user_sector:$user_role");
     if((user_sector == "7" && user_role == "6")||(user_sector == "4" && user_role == "3")){ // wwf employee
-      if(user_account == "0" || ref_id=="null") {
+      if(user_account == "0" || user_backing == "null") {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => WWFEmployeeInformationForm(),
           ),
               (route) => false,
         );
-      }else{
+      } else {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmployeeHome(),
@@ -155,7 +154,7 @@ class LoginController extends GetxController{
         );
       }
     }else if(user_sector == "8" && user_role == "9"){ // company worker
-      if(user_account == "0" || ref_id=="null") {
+      if(user_account == "0" || user_backing == "null") {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmployeeInformationForm(),
@@ -171,7 +170,7 @@ class LoginController extends GetxController{
         );
       }
     }else if(user_sector == "8" && user_role == "7"){ //CEO company
-      if(user_account == "0"|| ref_id=="null"){
+      if(user_account == "0"|| user_backing == "null"){
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (BuildContext context) => CompanyInformationForm(),
