@@ -6,6 +6,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/EmployeeVerificationModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -267,14 +268,13 @@ class _EmployeeVerificationDialogState extends State<EmployeeVerificationDialog>
     String status= SetEmployeeStatus();
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "matched": status,
       "remarks": remarksController.text.toString(),
       "emp_id": widget.model.emp_id,
     };
     print(data.toString());
     var url = constants.getApiBaseURL()+constants.companies+"verify";
-    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
     print("url:${url} :data:$data"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();

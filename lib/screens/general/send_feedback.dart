@@ -5,6 +5,7 @@ import 'package:welfare_claims_app/Strings/Strings.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -377,7 +378,6 @@ class _SendFeedbackState extends State<SendFeedback> {
     SetFeedbackType(UserSessions.instance.getUserSector, UserSessions.instance.getUserRole, UserSessions.instance.getUserAccount);
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "comp_id": UserSessions.instance.getRefID,
       "feed_type": feedbackType,
       "feed_quality": selectedFeedback,
@@ -385,7 +385,7 @@ class _SendFeedbackState extends State<SendFeedback> {
     };
     print(data.toString());
     var url = constants.getApiBaseURL()+constants.assessments+"feedback";
-    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
     print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();

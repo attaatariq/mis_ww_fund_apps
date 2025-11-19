@@ -8,6 +8,7 @@ import 'package:welfare_claims_app/itemviews/children_list_itemview.dart';
 import 'package:welfare_claims_app/models/ChildrenModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/add_child.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
@@ -135,13 +136,12 @@ class _ChildrenListState extends State<ChildrenList> {
     List<String> tagsList= [constants.accountInfo, constants.empChildren];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     print(url);
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(response.body);

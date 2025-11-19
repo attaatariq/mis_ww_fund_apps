@@ -1645,7 +1645,6 @@ class _Annex3AState extends State<Annex3A> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL()+constants.companies+"annex3a";
-    print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     print(UserSessions.instance.getRefID);
     request.fields['comp_id'] = UserSessions.instance.getRefID;

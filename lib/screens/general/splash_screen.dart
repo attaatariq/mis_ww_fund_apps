@@ -423,7 +423,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void SetScreen() {
-    print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken+" : "+UserSessions.instance.getRefID);
     if((UserSessions.instance.getUserSector == "7" && UserSessions.instance.getUserRole == "6")
     || (UserSessions.instance.getUserSector == "4" && UserSessions.instance.getUserRole == "3")
     ){ // wwf employee

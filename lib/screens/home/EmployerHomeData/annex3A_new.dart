@@ -2119,9 +2119,6 @@ class _Annex3ANewState extends State<Annex3ANew> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL() + constants.companies + "annexure_2";
-    print(UserSessions.instance.getUserID +
-        " : " +
-        UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID; //
 
@@ -2232,13 +2229,12 @@ class _Annex3ANewState extends State<Annex3ANew> {
     List<String> tagsList = [constants.companiesInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url =
         constants.getApiBaseURL() + constants.authentication + "information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel =
         constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();

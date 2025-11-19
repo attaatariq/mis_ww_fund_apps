@@ -1184,8 +1184,7 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL() + constants.claims +
-          "marriage_detail/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/" + widget.calim_ID;
+          "marriage_detail/" + UserSessions.instance.getUserID + "/" + widget.calim_ID;
       print(url);
       
       var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));

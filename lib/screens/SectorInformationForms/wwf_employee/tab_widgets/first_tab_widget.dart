@@ -1103,19 +1103,12 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
     List<String> tagsList= [constants.accountInfo, constants.citiesInfo, constants.statesInfo, constants.districtsInfo,constants.companiesInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-
-
-    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    // var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
-    // var response = await http.get(Uri.parse(url));
-    print(data);
-    print(url+response.body+" : "+response.statusCode.toString());
+    
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(url+response.body);

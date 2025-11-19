@@ -296,7 +296,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "previous": oldPassController.text.toString(),
       "password": newPassController.text.toString(),
       "confirm": confirmPassController.text.toString(),

@@ -608,7 +608,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL()+constants.employees+"create";
-    print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;//
     request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;//
@@ -744,19 +743,12 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     List<String> tagsList= [constants.accountInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data);
-
-
-    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    // var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
-    // var response = await http.get(Uri.parse(url));
-    print(data);
-    print(url+response.body+" : "+response.statusCode.toString());
+    
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     print(url+response.body);

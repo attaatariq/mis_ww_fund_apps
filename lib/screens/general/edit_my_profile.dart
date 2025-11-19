@@ -323,7 +323,6 @@ class _EditProfileState extends State<EditProfile> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "name": nameController.text.toString(),
       "image": selectedFilePath,
       "contact": numberController.text.toString(),

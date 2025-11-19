@@ -729,8 +729,7 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL() + constants.claims +
-          "fee_info/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken+ "/" +widget.calim_ID;
+          "fee_info/" + UserSessions.instance.getUserID + "/" + widget.calim_ID;
       var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

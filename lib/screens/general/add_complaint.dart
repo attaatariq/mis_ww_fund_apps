@@ -229,7 +229,6 @@ class _AddComplaintState extends State<AddComplaint> {
     SetFeedbackType(UserSessions.instance.getUserSector, UserSessions.instance.getUserRole, UserSessions.instance.getUserAccount);
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "com_type": feedbackType,
       "comp_id": UserSessions.instance.getRefID,
       "com_subject": selectComplaintType,

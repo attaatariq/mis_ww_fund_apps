@@ -1345,13 +1345,12 @@ class _AddChildEducationState extends State<AddChildEducation> {
     List<String> tagsList= [constants.accountInfo, constants.empChildren, constants.schoolsInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     print(jsonEncode(tagsList).toString());
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     print(response.body);

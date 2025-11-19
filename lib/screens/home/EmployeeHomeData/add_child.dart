@@ -757,12 +757,11 @@ class _AddChildState extends State<AddChild> {
     List<String> tagsList= [constants.accountInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();

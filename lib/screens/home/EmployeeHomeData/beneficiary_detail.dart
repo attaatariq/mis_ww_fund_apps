@@ -7,6 +7,7 @@ import 'package:welfare_claims_app/screens/home/EmployeeHomeData/add_beneficiary
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
 import '../../../models/ResponseCodeModel.dart';
+import '../../../network/api_service.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
 
@@ -536,12 +537,11 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
     List<String> tagsList= [constants.accountInfo, constants.inheritorInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();

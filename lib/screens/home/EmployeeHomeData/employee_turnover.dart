@@ -876,7 +876,6 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     List<String> tagsList= [constants.accountInfo, constants.citiesInfo, constants.statesInfo, constants.districtsInfo,constants.companiesInfo];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
@@ -1053,7 +1052,6 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     Map data = {
       "user_id": UserSessions.instance.getUserID,//
-      "user_token": UserSessions.instance.getToken,//
       "emp_id": UserSessions.instance.getEmployeeID,//
       "comp_name": cNameController.text.toString(),//
       "comp_address": addressController.text.toString(),//
@@ -1088,7 +1086,6 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "emp_id": UserSessions.instance.getEmployeeID,
       "comp_id": selectedCompanyID,
       "appointed_at": selectedAppointedDate,

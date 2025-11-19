@@ -7,6 +7,7 @@ import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/authentication/signup.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -482,7 +483,6 @@ class _AddContactPersonState extends State<AddContactPerson> {
     Map data = {
       "comp_id": UserSessions.instance.getRefID,
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "person_name": nameController.text.toString(),
       "person_about": designitationController.text.toString(),
       "person_email": emailController.text.toString(),
@@ -492,7 +492,7 @@ class _AddContactPersonState extends State<AddContactPerson> {
     };
 
     var url = constants.getApiBaseURL()+constants.companies+"person";
-    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
     print("url:$url :data:$data:resp:${response.body}");
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();

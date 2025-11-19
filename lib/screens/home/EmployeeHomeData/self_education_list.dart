@@ -8,6 +8,7 @@ import 'package:welfare_claims_app/itemviews/self_education_list_item.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/models/SelfEducationModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/add_self_education.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
@@ -136,14 +137,13 @@ class _SelfEducationListState extends State<SelfEducationList> {
       List<String> tagsList= [constants.accountInfo, constants.empEduList];
       Map data = {
         "user_id": UserSessions.instance.getUserID,
-        "user_token": UserSessions.instance.getToken,
         "api_tags": jsonEncode(tagsList).toString(),
       };
       print(jsonEncode(tagsList).toString());
       
       var url = constants.getApiBaseURL()+constants.authentication+"information";
       print(url);
-      var response = await http.post(Uri.parse(url), body: data).timeout(Duration(seconds: 30));
+      var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       print(response.body);

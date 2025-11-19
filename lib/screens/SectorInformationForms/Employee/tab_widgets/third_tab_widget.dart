@@ -597,7 +597,6 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL()+constants.employees+"create";
-    print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
     request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;

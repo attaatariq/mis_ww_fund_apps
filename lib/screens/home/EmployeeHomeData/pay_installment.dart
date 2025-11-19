@@ -12,6 +12,7 @@ import 'package:welfare_claims_app/dialogs/banks_dialog_model.dart';
 import 'package:welfare_claims_app/models/InstallmentModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/annex3A.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -622,7 +623,6 @@ class _PayInstallmentState extends State<PayInstallment> {
     }
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "ins_id": widget.installmentModel.ins_id,
       "ins_amount": widget.installmentModel.ins_amount,
       "ins_payment": widget.installmentModel.ins_amount,
@@ -634,7 +634,7 @@ class _PayInstallmentState extends State<PayInstallment> {
       "ins_remarks": remarks,
     };
     var url = constants.getApiBaseURL()+constants.claims+"add_installment";
-    var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
     print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();

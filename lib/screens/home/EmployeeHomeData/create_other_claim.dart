@@ -10,6 +10,7 @@ import 'package:welfare_claims_app/dialogs/child_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/claim_type_dialog_model.dart';
 import 'package:welfare_claims_app/models/ChildModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
@@ -1053,12 +1054,11 @@ class _CreateOtherClaimState extends State<CreateOtherClaim> {
     List<String> tagsList= [constants.accountInfo, constants.empChildren];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -1195,13 +1195,9 @@ class _CreateOtherClaimState extends State<CreateOtherClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url;
     if(!isChildSelected) {
-      url = constants.getApiBaseURL() + constants.claims +
-          "edu_check/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/emp_id--" + refID;
-    }else {
-      url = constants.getApiBaseURL() + constants.claims +
-          "edu_check/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/child_id--" + selectedChildID;
+      url = constants.getApiBaseURL() + constants.claims + "edu_check/" + UserSessions.instance.getUserID + "/emp_id--" + refID;
+    } else {
+      url = constants.getApiBaseURL() + constants.claims + "edu_check/" + UserSessions.instance.getUserID + "/child_id--" + selectedChildID;
     }
 
     var response = await http.get(url);

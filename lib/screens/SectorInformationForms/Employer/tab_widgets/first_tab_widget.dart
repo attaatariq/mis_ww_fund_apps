@@ -1117,7 +1117,6 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
     uiUpdates.HideKeyBoard();
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL()+constants.companies+"company";
-    print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['name'] = cNameController.text.toString();
     request.fields['user_id'] = UserSessions.instance.getUserID;

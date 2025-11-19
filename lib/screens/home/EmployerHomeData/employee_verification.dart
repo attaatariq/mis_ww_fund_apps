@@ -136,8 +136,7 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL() + constants.employees +
-          "index/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
+          "index/" + UserSessions.instance.getUserID + "/" + UserSessions.instance.getRefID;
       var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
