@@ -204,7 +204,6 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError = true;
             errorMessage = Strings.instance.notAvail;
@@ -225,7 +224,6 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError = true;
             errorMessage = Strings.instance.notAvail;
@@ -233,7 +231,6 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError = true;
         errorMessage = Strings.instance.notAvail;

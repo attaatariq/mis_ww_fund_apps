@@ -37,7 +37,6 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
 
   void parentFunction(newInt)
   {
-    print(newInt);
     setState(() {
       list.removeAt(newInt);
       if(list.length == 0){
@@ -182,7 +181,6 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -204,7 +202,6 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -212,7 +209,6 @@ class _EmployeeVerificationState extends State<EmployeeVerification> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.notAvail;

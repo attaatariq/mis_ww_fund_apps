@@ -674,7 +674,6 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        print(message);
         uiUpdates.ShowToast(message);
       }
     }catch(e){
@@ -701,10 +700,8 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
-    print("$data"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

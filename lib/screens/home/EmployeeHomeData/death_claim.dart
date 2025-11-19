@@ -604,7 +604,6 @@ class _DeathClaimState extends State<DeathClaim> {
     uiUpdates.DismissProgresssDialog();
     try {
       final resp = await http.Response.fromStream(response);
-      print('${request.fields}:url:$url :${resp.body}:${resp.statusCode}');
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -645,10 +644,8 @@ class _DeathClaimState extends State<DeathClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
-    debugPrint(response.body+" : "+response.statusCode.toString(),wrapWidth: 1024);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

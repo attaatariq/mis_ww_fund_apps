@@ -272,10 +272,8 @@ class _EmployeeVerificationDialogState extends State<EmployeeVerificationDialog>
       "remarks": remarksController.text.toString(),
       "emp_id": widget.model.emp_id,
     };
-    print(data.toString());
     var url = constants.getApiBaseURL()+constants.companies+"verify";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
-    print("url:${url} :data:$data"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {

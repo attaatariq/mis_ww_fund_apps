@@ -480,7 +480,6 @@ class _VerificationState extends State<Verification>
       "password": widget.signupDataModel.password,
       "confirm": widget.signupDataModel.password
     };
-    print(data);
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL() + constants.authentication + "signup";
     var response = await http.post(Uri.parse(url),

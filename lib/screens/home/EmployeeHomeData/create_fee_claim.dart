@@ -2013,7 +2013,6 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
@@ -2116,7 +2115,6 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
       messCharges= int.parse(messChargesCon.text.toString());
     }
     String totalClaimAmount = GetTotalClaimAmount(trannsportCost, messCharges);
-    print(totalClaimAmount +" : "+trannsportCost.toString()+" : "+messCharges.toString());
 
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.claims+"fee_claim";
@@ -2231,7 +2229,6 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
     uiUpdates.DismissProgresssDialog();
     try {
       final resp = await http.Response.fromStream(response);
-      print(resp.body);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, resp);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {

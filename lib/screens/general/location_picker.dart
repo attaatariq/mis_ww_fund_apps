@@ -47,7 +47,6 @@ class _LocationPickerState extends State<LocationPicker> {
       googleMapController.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition));
     }catch(e){
-      print('error:$e');
       uiUpdates.ShowToast(e.toString());
     }
   }
