@@ -822,7 +822,6 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
             }
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
@@ -838,7 +837,6 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
             uiUpdates.ShowToast(responseCodeModel.message);
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           uiUpdates.ShowToast(responseCodeModel.message);
         }
       }

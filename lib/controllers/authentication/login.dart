@@ -33,7 +33,6 @@ class LoginController extends GetxController{
       "platform": platform,
       "device": deviceModel,
     };
-    print(data.toString());
     var url = constants.authentication+"login";
 
     try {
@@ -70,9 +69,7 @@ class LoginController extends GetxController{
               try {
                 Map<String, dynamic> claimStagesJson = dataObject["claim_stages"];
                 ClaimStagesData.instance.loadFromJson(claimStagesJson);
-                print('Claim stages loaded: ${ClaimStagesData.instance.stages.length} stages');
               } catch (e) {
-                print('Error loading claim stages: $e');
               }
             }
             
@@ -101,7 +98,6 @@ class LoginController extends GetxController{
             if (onComplete != null) onComplete(false);
           }
         } catch (e) {
-          print('JSON decode error: $e');
           uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
           if (onComplete != null) onComplete(false);
         }
@@ -110,7 +106,6 @@ class LoginController extends GetxController{
         if (onComplete != null) onComplete(false);
       }
     } catch(e) {
-      print('Login error: $e');
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       if (onComplete != null) onComplete(false);
@@ -136,7 +131,6 @@ class LoginController extends GetxController{
     }
   }
   void SetScreen(String user_sector, String user_role, String user_account,BuildContext context, String user_backing) {
-    print("user_account:$user_sector:$user_role");
     if((user_sector == "7" && user_role == "6")||(user_sector == "4" && user_role == "3")){ // wwf employee
       if(user_account == "0" || user_backing == "null") {
         Navigator.pushAndRemoveUntil(context,

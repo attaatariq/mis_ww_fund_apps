@@ -1168,7 +1168,6 @@ class _EmployerHomeState extends State<EmployerHome> {
     var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeCompanies+"/"+UserSessions.instance.getUserID+"/"
         +UserSessions.instance.getRefID;
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {
@@ -1251,7 +1250,6 @@ class _EmployerHomeState extends State<EmployerHome> {
 
   void GetToken() async{
     await FirebaseMessaging.instance.getToken().then((token) => {
-      print(token),
       SaveNotificationToken(token)
     });
   }
@@ -1265,16 +1263,13 @@ class _EmployerHomeState extends State<EmployerHome> {
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);
-      print('$url :response:${resp.statusCode}:${resp.body}');
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          print("Success Token");
         } else {
-          print("Failed Token");
         }
       } else {
         var body = jsonDecode(resp.body);
@@ -1284,7 +1279,6 @@ class _EmployerHomeState extends State<EmployerHome> {
         }
       }
     }catch(e){
-      print('its here 1');
       uiUpdates.ShowToast(e);
     }
   }

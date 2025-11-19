@@ -304,7 +304,6 @@ class _EducationClaimListState extends State<EducationClaimList> {
           additionalPath: "E/${UserSessions.instance.getRefID}");
       print(url);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
-      print('url:$url :response:${response.body}:${response.statusCode}');
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
@@ -386,7 +385,6 @@ class _EducationClaimListState extends State<EducationClaimList> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isErrorFee= true;
             errorMessageFee = Strings.instance.notFound;
@@ -404,7 +402,6 @@ class _EducationClaimListState extends State<EducationClaimList> {
         });
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isErrorFee= true;
         errorMessageFee = Strings.instance.notFound;
@@ -518,14 +515,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
             }
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
         uiUpdates.ShowToast(responseCodeModel.message);
       }
     } catch (e) {
-      print('Network or request error: $e');
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     } finally {
       uiUpdates.DismissProgresssDialog();

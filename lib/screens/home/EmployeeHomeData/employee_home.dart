@@ -941,11 +941,9 @@ class _EmployeeHomeState extends State<EmployeeHome> {
   }
 
   GetDashBoardData() async{
-    //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeEmployees+"/"+UserSessions.instance.getUserID+"/"
         +UserSessions.instance.getUserID;
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {
@@ -1035,7 +1033,6 @@ class _EmployeeHomeState extends State<EmployeeHome> {
   }
 
   void SaveNotificationToken(String notificationToken) async{
-    print('its calling');
     var url = constants.getApiBaseURL()+constants.authentication+"gadget";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
@@ -1044,16 +1041,13 @@ class _EmployeeHomeState extends State<EmployeeHome> {
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);
-      print('$url :response:${resp.statusCode}:${resp.body}');
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          print("Success Token");
         } else {
-          print("Failed Token");
         }
       } else {
         var body = jsonDecode(resp.body);
@@ -1063,7 +1057,6 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         }
       }
     }catch(e){
-      print('here');
       uiUpdates.ShowToast(e);
     }
   }

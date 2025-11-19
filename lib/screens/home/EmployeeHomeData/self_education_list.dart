@@ -139,14 +139,11 @@ class _SelfEducationListState extends State<SelfEducationList> {
         "user_id": UserSessions.instance.getUserID,
         "api_tags": jsonEncode(tagsList).toString(),
       };
-      print(jsonEncode(tagsList).toString());
       
       var url = constants.getApiBaseURL()+constants.authentication+"information";
-      print(url);
       var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-      print(response.body);
       
       if (responseCodeModel.status == true) {
         try {
@@ -203,7 +200,6 @@ class _SelfEducationListState extends State<SelfEducationList> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.educationListNotAvail;
@@ -225,7 +221,6 @@ class _SelfEducationListState extends State<SelfEducationList> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.educationListNotAvail;
@@ -233,7 +228,6 @@ class _SelfEducationListState extends State<SelfEducationList> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.educationListNotAvail;
