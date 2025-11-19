@@ -272,7 +272,6 @@ class _PayInstalmentDialogModelState extends State<PayInstalmentDialogModel> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,

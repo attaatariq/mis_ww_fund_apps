@@ -1380,7 +1380,6 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
     uiUpdates.DismissProgresssDialog();
     try {
       final resp = await http.Response.fromStream(response);
-      debugPrint('url:$url :${request.fields} :${resp.body}:${resp.statusCode}',wrapWidth: 1024);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {

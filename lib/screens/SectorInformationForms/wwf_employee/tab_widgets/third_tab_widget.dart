@@ -503,7 +503,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -711,7 +710,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     var response = await request.send();
     try{
       final resp= await http.Response.fromStream(response);
-      debugPrint('url:${url}:response:${request.fields}:${resp.body}:${resp.statusCode}',wrapWidth: 1024);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
@@ -734,7 +732,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();
-      print(e);
     }
   }
 
@@ -751,7 +748,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
@@ -763,11 +759,6 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
          userGender=account['user_gender'];
          userEmail=account['user_email'];
          userContact=account['user_contact'];
-        print(userName);
-        print(userCNIC);
-        print(userGender);
-        print(userEmail);
-        print(userContact);
       } else {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }

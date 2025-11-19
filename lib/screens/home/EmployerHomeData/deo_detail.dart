@@ -348,19 +348,15 @@ class _DeoDetailState extends State<DeoDetail> {
 
   GetInformation() async{
     List<String> tagsList= [constants.accountInfo, constants.deoInfo];
-    print('taglist:${tagsList}');
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    print("url:$url:${data}");
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
-    debugPrint(response.body+" : "+response.statusCode.toString(),wrapWidth: 1024);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
@@ -370,7 +366,6 @@ class _DeoDetailState extends State<DeoDetail> {
           var account = data["account"];
           if (account != null) {
             var deoDetail = account["DEO"];
-            print("deoDetail:$deoDetail:$account");
             if(deoDetail != null) {
               name = deoDetail["user_name"].toString();
               deoImage = deoDetail["user_image"].toString();

@@ -1111,7 +1111,6 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
     
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

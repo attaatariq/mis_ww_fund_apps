@@ -493,7 +493,6 @@ class _AddContactPersonState extends State<AddContactPerson> {
 
     var url = constants.getApiBaseURL()+constants.companies+"person";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
-    print("url:$url :data:$data:resp:${response.body}");
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     if(responseCodeModel.status == true)
@@ -509,7 +508,6 @@ class _AddContactPersonState extends State<AddContactPerson> {
         uiUpdates.ShowToast(message);
       }
     }else {
-      print("here");
       uiUpdates.ShowToast(responseCodeModel.message);
     }
   }

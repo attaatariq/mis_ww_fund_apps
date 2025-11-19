@@ -956,7 +956,6 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -1170,7 +1169,6 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();
-      print(e);
     }
   }
 }

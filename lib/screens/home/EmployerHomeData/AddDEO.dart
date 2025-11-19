@@ -631,7 +631,6 @@ class _AddDeoState extends State<AddDeo> {
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     final resp = await http.Response.fromStream(response);
-    debugPrint("data:${request.fields}:resp:${resp.bodyBytes}",wrapWidth: 1024);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {
@@ -663,7 +662,6 @@ class _AddDeoState extends State<AddDeo> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
