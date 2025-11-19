@@ -8,7 +8,7 @@ import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/models/ClaimStageModel.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
-import 'package:wwf_apps/screens/sectors/employer/CompanyFrom.dart';
+import 'package:wwf_apps/screens/sectors/employer/CompanyForm.dart';
 import 'package:wwf_apps/screens/sectors/employee/EmployeeForm.dart';
 import 'package:wwf_apps/screens/general/splash_screen.dart';
 import 'package:wwf_apps/screens/home/employee/employee_home.dart';
@@ -135,7 +135,7 @@ class LoginController extends GetxController{
       if(user_account == "0" || user_backing == "null") {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => WWFEmployeeInformationForm(),
+            builder: (BuildContext context) => EmployeeForm(),
           ),
               (route) => false,
         );
@@ -167,7 +167,7 @@ class LoginController extends GetxController{
       if(user_account == "0"|| user_backing == "null"){
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => CompanyInformationForm(),
+            builder: (BuildContext context) => CompanyForm(),
           ),
               (route) => false,
         );

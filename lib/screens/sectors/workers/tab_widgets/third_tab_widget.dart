@@ -15,17 +15,17 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
 
-class EmployeeThirdTab extends StatefulWidget {
+class WorkerThirdTab extends StatefulWidget {
 
   final parentFunction;
 
-  EmployeeThirdTab(this.parentFunction);
+  WorkerThirdTab(this.parentFunction);
 
   @override
-  _EmployeeThirdTabState createState() => _EmployeeThirdTabState();
+  _WorkerThirdTabState createState() => _WorkerThirdTabState();
 }
 
-class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
+class _WorkerThirdTabState extends State<WorkerThirdTab> {
   String cnicFilePath="", cnicFileName=Strings.instance.uploadCnic;
   String ssnFilePath="", ssnFileName=Strings.instance.uploadSSnFile;
   String eobiFilePath="", eobiFileName=Strings.instance.uploadEobiFile;
@@ -598,26 +598,26 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
     var url = constants.getApiBaseURL()+constants.employees+"create";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;
-    request.fields['father'] = EmployeeInformationForm.companyWorkerInformationModel.fatherName;
-    request.fields['about'] = EmployeeInformationForm.companyWorkerInformationModel.designation;
-    request.fields['ssno'] = EmployeeInformationForm.companyWorkerInformationModel.ssnNumber;
-    request.fields['eobino'] = EmployeeInformationForm.companyWorkerInformationModel.eobiNumber;
-    request.fields['appoint_date'] = EmployeeInformationForm.companyWorkerInformationModel.appointDate;
-    request.fields['scale'] = EmployeeInformationForm.companyWorkerInformationModel.payScale;
-    request.fields['disability'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDisability;
-    request.fields['cnic_issued'] = EmployeeInformationForm.companyWorkerInformationModel.cnicIssueDate;
-    request.fields['cnic_expiry'] = EmployeeInformationForm.companyWorkerInformationModel.cnicExpiryDate;
-    request.fields['birthday'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDOB;
-    request.fields['address'] = EmployeeInformationForm.companyWorkerInformationModel.address;
-    request.fields['city'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCityID;
-    request.fields['district'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDistrictID;
-    request.fields['province'] = EmployeeInformationForm.companyWorkerInformationModel.selectedProvinceID;
-    request.fields['bank'] = EmployeeInformationForm.companyWorkerBankInformationModel.selectedBank;
-    request.fields['account_title'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountTitle;
-    request.fields['account_no'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountNumber;
-    request.fields['latitude'] = EmployeeInformationForm.companyWorkerInformationModel.latitude;
-    request.fields['longitude'] = EmployeeInformationForm.companyWorkerInformationModel.longitude;
+    request.fields['comp_id'] = WorkerForm.companyWorkerInformationModel.selectedCompanyID;
+    request.fields['father'] = WorkerForm.companyWorkerInformationModel.fatherName;
+    request.fields['about'] = WorkerForm.companyWorkerInformationModel.designation;
+    request.fields['ssno'] = WorkerForm.companyWorkerInformationModel.ssnNumber;
+    request.fields['eobino'] = WorkerForm.companyWorkerInformationModel.eobiNumber;
+    request.fields['appoint_date'] = WorkerForm.companyWorkerInformationModel.appointDate;
+    request.fields['scale'] = WorkerForm.companyWorkerInformationModel.payScale;
+    request.fields['disability'] = WorkerForm.companyWorkerInformationModel.selectedDisability;
+    request.fields['cnic_issued'] = WorkerForm.companyWorkerInformationModel.cnicIssueDate;
+    request.fields['cnic_expiry'] = WorkerForm.companyWorkerInformationModel.cnicExpiryDate;
+    request.fields['birthday'] = WorkerForm.companyWorkerInformationModel.selectedDOB;
+    request.fields['address'] = WorkerForm.companyWorkerInformationModel.address;
+    request.fields['city'] = WorkerForm.companyWorkerInformationModel.selectedCityID;
+    request.fields['district'] = WorkerForm.companyWorkerInformationModel.selectedDistrictID;
+    request.fields['province'] = WorkerForm.companyWorkerInformationModel.selectedProvinceID;
+    request.fields['bank'] = WorkerForm.companyWorkerBankInformationModel.selectedBank;
+    request.fields['account_title'] = WorkerForm.companyWorkerBankInformationModel.accountTitle;
+    request.fields['account_no'] = WorkerForm.companyWorkerBankInformationModel.accountNumber;
+    request.fields['latitude'] = WorkerForm.companyWorkerInformationModel.latitude;
+    request.fields['longitude'] = WorkerForm.companyWorkerInformationModel.longitude;
 
     request.files.add(
         http.MultipartFile('ssn_upload',

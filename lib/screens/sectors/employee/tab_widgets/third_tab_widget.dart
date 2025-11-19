@@ -609,34 +609,34 @@ class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
     var url = constants.getApiBaseURL()+constants.employees+"create";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;//
-    request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;//
-    request.fields['father'] = EmployeeInformationForm.companyWorkerInformationModel.fatherName;//
-    request.fields['about'] = EmployeeInformationForm.companyWorkerInformationModel.designation;//
-    request.fields['ssno'] = EmployeeInformationForm.companyWorkerInformationModel.ssnNumber;//
-    request.fields['eobino'] = EmployeeInformationForm.companyWorkerInformationModel.eobiNumber;//
-    request.fields['appointed'] = EmployeeInformationForm.companyWorkerInformationModel.appointDate;//
-    request.fields['scale'] = EmployeeInformationForm.companyWorkerInformationModel.payScale;//
-    request.fields['disable'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDisability;//
-    request.fields['issued'] = EmployeeInformationForm.companyWorkerInformationModel.cnicIssueDate;//
-    request.fields['expiry'] = EmployeeInformationForm.companyWorkerInformationModel.cnicExpiryDate;//
-    request.fields['birthday'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDOB;//
-    request.fields['address'] = EmployeeInformationForm.companyWorkerInformationModel.address;//
-    request.fields['city'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCityID;//
-    request.fields['district'] = EmployeeInformationForm.companyWorkerInformationModel.selectedDistrictID;//
-    request.fields['province'] = EmployeeInformationForm.companyWorkerInformationModel.selectedProvinceID;//
-    request.fields['bank_name'] = EmployeeInformationForm.companyWorkerBankInformationModel.selectedBank;//
-    request.fields['account_title'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountTitle;//
-    request.fields['account_no'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountNumber;
-    request.fields['account_type'] = EmployeeInformationForm.companyWorkerBankInformationModel.accountType;
-    request.fields['latitude'] = EmployeeInformationForm.companyWorkerInformationModel.latitude;//
-    request.fields['longitude'] = EmployeeInformationForm.companyWorkerInformationModel.longitude;//
+    request.fields['comp_id'] = WorkerForm.companyWorkerInformationModel.selectedCompanyID;//
+    request.fields['father'] = WorkerForm.companyWorkerInformationModel.fatherName;//
+    request.fields['about'] = WorkerForm.companyWorkerInformationModel.designation;//
+    request.fields['ssno'] = WorkerForm.companyWorkerInformationModel.ssnNumber;//
+    request.fields['eobino'] = WorkerForm.companyWorkerInformationModel.eobiNumber;//
+    request.fields['appointed'] = WorkerForm.companyWorkerInformationModel.appointDate;//
+    request.fields['scale'] = WorkerForm.companyWorkerInformationModel.payScale;//
+    request.fields['disable'] = WorkerForm.companyWorkerInformationModel.selectedDisability;//
+    request.fields['issued'] = WorkerForm.companyWorkerInformationModel.cnicIssueDate;//
+    request.fields['expiry'] = WorkerForm.companyWorkerInformationModel.cnicExpiryDate;//
+    request.fields['birthday'] = WorkerForm.companyWorkerInformationModel.selectedDOB;//
+    request.fields['address'] = WorkerForm.companyWorkerInformationModel.address;//
+    request.fields['city'] = WorkerForm.companyWorkerInformationModel.selectedCityID;//
+    request.fields['district'] = WorkerForm.companyWorkerInformationModel.selectedDistrictID;//
+    request.fields['province'] = WorkerForm.companyWorkerInformationModel.selectedProvinceID;//
+    request.fields['bank_name'] = WorkerForm.companyWorkerBankInformationModel.selectedBank;//
+    request.fields['account_title'] = WorkerForm.companyWorkerBankInformationModel.accountTitle;//
+    request.fields['account_no'] = WorkerForm.companyWorkerBankInformationModel.accountNumber;
+    request.fields['account_type'] = WorkerForm.companyWorkerBankInformationModel.accountType;
+    request.fields['latitude'] = WorkerForm.companyWorkerInformationModel.latitude;//
+    request.fields['longitude'] = WorkerForm.companyWorkerInformationModel.longitude;//
     request.fields['name'] = userName;//
     request.fields['cnicno'] = userCNIC;//
     request.fields['gender'] = userGender;//
     request.fields['email'] = userEmail;//
     request.fields['contact'] = userContact;//
-    List<Placemark> placemarks = await placemarkFromCoordinates(double.parse(EmployeeInformationForm.companyWorkerInformationModel.latitude),
-        double.parse(EmployeeInformationForm.companyWorkerInformationModel.longitude));
+    List<Placemark> placemarks = await placemarkFromCoordinates(double.parse(WorkerForm.companyWorkerInformationModel.latitude),
+        double.parse(WorkerForm.companyWorkerInformationModel.longitude));
     request.fields['lladdress'] = placemarks.first.street??''+", "+placemarks.first.thoroughfare??''+", "+placemarks.first.locality??''+", "+placemarks.first.country??"";//
 
     /// type,  lladdress  , user_image

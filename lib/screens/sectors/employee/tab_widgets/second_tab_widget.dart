@@ -9,14 +9,14 @@ import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
 import 'package:wwf_apps/screens/general/splash_screen.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 
-class WWFEmployeeSecondTab extends StatefulWidget {
+class EmployeeSecondTab extends StatefulWidget {
 
   final parentFunction;
 
-  WWFEmployeeSecondTab(this.parentFunction);
+  EmployeeSecondTab(this.parentFunction);
 
   @override
-  _WWFEmployeeSecondTabState createState() => _WWFEmployeeSecondTabState();
+  _EmployeeSecondTabState createState() => _EmployeeSecondTabState();
 }
 
 TextEditingController wWAccountTitleController= TextEditingController();
@@ -380,7 +380,7 @@ class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
   void CreateBankModel() {
     CompanyWorkerBankInformationModel companyWorkerBankInformationModel= new CompanyWorkerBankInformationModel(selectedBankName,
         wWAccountTitleController.text.toString(), wWAccountNumberController.text.toString(),selectedAccountType);
-    EmployeeInformationForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
+    WorkerForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
     ////call Function
     widget.parentFunction(2);
   }

@@ -189,8 +189,8 @@ class _WorkerFormState extends State<WorkerForm> {
               child: Container(
                 child: Stack(
                   children: [
-                    widget.selectedTab == 0 ? EmployeeFirstTab(parentFunction) : widget.selectedTab == 1 ? EmployeeSecondTab(parentFunction) : widget.selectedTab == 2 ? EmployeeThirdTab(parentFunction) :
-                    widget.selectedTab == 3 ? EmployeeFirstTab(parentFunction) : EmployeeSecondTab(parentFunction)
+                    widget.selectedTab == 0 ? WorkerFirstTab(parentFunction) : widget.selectedTab == 1 ? WorkerSecondTab(parentFunction) : widget.selectedTab == 2 ? WorkerThirdTab(parentFunction) :
+                    widget.selectedTab == 3 ? WorkerFirstTab(parentFunction) : WorkerSecondTab(parentFunction)
                   ],
                 ),
               ),
@@ -219,7 +219,7 @@ class _WorkerFormState extends State<WorkerForm> {
           entitlementsCompanies.forEach((row) {
             String comp_id= row["comp_id"].toString();
             String comp_name= row["comp_name"].toString();
-            EmployeeInformationForm.companiesList.add(new CompanyModel(comp_id, comp_name));
+            WorkerForm.companiesList.add(new CompanyModel(comp_id, comp_name));
           });
         }
 
@@ -229,7 +229,7 @@ class _WorkerFormState extends State<WorkerForm> {
           entitlementsCities.forEach((row) {
             String city_id= row["city_id"].toString();
             String city_name= row["city_name"].toString();
-            EmployeeInformationForm.citiesList.add(new CityModel(city_id, city_name));
+            WorkerForm.citiesList.add(new CityModel(city_id, city_name));
           });
         }
 
@@ -239,7 +239,7 @@ class _WorkerFormState extends State<WorkerForm> {
           entitlementsProvinces.forEach((row) {
             String province_id= row["state_id"].toString();
             String province_name= row["state_name"].toString();
-            EmployeeInformationForm.provincesList.add(new ProvinceModel(province_id, province_name));
+            WorkerForm.provincesList.add(new ProvinceModel(province_id, province_name));
           });
         }
 
@@ -249,7 +249,7 @@ class _WorkerFormState extends State<WorkerForm> {
           entitlementsDistricts.forEach((row) {
             String district_id= row["district_id"].toString();
             String district_name= row["district_name"].toString();
-            EmployeeInformationForm.districtList.add(new DistrictModel(district_id, district_name));
+            WorkerForm.districtList.add(new DistrictModel(district_id, district_name));
           });
         }
       } else {

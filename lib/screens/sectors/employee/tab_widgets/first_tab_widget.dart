@@ -19,13 +19,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
-class WWFEmployeeFirstTab extends StatefulWidget {
+class EmployeeFirstTab extends StatefulWidget {
   final parentFunction;
 
-  WWFEmployeeFirstTab(this.parentFunction);
+  EmployeeFirstTab(this.parentFunction);
 
   @override
-  _WWFEmployeeFirstTabState createState() => _WWFEmployeeFirstTabState();
+  _EmployeeFirstTabState createState() => _EmployeeFirstTabState();
 }
 
 TextEditingController wWFatherNameController= TextEditingController();
@@ -35,7 +35,7 @@ TextEditingController wWSsnNumberController= TextEditingController();
 TextEditingController wWAddressController= TextEditingController();
 TextEditingController wWDisabilityDetailController= TextEditingController();
 
-class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
+class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
   String selectedDobDate=Strings.instance.selectDOB, selectedCNICIssueDate= Strings.instance.selectedCnicIssueDate,
       selectedCNICExpiryDate= Strings.instance.selectedCnicExpiryDate, selectedDisability= Strings.instance.selectDisability, selectedCity= Strings.instance.selectCity, selectedDistrict= Strings.instance.selectDistrict,
       selectedProvince= Strings.instance.selectProvince, selectedDistrictID="", locationSelectionTitle=Strings.instance.selectLocation, selectedAppontmentDate= Strings.instance.selectedAppointmentDate;
@@ -591,7 +591,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
 
           InkWell(
             onTap: (){
-              if(EmployeeInformationForm.citiesList.length > 0) {
+              if(WorkerForm.citiesList.length > 0) {
                 OpenCityDialog(context).then((value) {
                   if(value != null) {
                     setState(() {
@@ -657,7 +657,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
 
           InkWell(
             onTap: (){
-              if(EmployeeInformationForm.districtList.length > 0) {
+              if(WorkerForm.districtList.length > 0) {
                 OpenDistrictDialog(context).then((value) {
                   if(value != null) {
                     setState(() {
@@ -723,7 +723,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
 
           InkWell(
             onTap: (){
-              if(EmployeeInformationForm.provincesList.length > 0) {
+              if(WorkerForm.provincesList.length > 0) {
                 OpenProvinceDialog(context).then((value) {
                   if(value != null){
                     setState(() {
@@ -979,7 +979,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: CityDialogModel(EmployeeInformationForm.citiesList),
+            child: CityDialogModel(WorkerForm.citiesList),
           );
         }
     );
@@ -990,7 +990,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: ProvinceDialogModel(EmployeeInformationForm.provincesList),
+            child: ProvinceDialogModel(WorkerForm.provincesList),
           );
         }
     );
@@ -1001,7 +1001,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: DistrictDialogModel(EmployeeInformationForm.districtList),
+            child: DistrictDialogModel(WorkerForm.districtList),
           );
         }
     );
@@ -1081,7 +1081,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
         wWFatherNameController.text.toString(), selectedDobDate, selectedCNICIssueDate, selectedCNICExpiryDate, selectedAppontmentDate, "Null",
         wWDesignationController.text.toString(), wWEobiNumberController.text.toString(), wWSsnNumberController.text.toString(),
         selectedDisability, disabilityType, selectedCityID, selectedDistrictID, selectedProvinceID, wWAddressController.text.toString(), data["lat"], data["lng"]);
-    EmployeeInformationForm.companyWorkerInformationModel= companyWorkerInformationModel;
+    WorkerForm.companyWorkerInformationModel= companyWorkerInformationModel;
     ////call Function
     widget.parentFunction(1);
   }
@@ -1123,7 +1123,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
           entitlementsCompanies.forEach((row) {
             String comp_id= row["comp_id"].toString();
             String comp_name= row["comp_name"].toString();
-            EmployeeInformationForm.companiesList.add(new CompanyModel(comp_id, comp_name));
+            WorkerForm.companiesList.add(new CompanyModel(comp_id, comp_name));
           });
         }
 
@@ -1133,7 +1133,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
           entitlementsCities.forEach((row) {
             String city_id= row["city_id"].toString();
             String city_name= row["city_name"].toString();
-            EmployeeInformationForm.citiesList.add(new CityModel(city_id, city_name));
+            WorkerForm.citiesList.add(new CityModel(city_id, city_name));
           });
         }
 
@@ -1143,7 +1143,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
           entitlementsProvinces.forEach((row) {
             String province_id= row["state_id"].toString();
             String province_name= row["state_name"].toString();
-            EmployeeInformationForm.provincesList.add(new ProvinceModel(province_id, province_name));
+            WorkerForm.provincesList.add(new ProvinceModel(province_id, province_name));
           });
         }
 
@@ -1153,7 +1153,7 @@ class _WWFEmployeeFirstTabState extends State<WWFEmployeeFirstTab> {
           entitlementsDistricts.forEach((row) {
             String district_id= row["district_id"].toString();
             String district_name= row["district_name"].toString();
-            EmployeeInformationForm.districtList.add(new DistrictModel(district_id, district_name));
+            WorkerForm.districtList.add(new DistrictModel(district_id, district_name));
           });
         }
       } else {

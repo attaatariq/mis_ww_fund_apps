@@ -1,5 +1,5 @@
 name: wwf_apps
-description: A new Flutter application.
+description: A mobile client for WWF-Pakistan’s Management Information System, providing secure access to worker welfare grants, scholarships, and claims.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.

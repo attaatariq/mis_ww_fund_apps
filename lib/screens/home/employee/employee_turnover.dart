@@ -831,7 +831,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         context: context,
         builder: (context){
           return Center(
-            child: CityDialogModel(EmployeeInformationForm.citiesList),
+            child: CityDialogModel(WorkerForm.citiesList),
           );
         }
     );
@@ -842,7 +842,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         context: context,
         builder: (context){
           return Center(
-            child: DistrictDialogModel(EmployeeInformationForm.districtList),
+            child: DistrictDialogModel(WorkerForm.districtList),
           );
         }
     );
@@ -853,7 +853,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         context: context,
         builder: (context){
           return Center(
-            child: ProvinceDialogModel(EmployeeInformationForm.provincesList),
+            child: ProvinceDialogModel(WorkerForm.provincesList),
           );
         }
     );
@@ -901,31 +901,31 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
 
         ///get cities
         List<dynamic> entitlementsCities = data['cities'];
-        if(entitlementsCities.length > 0 && EmployeeInformationForm.citiesList.length == 0){
+        if(entitlementsCities.length > 0 && WorkerForm.citiesList.length == 0){
           entitlementsCities.forEach((row) {
             String city_id= row["city_id"].toString();
             String city_name= row["city_name"].toString();
-            EmployeeInformationForm.citiesList.add(new CityModel(city_id, city_name));
+            WorkerForm.citiesList.add(new CityModel(city_id, city_name));
           });
         }
 
         ///get provinces
         List<dynamic> entitlementsProvinces = data['states'];
-        if(entitlementsProvinces.length > 0 && EmployeeInformationForm.provincesList.length == 0){
+        if(entitlementsProvinces.length > 0 && WorkerForm.provincesList.length == 0){
           entitlementsProvinces.forEach((row) {
             String province_id= row["state_id"].toString();
             String province_name= row["state_name"].toString();
-            EmployeeInformationForm.provincesList.add(new ProvinceModel(province_id, province_name));
+            WorkerForm.provincesList.add(new ProvinceModel(province_id, province_name));
           });
         }
 
         ///get district
         List<dynamic> entitlementsDistricts = data['districts'];
-        if(entitlementsDistricts.length > 0 && EmployeeInformationForm.districtList.length == 0){
+        if(entitlementsDistricts.length > 0 && WorkerForm.districtList.length == 0){
           entitlementsDistricts.forEach((row) {
             String district_id= row["district_id"].toString();
             String district_name= row["district_name"].toString();
-            EmployeeInformationForm.districtList.add(new DistrictModel(district_id, district_name));
+            WorkerForm.districtList.add(new DistrictModel(district_id, district_name));
           });
         }
       } else {

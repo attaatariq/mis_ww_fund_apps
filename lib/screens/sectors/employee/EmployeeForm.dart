@@ -23,14 +23,14 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
 
-class WWFEmployeeInformationForm extends StatefulWidget {
+class EmployeeForm extends StatefulWidget {
   int selectedTab= 0;
 
   @override
-  _WWFEmployeeInformationFormState createState() => _WWFEmployeeInformationFormState();
+  _EmployeeFormState createState() => _EmployeeFormState();
 }
 
-class _WWFEmployeeInformationFormState extends State<WWFEmployeeInformationForm> {
+class _EmployeeFormState extends State<EmployeeForm> {
 
   @override
   void initState() {

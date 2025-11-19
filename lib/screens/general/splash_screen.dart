@@ -7,7 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
-import 'package:wwf_apps/screens/sectors/employer/CompanyFrom.dart';
+import 'package:wwf_apps/screens/sectors/employer/CompanyForm.dart';
 import 'package:wwf_apps/screens/sectors/employee/EmployeeForm.dart';
 import 'package:wwf_apps/screens/auth/login.dart';
 import 'package:wwf_apps/screens/home/employee/employee_home.dart';
@@ -433,7 +433,7 @@ class _SplashScreenState extends State<SplashScreen>
       }else{
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => WWFEmployeeInformationForm(),
+            builder: (BuildContext context) => EmployeeForm(),
           ),
               (route) => false,
         );
@@ -465,7 +465,7 @@ class _SplashScreenState extends State<SplashScreen>
       }else{
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => CompanyInformationForm(),
+            builder: (BuildContext context) => CompanyForm(),
           ),
               (route) => false,
         );

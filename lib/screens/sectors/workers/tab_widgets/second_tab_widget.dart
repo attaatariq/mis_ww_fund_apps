@@ -8,20 +8,20 @@ import 'package:wwf_apps/models/bankAccountTypeModel.dart';
 import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 
-class EmployeeSecondTab extends StatefulWidget {
+class WorkerSecondTab extends StatefulWidget {
 
   final parentFunction;
 
-  EmployeeSecondTab(this.parentFunction);
+  WorkerSecondTab(this.parentFunction);
 
   @override
-  _EmployeeSecondTabState createState() => _EmployeeSecondTabState();
+  _WorkerSecondTabState createState() => _WorkerSecondTabState();
 }
 
 TextEditingController cWAccountTitleController= TextEditingController();
 TextEditingController cWAccountNumberController= TextEditingController();
 
-class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
+class _WorkerSecondTabState extends State<WorkerSecondTab> {
   String selectedBankName= Strings.instance.selectBankName;
   String selectedAccountType= Strings.instance.selectedAccount;
   bool isDisable= false;
@@ -384,7 +384,7 @@ class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
   void CreateBankModel() {
     CompanyWorkerBankInformationModel companyWorkerBankInformationModel= new CompanyWorkerBankInformationModel(selectedBankName,
         cWAccountTitleController.text.toString(), cWAccountNumberController.text.toString(),selectedAccountType);
-    EmployeeInformationForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
+    WorkerForm.companyWorkerBankInformationModel = companyWorkerBankInformationModel;
     widget.parentFunction(2);
   }
 }

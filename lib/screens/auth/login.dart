@@ -10,7 +10,7 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/controllers/auth/login.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
-import 'package:wwf_apps/screens/sectors/employer/CompanyFrom.dart';
+import 'package:wwf_apps/screens/sectors/employer/CompanyForm.dart';
 import 'package:wwf_apps/screens/sectors/employee/EmployeeForm.dart';
 import 'package:wwf_apps/screens/auth/forgot.dart';
 import 'package:wwf_apps/screens/auth/signup.dart';

@@ -16,13 +16,13 @@ import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
 import 'package:wwf_apps/screens/general/location_picker.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 
-class EmployeeFirstTab extends StatefulWidget {
+class WorkerFirstTab extends StatefulWidget {
   final parentFunction;
 
-  EmployeeFirstTab(this.parentFunction);
+  WorkerFirstTab(this.parentFunction);
 
   @override
-  _EmployeeFirstTabState createState() => _EmployeeFirstTabState();
+  _WorkerFirstTabState createState() => _WorkerFirstTabState();
 }
 
 TextEditingController cWFatherNameController= TextEditingController();
@@ -33,7 +33,7 @@ TextEditingController cWSsnNumberController= TextEditingController();
 TextEditingController cWAddressController= TextEditingController();
 TextEditingController cWDisabilityDetailController= TextEditingController();
 
-class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
+class _WorkerFirstTabState extends State<WorkerFirstTab> {
   String selectedCompanyName= Strings.instance.selectCompany, selectedDobDate=Strings.instance.selectDOB, selectedCNICIssueDate= Strings.instance.selectedCnicIssueDate,
       selectedCNICExpiryDate= Strings.instance.selectedCnicExpiryDate, selectedAppontmentDate= Strings.instance.selectedAppointmentDate, selectedDisability= Strings.instance.selectDisability, selectedCity= Strings.instance.selectCity,
       selectedProvince= Strings.instance.selectProvince, selectedDistrict= Strings.instance.selectDistrict, disabilityType="";
@@ -63,7 +63,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
           children: [
             InkWell(
               onTap: (){
-                if(EmployeeInformationForm.companiesList.length > 0){
+                if(WorkerForm.companiesList.length > 0){
                   OpenCompaniesDialog(context).then((value) => {
                     setState(() {
                       selectedCompanyID = value.id;
@@ -704,7 +704,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
             InkWell(
               onTap: (){
                 OpenCityDialog(context).then((value) => {
-                  if(EmployeeInformationForm.citiesList.length > 0) {
+                  if(WorkerForm.citiesList.length > 0) {
                       OpenCityDialog(context).then((value) {
                         if(value != null) {
                           setState(() {
@@ -771,7 +771,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
 
             InkWell(
               onTap: (){
-                if(EmployeeInformationForm.districtList.length > 0) {
+                if(WorkerForm.districtList.length > 0) {
                   OpenDistrictDialog(context).then((value) {
                     if(value != null) {
                       setState(() {
@@ -837,7 +837,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
 
             InkWell(
               onTap: (){
-                if(EmployeeInformationForm.provincesList.length > 0) {
+                if(WorkerForm.provincesList.length > 0) {
                   OpenProvinceDialog(context).then((value) {
                     if(value != null){
                       setState(() {
@@ -1018,7 +1018,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: CityDialogModel(EmployeeInformationForm.citiesList),
+            child: CityDialogModel(WorkerForm.citiesList),
           );
         }
     );
@@ -1029,7 +1029,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: DistrictDialogModel(EmployeeInformationForm.districtList),
+            child: DistrictDialogModel(WorkerForm.districtList),
           );
         }
     );
@@ -1051,7 +1051,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: ProvinceDialogModel(EmployeeInformationForm.provincesList),
+            child: ProvinceDialogModel(WorkerForm.provincesList),
           );
         }
     );
@@ -1062,7 +1062,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
         context: context,
         builder: (context){
           return Center(
-            child: CompaniesDialogModel(EmployeeInformationForm.companiesList),
+            child: CompaniesDialogModel(WorkerForm.companiesList),
           );
         }
     );
@@ -1216,7 +1216,7 @@ class _EmployeeFirstTabState extends State<EmployeeFirstTab> {
       cWFatherNameController.text.toString(), selectedDobDate, selectedCNICIssueDate, selectedCNICExpiryDate, selectedAppontmentDate, cWPayScaleController.text.toString(),
       cWDesignationController.text.toString(), cWEobiNumberController.text.toString(), cWSsnNumberController.text.toString(),
         selectedDisability, disabilityType, selectedCityID, selectedDistrictID, selectedProvinceID, cWAddressController.text.toString(), data["lat"], data["lng"]);
-    EmployeeInformationForm.companyWorkerInformationModel= companyWorkerInformationModel;
+    WorkerForm.companyWorkerInformationModel= companyWorkerInformationModel;
     ////call Function
     widget.parentFunction(1);
   }
