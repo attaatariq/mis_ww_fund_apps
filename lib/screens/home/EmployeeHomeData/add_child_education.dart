@@ -17,6 +17,7 @@ import 'package:welfare_claims_app/dialogs/schools_dialog_model.dart';
 import 'package:welfare_claims_app/models/ChildModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/models/SchoolModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
@@ -1439,7 +1440,6 @@ class _AddChildEducationState extends State<AddChildEducation> {
     request.fields['child_id'] = selectedChildID;
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['school_id'] = selectedSchoolID;
     request.fields['nature'] = selectedNature;
     request.fields['level'] = selectedLevel;

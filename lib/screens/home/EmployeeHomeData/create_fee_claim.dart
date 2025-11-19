@@ -2006,12 +2006,11 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
     List<String> tagsList= [constants.accountInfo, constants.empChildren];
     Map data = {
       "user_id": UserSessions.instance.getUserID,
-      "user_token": UserSessions.instance.getToken,
       "api_tags": jsonEncode(tagsList).toString(),
     };
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
-    var response = await http.post(Uri.parse(url), body: data);
+    var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     print(response.body);
@@ -2041,16 +2040,18 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url;
     if(!isChildSelected) {
-      url = constants.getApiBaseURL() + constants.claims +
-          "edu_check/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/emp_id--" + refID;
+      url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "edu_check/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: "emp_id--" + refID);
     }else {
-      url = constants.getApiBaseURL() + constants.claims +
-          "edu_check/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/child_id--" + selectedChildID;
+      url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "edu_check/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: "child_id--" + selectedChildID);
     }
 
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
