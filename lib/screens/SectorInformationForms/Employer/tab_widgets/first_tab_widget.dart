@@ -1120,7 +1120,6 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['name'] = cNameController.text.toString();
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['fileno'] = cFileNoController.text.toString();
     request.fields['type'] = selectedType;
     request.fields['industry'] = cIndustryController.text.toString();
@@ -1143,6 +1142,7 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     try{
       final resp= await http.Response.fromStream(response);

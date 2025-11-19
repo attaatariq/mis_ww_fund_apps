@@ -627,6 +627,7 @@ class _AddDeoState extends State<AddDeo> {
       return;
     }
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     final resp = await http.Response.fromStream(response);

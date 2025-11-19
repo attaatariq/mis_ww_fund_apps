@@ -1491,6 +1491,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     try {

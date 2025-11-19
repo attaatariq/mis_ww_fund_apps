@@ -1318,7 +1318,6 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
     request.fields['child'] = "";//
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
     request.fields['user_id'] = UserSessions.instance.getUserID;//
-    request.fields['user_token'] = UserSessions.instance.getToken;//
     request.fields['fileno'] = fileNoController.text.toString();
     request.fields['school'] = selectedSchoolID;//
     request.fields['nature'] = selectedNature;//
@@ -1376,6 +1375,7 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     try {

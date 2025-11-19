@@ -687,7 +687,6 @@ class _AddChildState extends State<AddChild> {
     request.fields['name'] = nameController.text.toString();//
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
     request.fields['user_id'] = UserSessions.instance.getUserID;//
-    request.fields['user_token'] = UserSessions.instance.getToken;//
     request.fields['cnicno'] = cnicController.text.toString();
     request.fields['issued'] = selectedCNICIssueDate;
     request.fields['expiry'] = selectedCNICExpiryDate;
@@ -715,6 +714,7 @@ class _AddChildState extends State<AddChild> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     try {

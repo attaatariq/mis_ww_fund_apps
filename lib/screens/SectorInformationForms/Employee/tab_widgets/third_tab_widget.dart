@@ -599,7 +599,6 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
     print(UserSessions.instance.getUserID+" : "+UserSessions.instance.getToken);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['comp_id'] = EmployeeInformationForm.companyWorkerInformationModel.selectedCompanyID;
     request.fields['father'] = EmployeeInformationForm.companyWorkerInformationModel.fatherName;
     request.fields['about'] = EmployeeInformationForm.companyWorkerInformationModel.designation;
@@ -678,6 +677,7 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     try{
       final resp= await http.Response.fromStream(response);

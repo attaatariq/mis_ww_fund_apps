@@ -1408,7 +1408,6 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
     request.fields['name'] = bNameController.text.toString();//
     request.fields['emp_id'] = UserSessions.instance.getEmployeeID;//
     request.fields['user_id'] = UserSessions.instance.getUserID;//
-    request.fields['user_token'] = UserSessions.instance.getToken;//
     request.fields['cnic'] = bCnicController.text.toString();//
     request.fields['bissued'] = selectedCNICIssueDate;//
     request.fields['bexpiry'] = selectedCNICExpiryDate;//
@@ -1434,6 +1433,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     uiUpdates.DismissProgresssDialog();
     try {
