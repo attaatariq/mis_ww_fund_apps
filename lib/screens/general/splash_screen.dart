@@ -449,7 +449,7 @@ class _SplashScreenState extends State<SplashScreen>
       }else{
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => EmployeeInformationForm(),
+            builder: (BuildContext context) => WorkerForm(),
           ),
               (route) => false,
         );

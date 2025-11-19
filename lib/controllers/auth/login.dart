@@ -151,7 +151,7 @@ class LoginController extends GetxController{
       if(user_account == "0" || user_backing == "null") {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
-            builder: (BuildContext context) => EmployeeInformationForm(),
+            builder: (BuildContext context) => WorkerForm(),
           ),
               (route) => false,
         );

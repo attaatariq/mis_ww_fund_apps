@@ -17,17 +17,17 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
-class WWFEmployeeThirdTab extends StatefulWidget {
+class EmployeeThirdTab extends StatefulWidget {
 
   final parentFunction;
 
-  WWFEmployeeThirdTab(this.parentFunction);
+  EmployeeThirdTab(this.parentFunction);
 
   @override
-  _WWFEmployeeThirdTabState createState() => _WWFEmployeeThirdTabState();
+  _EmployeeThirdTabState createState() => _EmployeeThirdTabState();
 }
 
-class _WWFEmployeeThirdTabState extends State<WWFEmployeeThirdTab> {
+class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
   String userName='';
   String userCNIC='';
   String userGender='';

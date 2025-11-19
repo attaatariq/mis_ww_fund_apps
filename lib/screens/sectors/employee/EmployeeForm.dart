@@ -180,8 +180,8 @@ class _EmployeeFormState extends State<EmployeeForm> {
               child: Container(
                 child: Stack(
                   children: [
-                    widget.selectedTab == 0 ? WWFEmployeeFirstTab(parentFunction) : widget.selectedTab == 1 ? WWFEmployeeSecondTab(parentFunction) : widget.selectedTab == 2 ? WWFEmployeeThirdTab(parentFunction) :
-                    widget.selectedTab == 3 ? WWFEmployeeFirstTab(parentFunction) : WWFEmployeeSecondTab(parentFunction)
+                    widget.selectedTab == 0 ? EmployeeFirstTab(parentFunction) : widget.selectedTab == 1 ? EmployeeSecondTab(parentFunction) : widget.selectedTab == 2 ? EmployeeThirdTab(parentFunction) :
+                    widget.selectedTab == 3 ? EmployeeFirstTab(parentFunction) : EmployeeSecondTab(parentFunction)
                   ],
                 ),
               ),

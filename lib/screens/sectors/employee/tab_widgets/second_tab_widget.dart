@@ -22,7 +22,7 @@ class EmployeeSecondTab extends StatefulWidget {
 TextEditingController wWAccountTitleController= TextEditingController();
 TextEditingController wWAccountNumberController= TextEditingController();
 
-class _WWFEmployeeSecondTabState extends State<WWFEmployeeSecondTab> {
+class _EmployeeSecondTabState extends State<EmployeeSecondTab> {
   String selectedBankName= Strings.instance.selectBankName;
   String selectedAccountType= Strings.instance.selectedAccount;
 
