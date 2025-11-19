@@ -12,6 +12,7 @@ import '../../../models/NoteModel.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../network/api_service.dart';
 import '../../../utils/claim_stages_helper.dart';
 
 class DeathClaimDetail extends StatefulWidget {
@@ -1042,11 +1043,12 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
 
   void GetDeathClaimsDetail() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "deceased_detail/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken + "/" + widget.calim_ID;
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.claims + "deceased_detail/", 
+        UserSessions.instance.getUserID, 
+        additionalPath: widget.calim_ID);
     print(url);
-    var response = await http.get(Uri.parse(url));
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
     if (responseCodeModel.status == true) {

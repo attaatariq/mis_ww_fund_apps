@@ -14,6 +14,7 @@ import 'package:welfare_claims_app/screens/general/widgets/alerts.dart';
 import 'package:welfare_claims_app/screens/general/widgets/notifications.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationsAndAlerts extends StatefulWidget {
@@ -170,10 +171,10 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
   }
 
   GetAlertsAndNotifications(bool isRefresh) async {
-    var url = constants.getApiBaseURL() + constants.alerts +
-        "notices/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.alerts + "notices/", 
+        UserSessions.instance.getUserID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -211,10 +212,10 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
 
   GetNotifications(bool isRefresh) async {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.alerts +
-        "notifications/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.alerts + "notifications/", 
+        UserSessions.instance.getUserID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
     print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

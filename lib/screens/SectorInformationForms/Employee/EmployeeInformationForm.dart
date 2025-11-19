@@ -16,6 +16,7 @@ import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/tab_w
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/tab_widgets/second_tab_widget.dart';
 import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/tab_widgets/third_tab_widget.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -202,8 +203,8 @@ class _EmployeeInformationFormState extends State<EmployeeInformationForm> {
 
   GetInformation() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.authentication+"information/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.authentication+"information/", UserSessions.instance.getUserID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/models/Note.dart';
 import '../../../ImageViewer/ImageViewer.dart';
 import '../../../Strings/Strings.dart';
+import '../../../network/api_service.dart';
 import '../../../colors/app_colors.dart';
 import '../../../constants/Constants.dart';
 import '../../../models/NoteModel.dart';
@@ -1182,12 +1183,13 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
   void GetMarriageClaimsDetail() async {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.claims +
-          "marriage_detail/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken + "/" + widget.calim_ID;
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "marriage_detail/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: widget.calim_ID);
       print(url);
       
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
       

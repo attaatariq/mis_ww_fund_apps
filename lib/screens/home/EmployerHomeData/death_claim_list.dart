@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
 import '../../../colors/app_colors.dart';
 import '../../../constants/Constants.dart';
+import '../../../network/api_service.dart';
 import '../../../itemviews/death_calim_list_item.dart';
 import '../../../models/DeathClaimModel.dart';
 import '../../../models/ResponseCodeModel.dart';
@@ -115,9 +116,9 @@ class _DeathClaimListState extends State<DeathClaimList> {
   void GetDeathClaims() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.claims+"deceased_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"deceased_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
       print(url);
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       print(response.body);

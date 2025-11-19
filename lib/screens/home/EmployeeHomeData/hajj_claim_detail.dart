@@ -9,6 +9,7 @@ import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
 import '../../../uiupdates/UIUpdates.dart';
 import '../../../usersessions/UserSessions.dart';
+import '../../../network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class HajjClaimsDetail extends StatefulWidget {
@@ -351,10 +352,10 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
 
   void GetHajjClaim() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "hajjclaims/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.claims + "hajjclaims/", 
+        UserSessions.instance.getUserID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);

@@ -6,6 +6,7 @@ import 'package:welfare_claims_app/screens/home/EmployeeHomeData/marriage_claim_
 import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
+import '../../../network/api_service.dart';
 import '../../../itemviews/marriage_claim_list_item.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../uiupdates/UIUpdates.dart';
@@ -115,8 +116,8 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
   void GetMarriageClaims() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.claims+"marriage_claim/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/C/"+UserSessions.instance.getRefID;
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"marriage_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       print(url+":"+response.statusCode.toString()+response.body);
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);

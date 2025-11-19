@@ -15,6 +15,7 @@ import 'package:welfare_claims_app/dialogs/payment_mode_dialog_model.dart';
 import 'package:welfare_claims_app/dialogs/year_dialog_model.dart';
 import 'package:welfare_claims_app/models/MonthModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
@@ -1649,7 +1650,6 @@ class _Annex3AState extends State<Annex3A> {
     print(UserSessions.instance.getRefID);
     request.fields['comp_id'] = UserSessions.instance.getRefID;
     request.fields['user_id'] = UserSessions.instance.getUserID;//
-    request.fields['user_token'] = UserSessions.instance.getToken;//
     request.fields['year'] = selectedYear;
     request.fields['statement'] = selectedStatement;
     request.fields['received'] = selectedReceivedDate;//
@@ -1693,6 +1693,7 @@ class _Annex3AState extends State<Annex3A> {
         )
     );
 
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     try{
       final resp= await http.Response.fromStream(response);

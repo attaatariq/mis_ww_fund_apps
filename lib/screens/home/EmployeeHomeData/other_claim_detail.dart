@@ -8,6 +8,7 @@ import 'package:welfare_claims_app/constants/Constants.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class OtherClaimDetail extends StatefulWidget {
@@ -1174,10 +1175,11 @@ class _OtherClaimDetailState extends State<OtherClaimDetail> {
 
   void GetOtherClaimsDetail() async{
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.claims +
-        "other_claim_info/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken+ "/" +widget.calim_ID;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.claims + "other_claim_info/", 
+        UserSessions.instance.getUserID, 
+        additionalPath: widget.calim_ID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {

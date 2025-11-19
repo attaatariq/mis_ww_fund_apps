@@ -11,6 +11,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class HajjClaim extends StatefulWidget {
@@ -116,10 +117,11 @@ class _HajjClaimState extends State<HajjClaim> {
   void GetHajjClaim() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.claims +
-          "hajj_claim/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken+"/C/4";
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "hajj_claim/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: "C/4");
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       print(url+response.body);
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

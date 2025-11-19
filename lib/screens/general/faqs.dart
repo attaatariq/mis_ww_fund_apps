@@ -9,6 +9,7 @@ import 'package:welfare_claims_app/models/FaqModel.dart';
 import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -128,10 +129,10 @@ class _FAQsState extends State<FAQs> {
       if(!isRefresh) {
         uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       }
-      var url = constants.getApiBaseURL() + constants.assessments +
-          "faqs/" + UserSessions.instance.getUserID + "/" +
-          UserSessions.instance.getToken;
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.assessments + "faqs/", 
+          UserSessions.instance.getUserID);
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
       

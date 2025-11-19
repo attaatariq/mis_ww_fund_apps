@@ -11,6 +11,7 @@ import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/AddContactPerson.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/AddDEO.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/contribution.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
@@ -1165,8 +1166,8 @@ class _EmployerHomeState extends State<EmployerHome> {
 
   GetDashBoardData() async{
     var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeCompanies+"/"+UserSessions.instance.getUserID+"/"
-        +UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
-    var response = await http.get(Uri.parse(url));
+        +UserSessions.instance.getRefID;
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
@@ -1259,8 +1260,8 @@ class _EmployerHomeState extends State<EmployerHome> {
     var url = constants.getApiBaseURL()+constants.authentication+"gadget";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['gadget_id'] = notificationToken;
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);

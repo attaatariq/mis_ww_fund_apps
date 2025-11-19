@@ -12,6 +12,7 @@ import 'package:welfare_claims_app/screens/home/EmployeeHomeData/death_claim.dar
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/drawer/drawer_view.dart';
 import 'package:welfare_claims_app/screens/home/EmployeeHomeData/marriage_claim.dart';
 import 'package:http/http.dart' as http;
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 
@@ -942,8 +943,8 @@ class _EmployeeHomeState extends State<EmployeeHome> {
   GetDashBoardData() async{
     //uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeEmployees+"/"+UserSessions.instance.getUserID+"/"
-        +UserSessions.instance.getToken+"/"+UserSessions.instance.getUserID;
-    var response = await http.get(Uri.parse(url));
+        +UserSessions.instance.getUserID;
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     print('url:$url :response:${response.body}:${response.statusCode}');
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
@@ -1038,8 +1039,8 @@ class _EmployeeHomeState extends State<EmployeeHome> {
     var url = constants.getApiBaseURL()+constants.authentication+"gadget";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['gadget_id'] = notificationToken;
+    APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);

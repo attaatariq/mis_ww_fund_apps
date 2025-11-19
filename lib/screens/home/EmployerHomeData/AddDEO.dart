@@ -605,7 +605,6 @@ class _AddDeoState extends State<AddDeo> {
     request.fields['name'] = fullNameController.text.toString();
     request.fields['comp_id'] = UserSessions.instance.getRefID;
     request.fields['user_id'] = UserSessions.instance.getUserID;
-    request.fields['user_token'] = UserSessions.instance.getToken;
     request.fields['cnic'] = cnicController.text.toString();
     request.fields['email'] = emailController.text.toString();
     request.fields['contact'] = numberController.text.toString();

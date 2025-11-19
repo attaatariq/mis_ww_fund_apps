@@ -11,6 +11,7 @@ import 'package:welfare_claims_app/screens/general/add_complaint.dart';
 import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
 import 'package:welfare_claims_app/usersessions/UserSessions.dart';
 import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class Complaints extends StatefulWidget {
@@ -142,10 +143,10 @@ class _ComplaintsState extends State<Complaints> {
     if(!isRefresh) {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     }
-    var url = constants.getApiBaseURL() + constants.assessments +
-        "complaints/" + UserSessions.instance.getUserID + "/" +
-        UserSessions.instance.getToken;
-    var response = await http.get(Uri.parse(url));
+    var url = constants.getApiBaseURL() + constants.buildApiUrl(
+        constants.assessments + "complaints/", 
+        UserSessions.instance.getUserID);
+    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/itemviews/wpf_distribution_item.dart';
 import 'package:welfare_claims_app/models/WPFDistributionModel.dart';
+import 'package:welfare_claims_app/network/api_service.dart';
 import 'package:welfare_claims_app/screens/home/EmployerHomeData/annexA.dart';
 import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
@@ -139,8 +140,8 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
   void GetAllAnnexA() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.companies+"annexure_1/"+UserSessions.instance.getUserID+"/"+UserSessions.instance.getToken+"/"+UserSessions.instance.getRefID;
-      var response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 30));
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.companies+"annexure_1/", UserSessions.instance.getUserID, additionalPath: UserSessions.instance.getRefID);
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       
       if (responseCodeModel.status == true) {
