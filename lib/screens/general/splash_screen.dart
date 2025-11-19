@@ -31,7 +31,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('Handling a background message ${message.toString()}');
   constants.ShowNotification(message);
 }
 
@@ -102,9 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future onSelectNotification(String payload) async {
     if (payload != null) {
-      debugPrint('notification payload: ' + payload);
     }
-    print("Notification Clicked");
   }
 
   StartTimer() async {
@@ -502,13 +499,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   void FirebaseNotificationListener() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Handling a On message '+message.data.toString());
       Map<String, dynamic> data= message.data;
       constants.ShowNotification(message);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Handling a Open App message ${message.toString()}');
       constants.ShowNotification(message);
     });
   }

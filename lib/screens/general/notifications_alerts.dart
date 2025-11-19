@@ -183,7 +183,6 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
       if (code == "1") {
         //get alerts
         List<dynamic> entitlements = body["Data"];
-        print(entitlements.length);
         if(entitlements.length > 0)
         {
           alertList.clear();
@@ -217,7 +216,6 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
         UserSessions.instance.getUserID);
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
-    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {

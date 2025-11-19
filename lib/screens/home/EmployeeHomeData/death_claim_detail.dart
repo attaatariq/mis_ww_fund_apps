@@ -1047,7 +1047,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
         constants.claims + "deceased_detail/", 
         UserSessions.instance.getUserID, 
         additionalPath: widget.calim_ID);
-    print(url);
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);

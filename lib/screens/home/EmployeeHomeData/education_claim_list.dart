@@ -302,7 +302,6 @@ class _EducationClaimListState extends State<EducationClaimList> {
           constants.claims + "fee_claim/", 
           UserSessions.instance.getUserID, 
           additionalPath: "E/${UserSessions.instance.getRefID}");
-      print(url);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
@@ -432,7 +431,6 @@ class _EducationClaimListState extends State<EducationClaimList> {
           constants.claims + "edu_check/", 
           UserSessions.instance.getUserID, 
           additionalPath: "emp_id--" + UserSessions.instance.getRefID);
-      print(url);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

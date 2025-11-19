@@ -147,7 +147,6 @@ class _ComplaintsState extends State<Complaints> {
         constants.assessments + "complaints/", 
         UserSessions.instance.getUserID);
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     uiUpdates.DismissProgresssDialog();

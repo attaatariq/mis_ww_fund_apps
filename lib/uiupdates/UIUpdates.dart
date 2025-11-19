@@ -1,14 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:progress_dialog/progress_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:welfare_claims_app/colors/app_colors.dart';
 import 'package:welfare_claims_app/colors/colors.dart';
 
 class UIUpdates{
   BuildContext context;
-  //ProgressDialog progressDialog;
   SimpleFontelicoProgressDialog _dialog;
 
   UIUpdates(BuildContext context)
@@ -17,7 +14,6 @@ class UIUpdates{
   }
   void ShowProgressDialog(String message)
   {
-    // Dismiss any existing dialog first to prevent multiple dialogs
     DismissProgresssDialog();
     
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -26,30 +22,10 @@ class UIUpdates{
           _dialog = SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
           _dialog.show(message: message, type: SimpleFontelicoProgressDialogType.normal,indicatorColor: AppColors().newPrimary);
         } catch (e) {
-          print('Error showing progress dialog: $e');
         }
       }
     });
 
-    // progressDialog= new ProgressDialog(context, isDismissible: false, type: ProgressDialogType.Normal);
-    // progressDialog.style(
-    //     message: message,
-    //     borderRadius: 10.0,
-    //     backgroundColor: Colors.white,
-    //     progressWidget: CircularProgressIndicator(
-    //       valueColor: new AlwaysStoppedAnimation<Color>(AppTheme.colors.newPrimary),
-    //       strokeWidth: 3,
-    //     ),
-    //     elevation: 10.0,
-    //     insetAnimCurve: Curves.easeInOut,
-    //     progress: 0.0,
-    //     maxProgress: 100.0,
-    //     progressTextStyle: TextStyle(
-    //         color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w400),
-    //     messageTextStyle: TextStyle(
-    //         color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600)
-    // );
-    // progressDialog.show();
   }
 
   void DismissProgresssDialog()
@@ -60,15 +36,10 @@ class UIUpdates{
         _dialog.hide();
         _dialog = null;
       } catch (e) {
-        print('Error dismissing progress dialog: $e');
         _dialog = null;
       }
     }
 
-    // if(progressDialog != null)
-    //   {
-    //     progressDialog.hide();
-    //   }
   }
 
   void HideKeyBoard()
@@ -90,7 +61,6 @@ class UIUpdates{
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  /// Show success message with green background and check icon
   void ShowSuccess(String message, {Duration duration = const Duration(seconds: 3)})
   {
     _showColoredSnackBar(
@@ -101,7 +71,6 @@ class UIUpdates{
     );
   }
 
-  /// Show error message with red background and error icon
   void ShowError(String message, {Duration duration = const Duration(seconds: 4)})
   {
     _showColoredSnackBar(
@@ -112,7 +81,6 @@ class UIUpdates{
     );
   }
 
-  /// Show warning message with orange background and warning icon
   void ShowWarning(String message, {Duration duration = const Duration(seconds: 3)})
   {
     _showColoredSnackBar(
@@ -123,7 +91,6 @@ class UIUpdates{
     );
   }
 
-  /// Show info message with blue background and info icon
   void ShowInfo(String message, {Duration duration = const Duration(seconds: 3)})
   {
     _showColoredSnackBar(
@@ -134,7 +101,6 @@ class UIUpdates{
     );
   }
 
-  /// Internal method to show colored snackbar with icon
   void _showColoredSnackBar({
     String message,
     Color backgroundColor,

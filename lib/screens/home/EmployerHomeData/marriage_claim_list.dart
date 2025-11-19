@@ -118,10 +118,8 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"marriage_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
-      print(url+":"+response.statusCode.toString()+response.body);
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-      print(response.body);
       
       if (responseCodeModel.status == true) {
         try {
@@ -158,7 +156,6 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -180,7 +177,6 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -188,7 +184,6 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.notAvail;

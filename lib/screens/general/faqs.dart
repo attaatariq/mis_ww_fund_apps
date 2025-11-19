@@ -172,7 +172,6 @@ class _FAQsState extends State<FAQs> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -194,7 +193,6 @@ class _FAQsState extends State<FAQs> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -202,7 +200,6 @@ class _FAQsState extends State<FAQs> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.notAvail;

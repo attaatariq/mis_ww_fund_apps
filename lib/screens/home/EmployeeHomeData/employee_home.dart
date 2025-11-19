@@ -1027,7 +1027,6 @@ class _EmployeeHomeState extends State<EmployeeHome> {
 
   void GetToken() async{
     await FirebaseMessaging.instance.getToken().then((token) => {
-      print(token),
       SaveNotificationToken(token)
     });
   }

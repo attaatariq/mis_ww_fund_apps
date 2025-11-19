@@ -205,10 +205,8 @@ class _EmployeeInformationFormState extends State<EmployeeInformationForm> {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.authentication+"information/", UserSessions.instance.getUserID);
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

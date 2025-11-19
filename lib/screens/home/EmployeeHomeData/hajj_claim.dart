@@ -103,9 +103,7 @@ class _HajjClaimState extends State<HajjClaim> {
   }
 
   void CheckTokenExpiry() {
-    print('here1');
     Future.delayed(const Duration(milliseconds: 1000), () {
-      print('here');
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
@@ -122,7 +120,6 @@ class _HajjClaimState extends State<HajjClaim> {
           UserSessions.instance.getUserID, 
           additionalPath: "C/4");
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
-      print(url+response.body);
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
@@ -165,7 +162,6 @@ class _HajjClaimState extends State<HajjClaim> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -179,7 +175,6 @@ class _HajjClaimState extends State<HajjClaim> {
         });
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.notAvail;

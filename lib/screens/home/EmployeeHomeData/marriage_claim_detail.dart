@@ -1187,7 +1187,6 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
           constants.claims + "marriage_detail/", 
           UserSessions.instance.getUserID, 
           additionalPath: widget.calim_ID);
-      print(url);
       
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
@@ -1279,7 +1278,6 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
           setState(() {
             isError = true;
@@ -1300,12 +1298,10 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
             uiUpdates.ShowToast(responseCodeModel.message);
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           uiUpdates.ShowToast(responseCodeModel.message);
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       setState(() {
         isError = true;

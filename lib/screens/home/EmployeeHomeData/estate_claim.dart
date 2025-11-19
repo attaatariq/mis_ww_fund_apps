@@ -569,7 +569,6 @@ class _EstateClaimState extends State<EstateClaim> {
           constants.claims + "estate_claim/", 
           UserSessions.instance.getUserID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
-      print(url+response.body);
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
@@ -658,7 +657,6 @@ class _EstateClaimState extends State<EstateClaim> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             hasEstateData = false;
             isError= true;
@@ -676,7 +674,6 @@ class _EstateClaimState extends State<EstateClaim> {
         });
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         hasEstateData = false;
         isError= true;

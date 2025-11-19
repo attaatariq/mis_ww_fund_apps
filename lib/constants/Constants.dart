@@ -556,7 +556,6 @@ class Constants {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
-    print(version + " : " + buildNumber);
     final newVersion = NewVersion(
       androidId: "com.snapchat.android",
       //androidId: "com.fi9solutions.welfare_claims_app",
@@ -567,9 +566,7 @@ class Constants {
       var doubleLocalVersion = ConvertedNumber(version);
       var doubleStoreVersion = ConvertedNumber(status.storeVersion);
       if (doubleLocalVersion < doubleStoreVersion) {
-        print("Low Version");
       } else {
-        print("Stable Version");
       }
     }
   }
@@ -587,7 +584,6 @@ class Constants {
   double ConvertedNumber(String version) {
     var splitString = version.split(".");
     if (splitString.length >= 3) {
-      print(splitString[0] + " : " + splitString[1] + " : " + splitString[2]);
       if (int.parse(splitString[2]) > 5) {
         int totalSecDigi = (int.parse(splitString[1]) + 1);
         String newStringVersion =
@@ -598,7 +594,6 @@ class Constants {
         return double.parse(newStringVersion);
       }
     } else {
-      print(splitString[0] + " : " + splitString[0]);
       return double.parse(version);
     }
   }
@@ -626,7 +621,6 @@ class Constants {
         return result.toStringAsFixed(2) + "T";
       }
     } catch (e) {
-      print(e);
     }
   }
 

@@ -340,7 +340,6 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
   }
 
   void CheckTokenExpiry() {
-    print("here1");
     Future.delayed(const Duration(milliseconds: 1000), () {
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
@@ -356,7 +355,6 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
         constants.claims + "hajjclaims/", 
         UserSessions.instance.getUserID);
     var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    print(url+response.body);
     ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
         response.statusCode, response);
     if (responseCodeModel.status == true) {
@@ -381,7 +379,6 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
             isError= false;
           });
         }else{
-          print("3");
           uiUpdates.DismissProgresssDialog();
           setState(() {
             isError= true;
@@ -391,13 +388,11 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
 
         uiUpdates.DismissProgresssDialog();
       } else {
-        print("2");
         var body = jsonDecode(response.body);
         String message = body["Data"].toString();
         uiUpdates.ShowToast(message);
       }
     } else {
-      print("1");
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(responseCodeModel.message);
     }

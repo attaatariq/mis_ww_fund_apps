@@ -841,7 +841,6 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     } finally {
       await Future.delayed(Duration(milliseconds: 200));

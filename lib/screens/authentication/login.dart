@@ -78,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      print("Resume Called");
     }
   }
 
@@ -585,7 +584,6 @@ class _LoginScreenState extends State<LoginScreen>
   void CheckConnectivity() {
     constants.CheckConnectivity(context).then((value) {
       if (value) {
-        print("here now");
         loginController.loginData(
             ipAddress: ipAddress,
             platform: platform,
@@ -605,7 +603,6 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     }).catchError((error) {
-      print('CheckConnectivity error: $error');
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       setState(() {
@@ -628,7 +625,6 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     }).catchError((error) {
-      print('GetIPAddress error: $error');
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       setState(() {
@@ -650,7 +646,6 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     }).catchError((error) {
-      print('GetDeviceinfo error: $error');
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       setState(() {
@@ -672,7 +667,6 @@ class _LoginScreenState extends State<LoginScreen>
         });
       }
     }).catchError((error) {
-      print('GetPalform error: $error');
       uiUpdates.DismissProgresssDialog();
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
       setState(() {

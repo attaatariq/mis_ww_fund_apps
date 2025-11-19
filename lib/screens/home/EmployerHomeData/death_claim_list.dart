@@ -117,11 +117,9 @@ class _DeathClaimListState extends State<DeathClaimList> {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"deceased_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
-      print(url);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-      print(response.body);
       
       if (responseCodeModel.status == true) {
         try {
@@ -160,7 +158,6 @@ class _DeathClaimListState extends State<DeathClaimList> {
             });
           }
         } catch (e) {
-          print('JSON parsing error: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -182,7 +179,6 @@ class _DeathClaimListState extends State<DeathClaimList> {
             });
           }
         } catch (e) {
-          print('Error parsing error response: $e');
           setState(() {
             isError= true;
             errorMessage = Strings.instance.notAvail;
@@ -190,7 +186,6 @@ class _DeathClaimListState extends State<DeathClaimList> {
         }
       }
     } catch (e) {
-      print('Network or request error: $e');
       setState(() {
         isError= true;
         errorMessage = Strings.instance.notAvail;
