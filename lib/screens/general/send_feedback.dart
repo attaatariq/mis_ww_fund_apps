@@ -383,10 +383,8 @@ class _SendFeedbackState extends State<SendFeedback> {
       "feed_quality": selectedFeedback,
       "feed_message": feedBackController.text.toString(),
     };
-    print(data.toString());
     var url = constants.getApiBaseURL()+constants.assessments+"feedback";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders(), encoding: Encoding.getByName("UTF-8"));
-    print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {

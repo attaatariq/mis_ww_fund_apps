@@ -267,7 +267,6 @@ class _EditProfileState extends State<EditProfile> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -328,10 +327,8 @@ class _EditProfileState extends State<EditProfile> {
       "contact": numberController.text.toString(),
       "about": aboutController.text.toString(),
     };
-    print(data.toString());
     var url = constants.getApiBaseURL()+constants.authentication+"profile";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
-    print(response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {

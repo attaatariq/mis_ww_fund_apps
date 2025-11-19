@@ -1225,7 +1225,6 @@ class _AddChildEducationState extends State<AddChildEducation> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -1347,13 +1346,11 @@ class _AddChildEducationState extends State<AddChildEducation> {
       "user_id": UserSessions.instance.getUserID,
       "api_tags": jsonEncode(tagsList).toString(),
     };
-    print(jsonEncode(tagsList).toString());
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
     var url = constants.getApiBaseURL()+constants.authentication+"information";
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     uiUpdates.DismissProgresssDialog();
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

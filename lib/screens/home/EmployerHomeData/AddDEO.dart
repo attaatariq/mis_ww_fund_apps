@@ -601,7 +601,6 @@ class _AddDeoState extends State<AddDeo> {
     uiUpdates.HideKeyBoard();
 //    var url = constants.getApiBaseURL()+constants.companies+"deo";
     var url = constants.getApiBaseURL()+constants.companies+"stenotypist";
-    print("url:$url:$logoFilePath");
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['name'] = fullNameController.text.toString();
     request.fields['comp_id'] = UserSessions.instance.getRefID;

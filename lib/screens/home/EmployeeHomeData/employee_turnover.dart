@@ -883,8 +883,6 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
     var response = await http.post(Uri.parse(url), body: data);
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
-    print(data);
-    print(url+response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

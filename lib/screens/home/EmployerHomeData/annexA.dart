@@ -2153,7 +2153,6 @@ class _AnnexAState extends State<AnnexA> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -2469,8 +2468,6 @@ class _AnnexAState extends State<AnnexA> {
           File(logoFilePath).lengthSync(),
           filename: logoFilePath.split("/").last));
     }
-    print(url);
-    debugPrint(request.fields.toString(), wrapWidth: 1024);
 
     APIService.addAuthHeaderToMultipartRequest(request);
     var response = await request.send();
@@ -2479,7 +2476,6 @@ class _AnnexAState extends State<AnnexA> {
       ResponseCodeModel responseCodeModel =
           constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
-      debugPrint(resp.body, wrapWidth: 1024);
       if (responseCodeModel.status == true) {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
@@ -2505,7 +2501,6 @@ class _AnnexAState extends State<AnnexA> {
       }
     } catch (e) {
       uiUpdates.DismissProgresssDialog();
-      print(e);
     }
   }
 
@@ -2533,8 +2528,6 @@ class _AnnexAState extends State<AnnexA> {
     ResponseCodeModel responseCodeModel =
         constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
-    print(data);
-    print(url + response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();

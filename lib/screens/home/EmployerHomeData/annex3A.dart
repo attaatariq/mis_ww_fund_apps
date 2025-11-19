@@ -1506,7 +1506,6 @@ class _Annex3AState extends State<Annex3A> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -1646,7 +1645,6 @@ class _Annex3AState extends State<Annex3A> {
     uiUpdates.ShowProgressDialog("Please Wait...");
     var url = constants.getApiBaseURL()+constants.companies+"annex3a";
     var request = http.MultipartRequest('POST', Uri.parse(url));
-    print(UserSessions.instance.getRefID);
     request.fields['comp_id'] = UserSessions.instance.getRefID;
     request.fields['user_id'] = UserSessions.instance.getUserID;//
     request.fields['year'] = selectedYear;
@@ -1698,7 +1696,6 @@ class _Annex3AState extends State<Annex3A> {
       final resp= await http.Response.fromStream(response);
       ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
-      print(resp.body);
       if (responseCodeModel.status == true) {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
@@ -1721,7 +1718,6 @@ class _Annex3AState extends State<Annex3A> {
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();
-      print(e);
     }
   }
 }

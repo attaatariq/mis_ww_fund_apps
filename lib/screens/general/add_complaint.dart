@@ -234,10 +234,8 @@ class _AddComplaintState extends State<AddComplaint> {
       "com_subject": selectComplaintType,
       "com_message": complaintController.text.toString(),
     };
-    print(data.toString());
     var url = constants.getApiBaseURL()+constants.assessments+"complaint";
     var response = await http.post(Uri.parse(url), body: data, encoding: Encoding.getByName("UTF-8"));
-    print("url:$url :data:${data}"+response.body+" : "+response.statusCode.toString());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
     if (responseCodeModel.status == true) {

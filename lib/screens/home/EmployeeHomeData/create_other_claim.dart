@@ -1061,7 +1061,6 @@ class _CreateOtherClaimState extends State<CreateOtherClaim> {
     var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
     ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
     uiUpdates.DismissProgresssDialog();
-    print(response.body);
     if (responseCodeModel.status == true) {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
@@ -1158,7 +1157,6 @@ class _CreateOtherClaimState extends State<CreateOtherClaim> {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[Permission.storage]);
     }
     FilePickerResult result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
