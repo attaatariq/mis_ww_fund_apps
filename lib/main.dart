@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:welfare_claims_app/Strings/Strings.dart';
@@ -18,11 +19,17 @@ class MyHttpOverrides extends HttpOverrides {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  if (kReleaseMode) {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+    };
+  }
+  
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   HttpOverrides.global = MyHttpOverrides();
 
-  ///set instance of user sessions
   await Firebase.initializeApp();
   await UserSessions.instance.init();
   await Strings.instance.init();
@@ -30,7 +37,6 @@ void main() async {
   runApp(MaterialApp(
     theme: new ThemeData(
         primaryColor: AppTheme.colors.newPrimary,
-        // accentColor: AppTheme.colors.colorAccent, // It's deprecated and shouldn't be used.
         colorScheme: ThemeData().colorScheme.copyWith(secondary: AppTheme.colors.colorAccent),
         primaryColorDark: AppTheme.colors.newPrimary,
         unselectedWidgetColor: AppTheme.colors.white),
