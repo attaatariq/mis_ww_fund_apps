@@ -29,3 +29,12 @@
 # Suppress system-level errors that can't be controlled by the app
 -dontwarn android.view.FrameInsert
 -dontwarn android.view.FrameInsertManager
+
+# Suppress FlutterGeolocator background service warnings (normal behavior)
+-dontwarn com.baseflow.geolocator.**
+
+# Suppress MIUI system logs (device-specific, not app errors)
+-dontwarn com.miui.**
+
+# Suppress system property access warnings
+-dontwarn libcore.io.Libcore

@@ -530,6 +530,14 @@ class Constants {
   }
 
   void CheckForNewUpdate(BuildContext context) async {
+    // Skip update check if app is not yet published on Play Store
+    // Set this to true once app is published
+    const bool isAppPublished = false;
+    
+    if (!isAppPublished) {
+      return;
+    }
+    
     try {
       final newVersion = NewVersion(
           androidId: "pk.gov.wwf.apps",
@@ -552,7 +560,7 @@ class Constants {
         );
       }
     } catch (e) {
-      // Silently handle Play Store lookup failures (app may not be published yet)
+      // Silently handle Play Store lookup failures
     }
   }
 
