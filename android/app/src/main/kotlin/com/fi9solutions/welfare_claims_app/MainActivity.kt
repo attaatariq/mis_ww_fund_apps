@@ -1,4 +1,4 @@
-package com.fi9solutions.welfare_claims_app
+package pk.gov.wwf.apps
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity

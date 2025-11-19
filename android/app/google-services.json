@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:262862127608:android:8c9e0c0f95bd0bc97f960d",
         "android_client_info": {
-          "package_name": "com.fi9solutions.welfare_claims_app"
+          "package_name": "pk.gov.wwf.apps"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "262862127608-elad2fn635qeic82irv4mvna4ckd4fld.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.fi9solutions.welfare_claims_app",
+            "package_name": "pk.gov.wwf.apps",
             "certificate_hash": "2158b2a2b9a7b297a2848a58476ac0fc7390ff61"
           }
         },

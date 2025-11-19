@@ -516,8 +516,8 @@ alerts/
 ### Firebase Configuration
 
 1. Create Firebase project
-2. Add Android app (package: `com.fi9solutions.welfare_claims_app`)
-3. Add iOS app (bundle ID: `com.fi9solutions.welfareClaimsApp`)
+2. Add Android app (package: `pk.gov.wwf.apps`)
+3. Add iOS app (bundle ID: `pk.gov.wwf.apps`)
 4. Download configuration files
 5. Place in respective directories
 
@@ -555,7 +555,7 @@ flutter build ios --release
 ### Build Configuration
 
 - **App Name**: Workers Welfare Fund MIS
-- **Package Name**: `com.fi9solutions.welfare_claims_app`
+- **Package Name**: `pk.gov.wwf.apps`
 - **Version**: 1.0.0+1
 - **Icon**: Configured via `flutter_launcher_icons`
 

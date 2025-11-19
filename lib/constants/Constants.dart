@@ -531,8 +531,8 @@ class Constants {
 
   void CheckForNewUpdate(BuildContext context) async {
     final newVersion = NewVersion(
-        androidId: "com.fi9solutions.welfare_claims_app",
-        iOSId: "com.fi9solutions.welfareClaimsApp");
+        androidId: "pk.gov.wwf.apps",
+        iOSId: "pk.gov.wwf.apps");
     final status = await newVersion.getVersionStatus();
     if (status != null && status.canUpdate) {
       newVersion.showUpdateDialog(
@@ -558,8 +558,8 @@ class Constants {
     String buildNumber = packageInfo.buildNumber;
     final newVersion = NewVersion(
       androidId: "com.snapchat.android",
-      //androidId: "com.fi9solutions.welfare_claims_app",
-      //iOSId: "com.fi9solutions.welfareClaimsApp"
+      //androidId: "pk.gov.wwf.apps",
+      //iOSId: "pk.gov.wwf.apps"
     );
     final status = await newVersion.getVersionStatus();
     if (status != null) {
