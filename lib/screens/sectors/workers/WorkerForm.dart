@@ -20,7 +20,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
-class EmployeeInformationForm extends StatefulWidget {
+class WorkerForm extends StatefulWidget {
   int selectedTab= 0;
   static CompanyWorkerInformationModel companyWorkerInformationModel;
   static CompanyWorkerBankInformationModel companyWorkerBankInformationModel;
@@ -30,10 +30,10 @@ class EmployeeInformationForm extends StatefulWidget {
   static List<CompanyModel> companiesList= [];
 
   @override
-  _EmployeeInformationFormState createState() => _EmployeeInformationFormState();
+  _WorkerFormState createState() => _WorkerFormState();
 }
 
-class _EmployeeInformationFormState extends State<EmployeeInformationForm> {
+class _WorkerFormState extends State<WorkerForm> {
 
   Constants constants;
   UIUpdates uiUpdates;

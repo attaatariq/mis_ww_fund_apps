@@ -530,44 +530,52 @@ class Constants {
   }
 
   void CheckForNewUpdate(BuildContext context) async {
-    final newVersion = NewVersion(
-        androidId: "pk.gov.wwf.apps",
-        iOSId: "pk.gov.wwf.apps");
-    final status = await newVersion.getVersionStatus();
-    if (status != null && status.canUpdate) {
-      newVersion.showUpdateDialog(
-        context: context,
-        allowDismissal: false,
-        versionStatus: status,
-        dialogTitle: "UPDATE!!!",
-        dialogText: "Please update the app from " +
-            "${status.localVersion}" +
-            " to " +
-            "${status.storeVersion}",
-        dismissAction: () {
-          SystemNavigator.pop();
-        },
-        updateButtonText: "Lets update",
-      );
+    try {
+      final newVersion = NewVersion(
+          androidId: "pk.gov.wwf.apps",
+          iOSId: "pk.gov.wwf.apps");
+      final status = await newVersion.getVersionStatus();
+      if (status != null && status.canUpdate) {
+        newVersion.showUpdateDialog(
+          context: context,
+          allowDismissal: false,
+          versionStatus: status,
+          dialogTitle: "UPDATE!!!",
+          dialogText: "Please update the app from " +
+              "${status.localVersion}" +
+              " to " +
+              "${status.storeVersion}",
+          dismissAction: () {
+            SystemNavigator.pop();
+          },
+          updateButtonText: "Lets update",
+        );
+      }
+    } catch (e) {
+      // Silently handle Play Store lookup failures (app may not be published yet)
     }
   }
 
   void CheckForNewUpdate1(BuildContext context) async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
-    final newVersion = NewVersion(
-      androidId: "com.snapchat.android",
-      //androidId: "pk.gov.wwf.apps",
-      //iOSId: "pk.gov.wwf.apps"
-    );
-    final status = await newVersion.getVersionStatus();
-    if (status != null) {
-      var doubleLocalVersion = ConvertedNumber(version);
-      var doubleStoreVersion = ConvertedNumber(status.storeVersion);
-      if (doubleLocalVersion < doubleStoreVersion) {
-      } else {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      final newVersion = NewVersion(
+        androidId: "com.snapchat.android",
+        //androidId: "pk.gov.wwf.apps",
+        //iOSId: "pk.gov.wwf.apps"
+      );
+      final status = await newVersion.getVersionStatus();
+      if (status != null) {
+        var doubleLocalVersion = ConvertedNumber(version);
+        var doubleStoreVersion = ConvertedNumber(status.storeVersion);
+        if (doubleLocalVersion < doubleStoreVersion) {
+        } else {
+        }
       }
+    } catch (e) {
+      // Silently handle Play Store lookup failures
     }
   }
 

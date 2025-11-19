@@ -26,3 +26,6 @@
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
 
+# Suppress system-level errors that can't be controlled by the app
+-dontwarn android.view.FrameInsert
+-dontwarn android.view.FrameInsertManager
