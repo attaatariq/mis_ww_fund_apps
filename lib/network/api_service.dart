@@ -43,7 +43,6 @@ static Future<String> postRequest({
         return null;
       }
       
-      // Merge default headers (with Bearer token) with provided headers
       Map<String, String> finalHeaders = getDefaultHeaders(additionalHeaders: headers);
       
       var response = await client.post(
@@ -78,7 +77,6 @@ static Future<String> postRequest({
       }
     }catch(e)
   {
-    print(e);
     uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     return null;
   }
@@ -98,7 +96,6 @@ static Future<String> postRequest({
         return null;
       }
       
-      // Merge default headers (with Bearer token) with provided headers
       Map<String, String> finalHeaders = getDefaultHeaders(additionalHeaders: headers);
       
       var response = await client.get(
@@ -109,7 +106,6 @@ static Future<String> postRequest({
       switch (statusCode) {
         case HttpStatus.ok:
           var jsonString = response.body;
-          if ( kDebugMode) debugPrint(jsonString, wrapWidth: 1024);
           return jsonString;
           break;
         case HttpStatus.gatewayTimeout:
