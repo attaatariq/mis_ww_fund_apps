@@ -2,19 +2,19 @@ import 'dart:convert';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/itemviews/alert_list_item.dart';
-import 'package:welfare_claims_app/itemviews/notification_list_item.dart';
-import 'package:welfare_claims_app/models/AlertModel.dart';
-import 'package:welfare_claims_app/models/NotificationModel.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/screens/general/widgets/alerts.dart';
-import 'package:welfare_claims_app/screens/general/widgets/notifications.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/views/alert_list_item.dart';
+import 'package:wwf_apps/views/notification_list_item.dart';
+import 'package:wwf_apps/models/AlertModel.dart';
+import 'package:wwf_apps/models/NotificationModel.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/screens/general/widgets/alerts.dart';
+import 'package:wwf_apps/screens/general/widgets/notifications.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationsAndAlerts extends StatefulWidget {

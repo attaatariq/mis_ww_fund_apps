@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/models/EmployeeVerificationModel.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/models/EmployeeVerificationModel.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/network/api_service.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class EmployeeVerificationDialog extends StatefulWidget {
   EmployeeVerificationModel model;

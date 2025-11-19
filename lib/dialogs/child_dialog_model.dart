@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/itemviews/center_text_list_item.dart';
-import 'package:welfare_claims_app/models/ChildModel.dart';
-import 'package:welfare_claims_app/models/CityModel.dart';
-import 'package:welfare_claims_app/models/CompanyModel.dart';
-import 'package:welfare_claims_app/models/SchoolModel.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/views/center_text_list_item.dart';
+import 'package:wwf_apps/models/ChildModel.dart';
+import 'package:wwf_apps/models/CityModel.dart';
+import 'package:wwf_apps/models/CompanyModel.dart';
+import 'package:wwf_apps/models/SchoolModel.dart';
 
 class ChildDialogModel extends StatefulWidget {
   List<ChildModel> list;

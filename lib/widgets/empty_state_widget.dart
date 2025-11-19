@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
 
 /// A reusable widget to display consistent empty states across the application
 /// with an icon, message, and optional description

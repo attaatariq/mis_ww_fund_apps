@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
 
 class StatusHelper {
   // Status color coding based on claim stage

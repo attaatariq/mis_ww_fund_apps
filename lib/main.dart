@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/screens/general/splash_screen.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/screens/general/splash_screen.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'colors/app_colors.dart';
 
 class MyHttpOverrides extends HttpOverrides {

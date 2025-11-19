@@ -3,19 +3,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/models/ClaimStageModel.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/Employer/CompanyInformationFrom.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/wwf_employee/WWFEmployeeInformationForm.dart';
-import 'package:welfare_claims_app/screens/general/splash_screen.dart';
-import 'package:welfare_claims_app/screens/home/EmployeeHomeData/employee_home.dart';
-import 'package:welfare_claims_app/screens/home/EmployerHomeData/employer_home.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/models/ClaimStageModel.dart';
+import 'package:wwf_apps/network/api_service.dart';
+import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
+import 'package:wwf_apps/screens/sectors/employer/CompanyFrom.dart';
+import 'package:wwf_apps/screens/sectors/employee/EmployeeForm.dart';
+import 'package:wwf_apps/screens/general/splash_screen.dart';
+import 'package:wwf_apps/screens/home/employee/employee_home.dart';
+import 'package:wwf_apps/screens/home/employer/employer_home.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class LoginController extends GetxController{
   var isLoading=false.obs;

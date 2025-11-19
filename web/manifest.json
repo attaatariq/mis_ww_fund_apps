@@ -1,6 +1,6 @@
 {
-    "name": "welfare_claims_app",
-    "short_name": "welfare_claims_app",
+    "name": "wwf_apps",
+    "short_name": "wwf_apps",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

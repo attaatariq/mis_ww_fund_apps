@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/models/ClaimStageModel.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/models/ClaimStageModel.dart';
 
 class ClaimStagesHelper {
   // Get color based on API color value

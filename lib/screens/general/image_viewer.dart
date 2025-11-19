@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
 
 class ImageViewer extends StatefulWidget {
   String URL="";
@@ -61,8 +61,8 @@ class _ImageViewerState extends State<ImageViewer> {
                   borderRadius: BorderRadius.circular(0),
                   child: widget.URL != "null" && widget.URL != "" ? FadeInImage(
                     image: NetworkImage(widget.URL),
-                    placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
-                  ) : Image.asset("assets/images/no_image_placeholder.jpg",
+                    placeholder: AssetImage("archive/images/no_image.jpg"),
+                  ) : Image.asset("archive/images/no_image.jpg",
                   ),
                 ),
               ),

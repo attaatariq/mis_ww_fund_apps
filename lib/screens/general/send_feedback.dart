@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/network/api_service.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class SendFeedback extends StatefulWidget {
   @override
@@ -114,7 +114,7 @@ class _SendFeedbackState extends State<SendFeedback> {
                                 children: [
                                   Image(
                                     image: AssetImage(
-                                        "assets/images/exelent_smile.png"),
+                                        "archive/images/smile_ex.png"),
                                     alignment: Alignment.center,
                                     height: 20.0,
                                     width: 20.0,
@@ -156,7 +156,7 @@ class _SendFeedbackState extends State<SendFeedback> {
                                 children: [
                                   Image(
                                     image: AssetImage(
-                                        "assets/images/good_smile.png"),
+                                        "archive/images/smile.png"),
                                     alignment: Alignment.center,
                                     height: 20.0,
                                     width: 20.0,
@@ -198,7 +198,7 @@ class _SendFeedbackState extends State<SendFeedback> {
                                 children: [
                                   Image(
                                     image: AssetImage(
-                                        "assets/images/sad.png"),
+                                        "archive/images/sad.png"),
                                     alignment: Alignment.center,
                                     height: 20.0,
                                     width: 20.0,
@@ -240,7 +240,7 @@ class _SendFeedbackState extends State<SendFeedback> {
                                 children: [
                                   Image(
                                     image: AssetImage(
-                                        "assets/images/poor.png"),
+                                        "archive/images/poor.png"),
                                     alignment: Alignment.center,
                                     height: 20.0,
                                     width: 20.0,

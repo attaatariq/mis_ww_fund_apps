@@ -158,14 +158,14 @@ lib/
 ├── constants/                 # Application constants
 │   └── Constants.dart
 ├── controllers/               # Business logic controllers
-│   └── authentication/
+│   └── auth/
 │       └── login.dart
 ├── dialogs/                   # Custom dialog widgets (27 dialogs)
 │   ├── app_update_dialog.dart
 │   ├── banks_dialog_model.dart
 │   ├── complaint_type_dialog_model.dart
 │   └── ... (24 more)
-├── itemviews/                 # List item widgets (19 items)
+├── views/                 # List item widgets (19 items)
 │   ├── children_list_itemview.dart
 │   ├── complaint_list_item.dart
 │   ├── fee_claim_list_item.dart
@@ -180,27 +180,25 @@ lib/
 ├── network/                   # API service layer
 │   └── api_service.dart
 ├── screens/                   # Application screens
-│   ├── authentication/        # Login, Signup, Verification
+│   ├── auth/        # Login, Signup, Verification
 │   ├── general/              # Common screens (14 screens)
 │   ├── home/
-│   │   ├── EmployeeHomeData/ # Worker screens (27 screens)
-│   │   └── EmployerHomeData/ # Company screens (15 screens)
-│   └── SectorInformationForms/ # Registration forms
+│   │   ├── employee/ # Worker screens (27 screens)
+│   │   └── employer/ # Company screens (15 screens)
+│   └── sectors/ # Registration forms
 ├── Strings/                   # String resources
 │   └── Strings.dart
-├── uiupdates/                 # UI utility functions
+├── updates/                 # UI utility functions
 │   └── UIUpdates.dart
-├── usersessions/              # Session management
+├── sessions/              # Session management
 │   └── UserSessions.dart
-├── ImageViewer/               # Image viewing utility
+├── viewer/               # Image viewing utility
 │   └── ImageViewer.dart
 └── main.dart                  # Application entry point
 
-assets/
+archive/
 └── images/                    # Application images (50+ images)
-
-fonts/
-└── varela_round_regular.otf   # Custom font
+└── fonts/varela_round.otf   # Custom font
 ```
 
 ## User Roles & Access Control
@@ -399,7 +397,7 @@ The application supports multiple user roles with different access levels:
 authenticate/
   ├── login
   ├── signup
-  ├── forgot_password
+  ├── forgot
   ├── information
   └── gadget (FCM token registration)
 

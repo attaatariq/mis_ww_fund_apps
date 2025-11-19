@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
 
 class LocationPicker extends StatefulWidget {
   @override

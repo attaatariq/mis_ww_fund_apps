@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/screens/general/edit_my_profile.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/screens/general/edit_my_profile.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -113,9 +113,9 @@ class _MyProfileState extends State<MyProfile> {
                         borderRadius: BorderRadius.circular(100),
                         child: UserSessions.instance.getUserImage != "null" ? FadeInImage(
                           image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
-                          placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
+                          placeholder: AssetImage("archive/images/no_image.jpg"),
                           fit: BoxFit.fill,
-                        ) : Image.asset("assets/images/no_image_placeholder.jpg",
+                        ) : Image.asset("archive/images/no_image.jpg",
                           height: 60.0,
                           width: 60,
                           fit: BoxFit.fill,
@@ -223,7 +223,7 @@ class _MyProfileState extends State<MyProfile> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/profile_ic.png",
+                        child: Image.asset("archive/images/profile_ic.png",
                           height: 20.0,
                           width: 20,
                           color: AppTheme.colors.newWhite,
@@ -286,7 +286,7 @@ class _MyProfileState extends State<MyProfile> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/phone_ic.png",
+                        child: Image.asset("archive/images/phone_ic.png",
                           height: 20.0,
                           width: 20,
                           color: AppTheme.colors.newWhite,
@@ -349,7 +349,7 @@ class _MyProfileState extends State<MyProfile> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/email_ic.png",
+                        child: Image.asset("archive/images/email_ic.png",
                           height: 20.0,
                           width: 20,
                           color: AppTheme.colors.newWhite,
@@ -412,7 +412,7 @@ class _MyProfileState extends State<MyProfile> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Center(
-                        child: Image.asset("assets/images/cnic_ic.png",
+                        child: Image.asset("archive/images/cnic_ic.png",
                           height: 20.0,
                           width: 20,
                           color: AppTheme.colors.newWhite,

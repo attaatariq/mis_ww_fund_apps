@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/itemviews/notification_list_item.dart';
-import 'package:welfare_claims_app/models/NotificationModel.dart';
-import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/views/notification_list_item.dart';
+import 'package:wwf_apps/models/NotificationModel.dart';
+import 'package:wwf_apps/widgets/empty_state_widget.dart';
 
 class Notifications extends StatefulWidget {
   List<NotificationModel> list;

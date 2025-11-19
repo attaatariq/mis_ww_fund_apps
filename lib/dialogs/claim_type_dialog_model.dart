@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
 
 class ClaimTypeDialogModel extends StatefulWidget {
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/itemviews/center_text_list_item.dart';
-import 'package:welfare_claims_app/models/CityModel.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/views/center_text_list_item.dart';
+import 'package:wwf_apps/models/CityModel.dart';
 
 class ComplaintTypeDialogModel extends StatefulWidget {
   List<String> list;

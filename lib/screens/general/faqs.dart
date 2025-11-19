@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/itemviews/faq_list_item.dart';
-import 'package:welfare_claims_app/models/FaqModel.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/views/faq_list_item.dart';
+import 'package:wwf_apps/models/FaqModel.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class FAQs extends StatefulWidget {
   @override

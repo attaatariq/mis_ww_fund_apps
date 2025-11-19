@@ -4,15 +4,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/Employee/EmployeeInformationForm.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/Employer/CompanyInformationFrom.dart';
-import 'package:welfare_claims_app/screens/SectorInformationForms/wwf_employee/WWFEmployeeInformationForm.dart';
-import 'package:welfare_claims_app/screens/authentication/login.dart';
-import 'package:welfare_claims_app/screens/home/EmployeeHomeData/employee_home.dart';
-import 'package:welfare_claims_app/screens/home/EmployerHomeData/employer_home.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
+import 'package:wwf_apps/screens/sectors/employer/CompanyFrom.dart';
+import 'package:wwf_apps/screens/sectors/employee/EmployeeForm.dart';
+import 'package:wwf_apps/screens/auth/login.dart';
+import 'package:wwf_apps/screens/home/employee/employee_home.dart';
+import 'package:wwf_apps/screens/home/employer/employer_home.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -205,7 +205,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 ),
                                 child: Center(
                                   child: Image.asset(
-                                    "assets/images/logo.png",
+                                    "archive/images/logo.png",
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.contain,

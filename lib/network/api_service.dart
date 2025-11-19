@@ -7,10 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/screens/general/splash_screen.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/screens/general/splash_screen.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class APIService {
   static var client=http.Client();

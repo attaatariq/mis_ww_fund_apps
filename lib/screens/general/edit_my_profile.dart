@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:http/http.dart' as http;
 
 class EditProfile extends StatefulWidget {
@@ -105,9 +105,9 @@ class _EditProfileState extends State<EditProfile> {
                                 borderRadius: BorderRadius.circular(100),
                                 child: bytes == null ? UserSessions.instance.getUserImage != "null" ? FadeInImage(
                                   image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
-                                  placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
+                                  placeholder: AssetImage("archive/images/no_image.jpg"),
                                   fit: BoxFit.fill,
-                                ) : Image.asset("assets/images/no_image_placeholder.jpg",
+                                ) : Image.asset("archive/images/no_image.jpg",
                                   height: 100.0,
                                   width: 100,
                                   fit: BoxFit.fill,

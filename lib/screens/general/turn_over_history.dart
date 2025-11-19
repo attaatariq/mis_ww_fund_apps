@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/constants/Constants.dart';
-import 'package:welfare_claims_app/itemviews/turn_over_history_item.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/models/TurnoverHistoryModel.dart';
-import 'package:welfare_claims_app/uiupdates/UIUpdates.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
-import 'package:welfare_claims_app/widgets/empty_state_widget.dart';
-import 'package:welfare_claims_app/network/api_service.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/views/turn_over_history_item.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/models/TurnoverHistoryModel.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
 class TurnOverHistory extends StatefulWidget {
@@ -120,9 +120,9 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
                                   borderRadius: BorderRadius.circular(100),
                                   child: comp_logo != "null" && comp_logo != "" && comp_logo != "-" && comp_logo != "NULL" ? FadeInImage(
                                     image: NetworkImage(constants.getImageBaseURL()+comp_logo),
-                                    placeholder: AssetImage("assets/images/no_image_placeholder.jpg"),
+                                    placeholder: AssetImage("archive/images/no_image.jpg"),
                                     fit: BoxFit.fill,
-                                  ) : Image.asset("assets/images/no_image_placeholder.jpg",
+                                  ) : Image.asset("archive/images/no_image.jpg",
                                     height: 60.0,
                                     width: 60,
                                     fit: BoxFit.fill,

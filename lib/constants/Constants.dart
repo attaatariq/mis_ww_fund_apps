@@ -16,16 +16,16 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:new_version/new_version.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:welfare_claims_app/Strings/Strings.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
-import 'package:welfare_claims_app/dialogs/app_update_dialog.dart';
-import 'package:welfare_claims_app/dialogs/logout_dialog.dart';
-import 'package:welfare_claims_app/models/MonthModel.dart';
-import 'package:welfare_claims_app/models/ProvinceModel.dart';
-import 'package:welfare_claims_app/models/ResponseCodeModel.dart';
-import 'package:welfare_claims_app/screens/authentication/login.dart';
-import 'package:welfare_claims_app/screens/general/splash_screen.dart';
-import 'package:welfare_claims_app/usersessions/UserSessions.dart';
+import 'package:wwf_apps/Strings/Strings.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/dialogs/app_update_dialog.dart';
+import 'package:wwf_apps/dialogs/logout_dialog.dart';
+import 'package:wwf_apps/models/MonthModel.dart';
+import 'package:wwf_apps/models/ProvinceModel.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/screens/auth/login.dart';
+import 'package:wwf_apps/screens/general/splash_screen.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class Constants {
   // APIs base urls

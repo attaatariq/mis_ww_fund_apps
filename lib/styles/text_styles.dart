@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:welfare_claims_app/colors/app_colors.dart';
+import 'package:wwf_apps/colors/app_colors.dart';
 
 /// Centralized text styles for consistent typography across the application
 /// Provides a comprehensive set of pre-defined text styles following Material Design guidelines
