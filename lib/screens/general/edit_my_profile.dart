@@ -103,15 +103,27 @@ class _EditProfileState extends State<EditProfile> {
                             Center(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: bytes == null ? UserSessions.instance.getUserImage != "null" ? FadeInImage(
-                                  image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
-                                  placeholder: AssetImage("archive/images/no_image.jpg"),
-                                  fit: BoxFit.fill,
-                                ) : Image.asset("archive/images/no_image.jpg",
-                                  height: 100.0,
-                                  width: 100,
-                                  fit: BoxFit.fill,
-                                ) : new Image.memory(bytes,
+                                child: bytes == null ? 
+                                  (UserSessions.instance.getUserImage != "null" && 
+                                   UserSessions.instance.getUserImage != "" && 
+                                   UserSessions.instance.getUserImage != "NULL" &&
+                                   UserSessions.instance.getUserImage != "-" &&
+                                   UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
+                                    image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
+                                    placeholder: AssetImage("archive/images/no_image.jpg"),
+                                    fit: BoxFit.fill,
+                                    imageErrorBuilder: (context, error, stackTrace) {
+                                      return Image.asset("archive/images/no_image.jpg",
+                                        height: 100.0,
+                                        width: 100,
+                                        fit: BoxFit.fill,
+                                      );
+                                    },
+                                  ) : Image.asset("archive/images/no_image.jpg",
+                                    height: 100.0,
+                                    width: 100,
+                                    fit: BoxFit.fill,
+                                  )) : new Image.memory(bytes,
                                 fit: BoxFit.cover),
                               ),
                             ),

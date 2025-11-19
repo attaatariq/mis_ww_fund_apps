@@ -11,6 +11,7 @@ import '../../../views/marriage_claim_list_item.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
+import '../../../models/ClaimStageModel.dart';
 import '../../../widgets/empty_state_widget.dart';
 import '../../../network/api_service.dart';
 import 'marriage_claim.dart';
@@ -138,9 +139,39 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        GetMarriageClaims();
+        // Load claim stages before loading claims
+        LoadClaimStagesIfNeeded().then((_) {
+          GetMarriageClaims();
+        });
       }
     });
+  }
+
+  // Load claim stages from information API if not already loaded
+  Future<void> LoadClaimStagesIfNeeded() async {
+    // Only load if claim stages are not already available
+    if (!ClaimStagesData.instance.hasStages()) {
+      try {
+        List<String> tagsList = [constants.accountInfo];
+        Map data = {
+          "user_id": UserSessions.instance.getUserID,
+          "api_tags": jsonEncode(tagsList).toString(),
+        };
+        var url = constants.getApiBaseURL() + constants.authentication + "information";
+        var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
+        ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
+        if (responseCodeModel.status == true) {
+          var body = jsonDecode(response.body);
+          String code = body["Code"]?.toString() ?? "0";
+          if (code == "1") {
+            var dataObj = body["Data"];
+            ClaimStagesData.loadFromInformationResponse(dataObj);
+          }
+        }
+      } catch (e) {
+        // Silently fail - claim stages might be loaded from login
+      }
+    }
   }
 
   void GetMarriageClaims() async{

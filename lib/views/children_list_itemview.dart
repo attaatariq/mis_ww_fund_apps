@@ -34,10 +34,21 @@ class _ChildrenListItemViewState extends State<ChildrenListItemView> {
                   width: 40,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: widget.childrenModel.child_image != "null" && widget.childrenModel.child_image != "" && widget.childrenModel.child_image != "NULL" ? FadeInImage(
+                    child: widget.childrenModel.child_image != "null" && 
+                           widget.childrenModel.child_image != "" && 
+                           widget.childrenModel.child_image != "NULL" &&
+                           widget.childrenModel.child_image != "-" &&
+                           widget.childrenModel.child_image != "N/A" ? FadeInImage(
                       image: NetworkImage(widget.constants.getImageBaseURL()+widget.childrenModel.child_image),
                       placeholder: AssetImage("archive/images/no_image.jpg"),
                       fit: BoxFit.fill,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset("archive/images/no_image.jpg",
+                          height: 40.0,
+                          width: 40,
+                          fit: BoxFit.fill,
+                        );
+                      },
                     ) : Image.asset("archive/images/no_image.jpg",
                       height: 40.0,
                       width: 40,

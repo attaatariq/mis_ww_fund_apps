@@ -111,10 +111,22 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
                               width: 40,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: user_image != "null" && user_image != "" && user_image != "NULL" && user_image != null ? FadeInImage(
+                                child: user_image != "null" && 
+                                       user_image != "" && 
+                                       user_image != "NULL" && 
+                                       user_image != "-" &&
+                                       user_image != "N/A" &&
+                                       user_image != null ? FadeInImage(
                                   image: NetworkImage(constants.getImageBaseURL()+user_image),
                                   placeholder: AssetImage("archive/images/no_image.jpg"),
                                   fit: BoxFit.fill,
+                                  imageErrorBuilder: (context, error, stackTrace) {
+                                    return Image.asset("archive/images/no_image.jpg",
+                                      height: 40.0,
+                                      width: 40,
+                                      fit: BoxFit.fill,
+                                    );
+                                  },
                                 ) : Image.asset("archive/images/no_image.jpg",
                                   height: 40.0,
                                   width: 40,

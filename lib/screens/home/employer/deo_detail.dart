@@ -113,10 +113,21 @@ class _DeoDetailState extends State<DeoDetail> {
                           width: 40,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: deoImage != "null" && deoImage != "" && deoImage != "NULL" ? FadeInImage(
+                            child: deoImage != "null" && 
+                                   deoImage != "" && 
+                                   deoImage != "NULL" &&
+                                   deoImage != "-" &&
+                                   deoImage != "N/A" ? FadeInImage(
                               image: NetworkImage(constants.getImageBaseURL()+deoImage),
                               placeholder: AssetImage("archive/images/no_image.jpg"),
                               fit: BoxFit.fill,
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Image.asset("archive/images/no_image.jpg",
+                                  height: 40.0,
+                                  width: 40,
+                                  fit: BoxFit.fill,
+                                );
+                              },
                             ) : Image.asset("archive/images/no_image.jpg",
                               height: 40.0,
                               width: 40,

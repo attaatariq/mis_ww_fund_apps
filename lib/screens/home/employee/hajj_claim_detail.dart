@@ -114,10 +114,21 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
                               width: 40,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
-                                child: UserSessions.instance.getUserImage != "null" && UserSessions.instance.getUserImage != "" && UserSessions.instance.getUserImage != "NULL" ? FadeInImage(
+                                child: UserSessions.instance.getUserImage != "null" && 
+                                       UserSessions.instance.getUserImage != "" && 
+                                       UserSessions.instance.getUserImage != "NULL" &&
+                                       UserSessions.instance.getUserImage != "-" &&
+                                       UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
                                   image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
                                   placeholder: AssetImage("archive/images/no_image.jpg"),
                                   fit: BoxFit.fill,
+                                  imageErrorBuilder: (context, error, stackTrace) {
+                                    return Image.asset("archive/images/no_image.jpg",
+                                      height: 40.0,
+                                      width: 40,
+                                      fit: BoxFit.fill,
+                                    );
+                                  },
                                 ) : Image.asset("archive/images/no_image.jpg",
                                   height: 40.0,
                                   width: 40,

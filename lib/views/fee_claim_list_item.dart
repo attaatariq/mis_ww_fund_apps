@@ -45,10 +45,21 @@ class _FeeClaimListItemState extends State<FeeClaimListItem> {
                 width: 40,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: UserSessions.instance.getUserImage != "null" && UserSessions.instance.getUserImage != "" && UserSessions.instance.getUserImage != "NULL" ? FadeInImage(
+                  child: UserSessions.instance.getUserImage != "null" && 
+                         UserSessions.instance.getUserImage != "" && 
+                         UserSessions.instance.getUserImage != "NULL" &&
+                         UserSessions.instance.getUserImage != "-" &&
+                         UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
                     image: NetworkImage(widget.constants.getImageBaseURL()+UserSessions.instance.getUserImage),
                     placeholder: AssetImage("archive/images/no_image.jpg"),
                     fit: BoxFit.fill,
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset("archive/images/no_image.jpg",
+                        height: 40.0,
+                        width: 40,
+                        fit: BoxFit.fill,
+                      );
+                    },
                   ) : Image.asset("archive/images/no_image.jpg",
                     height: 40.0,
                     width: 40,
@@ -62,40 +73,50 @@ class _FeeClaimListItemState extends State<FeeClaimListItem> {
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          UserSessions.instance.getUserName,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 13,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            UserSessions.instance.getUserName,
+                            maxLines: 1,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: AppTheme.colors.newBlack,
+                                fontSize: 13,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
-                        ),
 
-                        Text(
-                          UserSessions.instance.getUserCNIC,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 10,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal
+                          Text(
+                            UserSessions.instance.getUserCNIC,
+                            maxLines: 1,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: AppTheme.colors.colorDarkGray,
+                                fontSize: 10,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.normal
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
-                    ClaimStagesHelper.buildListStatusBadge(
-                      widget.educationClaimModel.claim_stage,
-                      fontSize: 10,
-                      showTooltip: true,
+                    SizedBox(width: 8),
+
+                    Flexible(
+                      child: ClaimStagesHelper.buildListStatusBadge(
+                        widget.educationClaimModel.claim_stage,
+                        fontSize: 10,
+                        showTooltip: true,
+                      ),
                     ),
                   ],
                 ),

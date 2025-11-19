@@ -14,6 +14,7 @@ import 'package:wwf_apps/screens/home/employer/contribution.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/models/ClaimStageModel.dart';
 import 'package:http/http.dart' as http;
 
 import 'drawer/drawer_view.dart';
@@ -160,7 +161,8 @@ class _EmployerHomeState extends State<EmployerHome> {
                                  companyLogo != "" && 
                                  companyLogo != "NULL" && 
                                  companyLogo != "N/A" && 
-                                 companyLogo != "null" 
+                                 companyLogo != "-" &&
+                                 companyLogo != "Unknown"
                             ? FadeInImage(
                                 image: NetworkImage(constants.getImageBaseURL() + companyLogo),
                                 placeholder: AssetImage("archive/images/no_image.jpg"),
@@ -1225,6 +1227,11 @@ class _EmployerHomeState extends State<EmployerHome> {
         // Parse feeds with null safety
         complaints= _formatCount(feedsObject["complaints"]);
         feedback= _formatCount(feedsObject["feedbacks"]);
+        
+        // Load claim stages from dashboard data if available
+        if (data["claim_stages"] != null) {
+          ClaimStagesData.loadFromInformationResponse(data);
+        }
         
         // Set defaults for missing data
         schoolBasics= "0";

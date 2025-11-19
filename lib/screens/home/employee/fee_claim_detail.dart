@@ -177,11 +177,19 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
               borderRadius: BorderRadius.circular(26),
               child: UserSessions.instance.getUserImage != "null" && 
                      UserSessions.instance.getUserImage != "" && 
-                     UserSessions.instance.getUserImage != "NULL"
+                     UserSessions.instance.getUserImage != "NULL" &&
+                     UserSessions.instance.getUserImage != "-" &&
+                     UserSessions.instance.getUserImage != "N/A"
                   ? FadeInImage(
                       image: NetworkImage(constants.getImageBaseURL() + UserSessions.instance.getUserImage),
                       placeholder: AssetImage("archive/images/no_image.jpg"),
                       fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "archive/images/no_image.jpg",
+                          fit: BoxFit.cover,
+                        );
+                      },
                     )
                   : Image.asset(
                       "archive/images/no_image.jpg",

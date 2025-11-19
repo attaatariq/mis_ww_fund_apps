@@ -55,7 +55,8 @@ class ClaimStagesData {
   }
 
   ClaimStageModel getStage(String stageKey) {
-    if (stageKey == null || stageKey.isEmpty || stageKey == "-") {
+    // Handle null, empty, or invalid stage keys
+    if (stageKey == null || stageKey.isEmpty || stageKey == "-" || stageKey == "null" || stageKey == "NULL") {
       return ClaimStageModel(
         stage: "Unknown",
         state: "Unknown",
@@ -64,24 +65,35 @@ class ClaimStagesData {
       );
     }
 
+    // Trim whitespace from stage key
+    String trimmedKey = stageKey.trim();
+
     // Try exact match first
-    if (stages.containsKey(stageKey)) {
-      return stages[stageKey];
+    if (stages.containsKey(trimmedKey)) {
+      return stages[trimmedKey];
     }
 
     // Try case-insensitive match
-    String lowerKey = stageKey.toLowerCase();
+    String lowerKey = trimmedKey.toLowerCase();
     for (var key in stages.keys) {
       if (key.toLowerCase() == lowerKey) {
         return stages[key];
       }
     }
 
-    // Return default if not found
+    // Try matching with trimmed keys (handle keys with extra spaces)
+    for (var key in stages.keys) {
+      if (key.trim().toLowerCase() == lowerKey) {
+        return stages[key];
+      }
+    }
+
+    // Return default if not found - this will show the raw stage key
+    // This ensures "Stage-7" is displayed if not in claim_stages
     return ClaimStageModel(
-      stage: stageKey,
-      state: stageKey,
-      title: "Status: $stageKey",
+      stage: trimmedKey,
+      state: trimmedKey,
+      title: "Status: $trimmedKey",
       color: "info",
     );
   }

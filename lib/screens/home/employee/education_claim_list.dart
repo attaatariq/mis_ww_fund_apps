@@ -14,6 +14,7 @@ import 'package:wwf_apps/screens/home/employee/fee_claim_detail.dart';
 import 'package:wwf_apps/screens/home/employee/other_claim_detail.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/models/ClaimStageModel.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/network/api_service.dart';
@@ -40,6 +41,33 @@ class _EducationClaimListState extends State<EducationClaimList> {
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
     CheckTokenExpiry();
+  }
+
+  // Load claim stages from information API if not already loaded
+  Future<void> LoadClaimStagesIfNeeded() async {
+    // Only load if claim stages are not already available
+    if (!ClaimStagesData.instance.hasStages()) {
+      try {
+        List<String> tagsList = [constants.accountInfo];
+        Map data = {
+          "user_id": UserSessions.instance.getUserID,
+          "api_tags": jsonEncode(tagsList).toString(),
+        };
+        var url = constants.getApiBaseURL() + constants.authentication + "information";
+        var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders());
+        ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
+        if (responseCodeModel.status == true) {
+          var body = jsonDecode(response.body);
+          String code = body["Code"]?.toString() ?? "0";
+          if (code == "1") {
+            var dataObj = body["Data"];
+            ClaimStagesData.loadFromInformationResponse(dataObj);
+          }
+        }
+      } catch (e) {
+        // Silently fail - claim stages might be loaded from login
+      }
+    }
   }
 
   @override
@@ -417,9 +445,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
       if(constants.AgentExpiryComperission()){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        if(UserSessions.instance.getEmployeeID == ""){
-          GetCEducationClaims();
-        }
+        // Load claim stages before loading claims
+        LoadClaimStagesIfNeeded().then((_) {
+          if(UserSessions.instance.getEmployeeID == ""){
+            GetCEducationClaims();
+          }
+        });
       }
     });
   }

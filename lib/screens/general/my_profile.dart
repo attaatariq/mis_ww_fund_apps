@@ -111,10 +111,21 @@ class _MyProfileState extends State<MyProfile> {
                       margin: EdgeInsets.only(left: 10, right: 10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: UserSessions.instance.getUserImage != "null" ? FadeInImage(
+                        child: UserSessions.instance.getUserImage != "null" && 
+                               UserSessions.instance.getUserImage != "" && 
+                               UserSessions.instance.getUserImage != "NULL" &&
+                               UserSessions.instance.getUserImage != "-" &&
+                               UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
                           image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
                           placeholder: AssetImage("archive/images/no_image.jpg"),
                           fit: BoxFit.fill,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image.asset("archive/images/no_image.jpg",
+                              height: 60.0,
+                              width: 60,
+                              fit: BoxFit.fill,
+                            );
+                          },
                         ) : Image.asset("archive/images/no_image.jpg",
                           height: 60.0,
                           width: 60,
