@@ -54,7 +54,7 @@ class ClaimStagesHelper {
     return Icons.info_outline;
   }
 
-  // Build status badge for list items (shows stage with title as tooltip)
+  // Build status badge for list items (shows state value with title as tooltip)
   static Widget buildListStatusBadge(
     String stageKey, {
     double fontSize = 10,
@@ -70,7 +70,7 @@ class ClaimStagesHelper {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        stageData.stage,
+        stageData.state, // Show state value on listing screens
         style: TextStyle(
           color: Colors.white,
           fontSize: fontSize,

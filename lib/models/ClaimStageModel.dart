@@ -89,5 +89,19 @@ class ClaimStagesData {
   bool hasStages() {
     return stages.isNotEmpty;
   }
+
+  // Helper method to load claim_stages from information API response
+  static void loadFromInformationResponse(Map<String, dynamic> data) {
+    if (data != null && data["claim_stages"] != null) {
+      try {
+        Map<String, dynamic> claimStagesJson = data["claim_stages"];
+        if (claimStagesJson is Map<String, dynamic>) {
+          instance.loadFromJson(claimStagesJson);
+        }
+      } catch (e) {
+        // Silently fail if claim stages parsing fails
+      }
+    }
+  }
 }
 

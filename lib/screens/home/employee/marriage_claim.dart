@@ -17,6 +17,7 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/network/api_service.dart';
+import 'package:wwf_apps/models/ClaimStageModel.dart';
 
 class MarraiageClaim extends StatefulWidget {
   @override
@@ -711,6 +712,9 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
         String empID= account["emp_id"].toString();
         comp_id=account["comp_id"].toString();
         UserSessions.instance.setEmployeeID(empID);
+
+        // Load claim stages from information API response
+        ClaimStagesData.loadFromInformationResponse(data);
 
         ///childrens
         if(childrens.length > 0){

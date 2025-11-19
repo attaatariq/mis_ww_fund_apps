@@ -194,13 +194,12 @@ class _MarriageClaimDetailState extends State<MarriageClaimDetail> {
                                 ],
                               ),
                             ),
-                            ClaimStagesHelper.buildListStatusBadge(claim_stage, fontSize: 10, showTooltip: true),
                           ],
                         ),
                       ),
                       SizedBox(height: 16),
 
-                      // Detailed Status Card with dynamic color and info
+                      // Detailed Status Card with dynamic color and info (shows stage and title)
                       ClaimStagesHelper.buildDetailStatusCard(claim_stage),
                       SizedBox(height: 16),
 

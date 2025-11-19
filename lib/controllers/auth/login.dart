@@ -48,28 +48,50 @@ class LoginController extends GetxController{
           if (code == "1") {
             uiUpdates.ShowToast(Strings.instance.loginSuccess);
             var dataObject = body["Data"];
-            String userID = dataObject["user_id"].toString();
-            String user_name = dataObject["user_name"].toString();
-            String user_cnic = dataObject["user_cnic"].toString();
-            String user_email = dataObject["user_email"].toString();
-            String user_contact = dataObject["user_contact"].toString();
-            String user_sector = dataObject["user_sector"].toString();
-            String sector_name = dataObject["sector_name"].toString();
-            String user_role = dataObject["user_role"].toString();
-            String role_name = dataObject["role_name"].toString();
-            String user_image = dataObject["user_image"].toString();
-            String user_about = dataObject["user_about"].toString();
-            String user_token = dataObject["user_token"].toString();
-            String user_account = dataObject["user_account"].toString();
-            String user_backing = dataObject["user_backing"].toString();
-            String agent_expiry = dataObject["agent_expiry"].toString();
             
-            // Load claim stages data if available
+            // Handle nested account structure - account data is nested under "account" key
+            var account = dataObject["account"];
+            if (account == null) {
+              // Fallback: try direct access for backward compatibility
+              account = dataObject;
+            }
+            
+            // Extract user account information with null safety
+            String userID = account["user_id"]?.toString() ?? "";
+            String user_name = account["user_name"]?.toString() ?? "";
+            String user_cnic = account["user_cnic"]?.toString() ?? "";
+            String user_email = account["user_email"]?.toString() ?? "";
+            String user_contact = account["user_contact"]?.toString() ?? "";
+            String user_sector = account["user_sector"]?.toString() ?? "";
+            String sector_name = account["sector_name"]?.toString() ?? "";
+            String user_role = account["user_role"]?.toString() ?? "";
+            String role_name = account["role_name"]?.toString() ?? "";
+            String user_image = account["user_image"]?.toString() ?? "";
+            String user_about = account["user_about"]?.toString() ?? "";
+            
+            // These fields might be at Data level or account level - check both
+            String user_token = dataObject["user_token"]?.toString() ?? account["user_token"]?.toString() ?? "";
+            String user_account = dataObject["user_account"]?.toString() ?? account["user_account"]?.toString() ?? account["user_count"]?.toString() ?? "0";
+            String user_backing = dataObject["user_backing"]?.toString() ?? account["user_backing"]?.toString() ?? account["ref_id"]?.toString() ?? "null";
+            String agent_expiry = dataObject["agent_expiry"]?.toString() ?? account["agent_expiry"]?.toString() ?? "";
+            
+            // Extract employee ID if available (for employees)
+            String emp_id = account["emp_id"]?.toString() ?? "";
+            
+            // Load claim stages data if available (check both Data level and account level)
             if (dataObject["claim_stages"] != null) {
               try {
                 Map<String, dynamic> claimStagesJson = dataObject["claim_stages"];
                 ClaimStagesData.instance.loadFromJson(claimStagesJson);
               } catch (e) {
+                // Silently fail if claim stages parsing fails
+              }
+            } else if (account["claim_stages"] != null) {
+              try {
+                Map<String, dynamic> claimStagesJson = account["claim_stages"];
+                ClaimStagesData.instance.loadFromJson(claimStagesJson);
+              } catch (e) {
+                // Silently fail if claim stages parsing fails
               }
             }
             
@@ -86,7 +108,8 @@ class LoginController extends GetxController{
                 user_sector,
                 user_role,
                 user_backing,
-                agent_expiry
+                agent_expiry,
+                emp_id
             );
 
             passwordController.clear();
@@ -112,7 +135,7 @@ class LoginController extends GetxController{
     }
   }
 
-  void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String user_backing, String agent_expiry) {
+  void SetSession(String userID, String user_name, String user_cnic, String user_email, String user_contact, String user_image, String user_about, String user_token, String user_account, String user_sector, String user_role, String user_backing, String agent_expiry, [String emp_id = ""]) {
     UserSessions.instance.setUserID(userID);
     UserSessions.instance.setUserName(user_name);
     UserSessions.instance.setUserCNIC(user_cnic);
@@ -126,6 +149,12 @@ class LoginController extends GetxController{
     UserSessions.instance.setUserRole(user_role);
     UserSessions.instance.setRefID(user_backing);
     UserSessions.instance.setAgentExpiry(agent_expiry);
+    
+    // Set employee ID if available
+    if (emp_id.isNotEmpty) {
+      UserSessions.instance.setEmployeeID(emp_id);
+    }
+    
     if(user_sector == "8" && user_role == "8"){
       UserSessions.instance.setDeoID(true);
     }
