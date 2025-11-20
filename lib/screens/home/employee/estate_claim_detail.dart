@@ -12,6 +12,7 @@ import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
 import '../../../network/api_service.dart';
 import '../../../widgets/empty_state_widget.dart';
+import '../../../utils/claim_stages_helper.dart';
 
 class EstateClaimDetail extends StatefulWidget {
   String claim_id = "";
@@ -28,7 +29,7 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
   String claim_balloting="-", claim_scheme="-", scheme_name="-", claim_location="-", claim_quota="-", 
       claim_dated="-", claim_abode="-", claim_number="-", claim_floor="-",
       claim_street="-", claim_block="-", claim_impound="-", claim_amount="-", 
-      claim_payment="-", claim_balance="-", created_at="";
+      claim_payment="-", claim_balance="-", created_at="-", claim_stage="-";
   String user_name="-", user_image="-", user_cnic="-", user_gender="-";
   bool isError= false;
   String errorMessage="";
@@ -170,6 +171,18 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
                             if (hasEstateData) _buildUserInfoCard(),
                             if (hasEstateData) SizedBox(height: 16),
 
+                            // Status Card (if claim_stage is available)
+                            if (hasEstateData && claim_stage != "-" && claim_stage.isNotEmpty)
+                              ClaimStagesHelper.buildDetailStatusCard(claim_stage),
+                            if (hasEstateData && claim_stage != "-" && claim_stage.isNotEmpty)
+                              SizedBox(height: 12),
+                            
+                            // Submission Date Card
+                            if (hasEstateData && created_at != "-" && created_at.isNotEmpty)
+                              _buildSubmissionDateCard(),
+                            if (hasEstateData && created_at != "-" && created_at.isNotEmpty)
+                              SizedBox(height: 16),
+
                             // Estate Overview Card
                             if (hasEstateData) _buildEstateOverviewCard(),
                             if (hasEstateData) SizedBox(height: 16),
@@ -183,31 +196,62 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
                             if (hasEstateData) SizedBox(height: 16),
 
                             // Installments Section
-                            if (hasEstateData) _buildSectionHeader("Installments", Icons.receipt_long),
-                            if (hasEstateData) SizedBox(height: 12),
-                            if (hasEstateData && !hasInstallmentError && list.isNotEmpty)
-                              ...list.map((installment) => Padding(
-                                padding: EdgeInsets.only(bottom: 12),
-                                child: InstallmentItem(installment, parentFunction),
-                              )).toList(),
-                            if (hasEstateData && hasInstallmentError)
-                              Container(
-                                padding: EdgeInsets.all(24),
-                                child: EmptyStateWidget(
-                                  icon: Icons.receipt_long_outlined,
-                                  message: 'No Installments Available',
-                                  description: installmentErrorMessage,
+                            if (hasEstateData) ...[
+                              _buildSectionHeader("Installments", Icons.receipt_long),
+                              SizedBox(height: 12),
+                              if (list.isNotEmpty)
+                                ...list.map((installment) => Padding(
+                                  padding: EdgeInsets.only(bottom: 12),
+                                  child: InstallmentItem(installment, parentFunction),
+                                )).toList(),
+                              if (list.isEmpty)
+                                Container(
+                                  padding: EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.colors.newWhite,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.06),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.receipt_long_outlined,
+                                        size: 48,
+                                        color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                                      ),
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'No Installments Available',
+                                        style: TextStyle(
+                                          color: AppTheme.colors.colorDarkGray,
+                                          fontSize: 14,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        installmentErrorMessage.isNotEmpty 
+                                            ? installmentErrorMessage 
+                                            : 'There are no installments for this estate claim.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                                          fontSize: 12,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            if (hasEstateData && !hasInstallmentError && list.isEmpty)
-                              Container(
-                                padding: EdgeInsets.all(24),
-                                child: EmptyStateWidget(
-                                  icon: Icons.receipt_long_outlined,
-                                  message: 'No Installments Available',
-                                  description: 'There are no installments for this estate claim.',
-                                ),
-                              ),
+                            ],
                             SizedBox(height: 24),
                           ],
                         ),
@@ -311,6 +355,29 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
                         ),
                       ),
                     ],
+                  ),
+                if (user_gender != "-" && user_gender.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          user_gender.toLowerCase() == "male" ? Icons.male : Icons.female,
+                          size: 14,
+                          color: user_gender.toLowerCase() == "male" ? Colors.blue : Colors.pink,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          user_gender,
+                          style: TextStyle(
+                            color: AppTheme.colors.colorDarkGray,
+                            fontSize: 12,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
               ],
             ),
@@ -688,6 +755,64 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
     );
   }
 
+  Widget _buildSubmissionDateCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.calendar_today,
+              size: 20,
+              color: AppTheme.colors.newPrimary,
+            ),
+          ),
+          SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Submitted Date",
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 11,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: 2),
+              Text(
+                created_at != "-" ? created_at : "N/A",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   void CheckTokenExpiry() {
     Future.delayed(const Duration(milliseconds: 1000), () {
       if(constants.AgentExpiryComperission()){
@@ -717,6 +842,7 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
           if (code == "1" || codeValue == 1) {
             var data = body["Data"];
             if(data != null) {
+              // Estate Details
               claim_balloting= data["claim_balloting"]?.toString() ?? "-";
               claim_scheme= data["claim_scheme"]?.toString() ?? "-";
               scheme_name= data["scheme_name"]?.toString() ?? "-";
@@ -732,30 +858,46 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
               claim_amount= data["claim_amount"]?.toString() ?? "-";
               claim_payment= data["claim_payment"]?.toString() ?? "-";
               claim_balance= data["claim_balance"]?.toString() ?? "-";
+              created_at= data["created_at"]?.toString() ?? "-";
+              claim_stage= data["claim_stage"]?.toString() ?? "-";
+              
+              // User Information (if available in API)
+              user_name= data["user_name"]?.toString() ?? "-";
+              user_image= data["user_image"]?.toString() ?? "-";
+              user_cnic= data["user_cnic"]?.toString() ?? "-";
+              user_gender= data["user_gender"]?.toString() ?? "-";
 
               setState(() {
                 hasEstateData = true;
                 isError= false;
               });
               
-              // Parse installments
-              List<dynamic> instalments = data["instalments"] != null ? data["instalments"] : [];
-              if(instalments.length > 0) {
+              // Parse installments - check both "instalments" and "installments" (API might use either)
+              List<dynamic> instalments = [];
+              if (data["instalments"] != null) {
+                instalments = data["instalments"] is List ? data["instalments"] : [];
+              } else if (data["installments"] != null) {
+                instalments = data["installments"] is List ? data["installments"] : [];
+              }
+              
+              if (instalments.length > 0) {
                 list.clear();
                 instalments.forEach((row) {
-                  String ins_id= row["ins_id"]?.toString() ?? "";
-                  String ins_number= row["ins_number"]?.toString() ?? "";
-                  String ins_amount= row["ins_amount"]?.toString() ?? "";
-                  String ins_payment= row["ins_payment"]?.toString() ?? "";
-                  String ins_balance= row["ins_balance"]?.toString() ?? "";
-                  String ins_duedate= row["ins_duedate"]?.toString() ?? "";
-                  String deposited_at= row["deposited_at"]?.toString() ?? "";
-                  String ins_bank_name= row["ins_bank_name"]?.toString() ?? "";
-                  String ins_challan_no= row["ins_challan_no"]?.toString() ?? "";
-                  String ins_challan= row["ins_challan"]?.toString() ?? "";
-                  String ins_remarks= row["ins_remarks"]?.toString() ?? "";
-                  String created_at= row["created_at"]?.toString() ?? "";
-                  list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
+                  if (row != null) {
+                    String ins_id = row["ins_id"]?.toString() ?? "";
+                    String ins_number = row["ins_number"]?.toString() ?? "";
+                    String ins_amount = row["ins_amount"]?.toString() ?? "";
+                    String ins_payment = row["ins_payment"]?.toString() ?? "";
+                    String ins_balance = row["ins_balance"]?.toString() ?? "";
+                    String ins_duedate = row["ins_duedate"]?.toString() ?? "";
+                    String deposited_at = row["deposited_at"]?.toString() ?? "";
+                    String ins_bank_name = row["ins_bank_name"]?.toString() ?? "";
+                    String ins_challan_no = row["ins_challan_no"]?.toString() ?? "";
+                    String ins_challan = row["ins_challan"]?.toString() ?? "";
+                    String ins_remarks = row["ins_remarks"]?.toString() ?? "";
+                    String created_at = row["created_at"]?.toString() ?? "";
+                    list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
+                  }
                 });
 
                 setState(() {
@@ -763,8 +905,8 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
                 });
               } else {
                 setState(() {
-                  hasInstallmentError = true;
-                  installmentErrorMessage = Strings.instance.notFound;
+                  hasInstallmentError = false; // Don't show error, just empty state
+                  installmentErrorMessage = "No installments available for this estate claim.";
                 });
               }
             } else {

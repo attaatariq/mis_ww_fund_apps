@@ -162,7 +162,7 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
 
                   _buildMenuItem(
                     icon: Icons.school,
-                    iconAsset: "archive/images/cap.png",
+                    iconAsset: "archive/images/user_book.png",
                     title: "Educational Claim",
                     onTap: () {
                       Navigator.of(context).pop();
@@ -210,7 +210,7 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
 
                   _buildMenuItem(
                     icon: Icons.mosque,
-                    iconAsset: "archive/images/pilgrim.png",
+                    iconAsset: "archive/images/pilgrimage.png",
                     title: "Hajj Claim",
                     onTap: () {
                       Navigator.of(context).pop();

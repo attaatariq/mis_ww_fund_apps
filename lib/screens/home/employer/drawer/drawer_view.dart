@@ -9,6 +9,7 @@ import 'package:wwf_apps/screens/home/employer/contact_person.dart';
 import 'package:wwf_apps/screens/home/employer/death_claim_list.dart';
 import 'package:wwf_apps/screens/home/employer/estate_claims.dart';
 import 'package:wwf_apps/screens/home/employer/hajj_claims.dart';
+import 'package:wwf_apps/screens/home/employer/education_claims.dart';
 import 'package:wwf_apps/screens/home/employer/verifications.dart';
 import 'package:wwf_apps/screens/home/employer/marriage_claims.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
@@ -242,12 +243,24 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
 
                   _buildMenuItem(
                     icon: Icons.mosque,
-                    iconAsset: "archive/images/hajj.png",
+                    iconAsset: "archive/images/pilgrimage.png",
                     title: "Hajj Claim",
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => HajjClaimList()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.school,
+                    iconAsset: "archive/images/user_book.png",
+                    title: "Education Claim",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => EducationClaimList()
                       ));
                     },
                   ),
