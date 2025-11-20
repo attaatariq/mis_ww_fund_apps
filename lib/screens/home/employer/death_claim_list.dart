@@ -93,7 +93,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
                   shrinkWrap: true,
                   padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
-                      DeathClaimListItem(list[index]),
+                      DeathClaimListItem(list[index], constants: constants),
                   itemCount: this.list.length,
                 ),
               ),
@@ -170,7 +170,25 @@ class _DeathClaimListState extends State<DeathClaimList> {
                 String claim_stage= element["claim_stage"]?.toString() ?? "";
                 String bene_name= element["bene_name"]?.toString() ?? "";
                 String bene_relation= element["bene_relation"]?.toString() ?? "";
-                list.add(DeathClaimModel(claim_id, claim_dated, claim_amount, claim_payment, claim_stage, bene_name, bene_relation));
+                String user_name= element["user_name"]?.toString() ?? "";
+                String user_image= element["user_image"]?.toString() ?? "";
+                String user_cnic= element["user_cnic"]?.toString() ?? "";
+                String bene_cnic= element["bene_cnic"]?.toString() ?? "";
+                String bene_contact= element["bene_contact"]?.toString() ?? "";
+                list.add(DeathClaimModel(
+                  claim_id, 
+                  claim_dated, 
+                  claim_amount, 
+                  claim_payment, 
+                  claim_stage, 
+                  bene_name, 
+                  bene_relation,
+                  user_name: user_name,
+                  user_image: user_image,
+                  user_cnic: user_cnic,
+                  bene_cnic: bene_cnic,
+                  bene_contact: bene_contact,
+                ));
               });
 
               setState(() {

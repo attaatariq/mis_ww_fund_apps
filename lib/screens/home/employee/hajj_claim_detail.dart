@@ -375,14 +375,14 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
         List<dynamic> claims= body["Data"];
         if(claims.length > 0){
           claims.forEach((element) {
-            String claim_year= element["claim_year"].toString();
-            String claim_receipt= element["claim_receipt"].toString();
-            String claim_amount= element["claim_amount"].toString();
-            String created_at= element["created_at"].toString();
-            String user_name= element["user_name"].toString();
-            String comp_name= element["comp_name"].toString();
-            String emp_about= element["emp_about"].toString();
-            list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name, emp_about));
+            String claim_year= element["claim_year"]?.toString() ?? "";
+            String claim_receipt= element["claim_receipt"]?.toString() ?? "";
+            String claim_amount= element["claim_amount"]?.toString() ?? "";
+            String created_at= element["created_at"]?.toString() ?? "";
+            String user_name= element["user_name"]?.toString() ?? "";
+            String comp_name= element["comp_name"]?.toString() ?? "";
+            String emp_about= element["emp_about"]?.toString() ?? "";
+            list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name, emp_about: emp_about));
           });
 
           uiUpdates.DismissProgresssDialog();

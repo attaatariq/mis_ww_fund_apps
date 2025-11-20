@@ -7,6 +7,8 @@ import 'package:wwf_apps/screens/general/notifications_alerts.dart';
 import 'package:wwf_apps/screens/general/send_feedback.dart';
 import 'package:wwf_apps/screens/home/employer/contact_person.dart';
 import 'package:wwf_apps/screens/home/employer/death_claim_list.dart';
+import 'package:wwf_apps/screens/home/employer/estate_claims.dart';
+import 'package:wwf_apps/screens/home/employer/hajj_claims.dart';
 import 'package:wwf_apps/screens/home/employer/verifications.dart';
 import 'package:wwf_apps/screens/home/employer/marriage_claims.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
@@ -222,6 +224,30 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => DeathClaimList()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.home_work,
+                    iconAsset: "archive/images/estate.png",
+                    title: "Estate Claim",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => EstateClaimList()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.mosque,
+                    iconAsset: "archive/images/hajj.png",
+                    title: "Hajj Claim",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => HajjClaimList()
                       ));
                     },
                   ),

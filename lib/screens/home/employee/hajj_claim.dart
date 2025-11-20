@@ -29,7 +29,6 @@ class _HajjClaimState extends State<HajjClaim> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
@@ -39,39 +38,47 @@ class _HajjClaimState extends State<HajjClaim> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.white,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          // Modern Header with Shadow
+          Container(
+            decoration: BoxDecoration(
               color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: AppTheme.colors.newWhite,
+                          size: 24,
+                        ),
                       ),
                     ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Hajj Claim",
-                        textAlign: TextAlign.center,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Hajj Claim",
                         style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
+                          color: AppTheme.colors.newWhite,
+                          fontSize: 18,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -79,25 +86,81 @@ class _HajjClaimState extends State<HajjClaim> {
                 ),
               ),
             ),
+          ),
 
-            isError ? Expanded(
-              child: EmptyStates.noClaims(type: 'Hajj'),
-            ) : Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
-                  itemBuilder: (_, int index) =>
-                      HajjClaimItem(constants, list[index]),
-                  itemCount: this.list.length,
-                ),
-              ),
-            ),
-
-            SizedBox(height: 40,)
-          ],
-        ),
+          Expanded(
+            child: isError
+                ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            errorMessage.isNotEmpty ? errorMessage : Strings.instance.notAvail,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppTheme.colors.colorDarkGray,
+                              fontSize: 14,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                isError = false;
+                              });
+                              CheckTokenExpiry();
+                            },
+                            icon: Icon(Icons.refresh, size: 18),
+                            label: Text("Retry"),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(AppTheme.colors.newPrimary),
+                              foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                              padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {
+                        isError = false;
+                        list.clear();
+                      });
+                      await Future.delayed(Duration(milliseconds: 500));
+                      CheckTokenExpiry();
+                    },
+                    color: AppTheme.colors.newPrimary,
+                    child: list.isEmpty
+                        ? Center(
+                            child: EmptyStates.noClaims(type: 'Hajj'),
+                          )
+                        : SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(bottom: 24),
+                            child: Column(
+                              children: [
+                                ...list.map((claim) => HajjClaimItem(constants, claim)).toList(),
+                              ],
+                            ),
+                          ),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -117,8 +180,7 @@ class _HajjClaimState extends State<HajjClaim> {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL() + constants.buildApiUrl(
           constants.claims + "hajj_claim/", 
-          UserSessions.instance.getUserID, 
-          additionalPath: "C/4");
+          UserSessions.instance.getUserID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
@@ -132,18 +194,17 @@ class _HajjClaimState extends State<HajjClaim> {
           
           if (code == "1" || codeValue == 1) {
             List<dynamic> claims= body["Data"] ?? [];
+            // Employee gets single record (first item)
             if(claims.length > 0){
               list.clear();
-              claims.forEach((element) {
-                String claim_year= element["claim_year"]?.toString() ?? "";
-                String claim_receipt= element["claim_receipt"]?.toString() ?? "";
-                String claim_amount= element["claim_amount"]?.toString() ?? "";
-                String created_at= element["created_at"]?.toString() ?? "";
-                String user_name= element["user_name"]?.toString() ?? "";
-                String comp_name= element["comp_name"]?.toString() ?? "";
-                String emp_about= element["emp_about"]?.toString() ?? "";
-                list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name, emp_about));
-              });
+              var element = claims[0]; // Get first claim for employee
+              String claim_year= element["claim_year"]?.toString() ?? "";
+              String claim_receipt= element["claim_receipt"]?.toString() ?? "";
+              String claim_amount= element["claim_amount"]?.toString() ?? "";
+              String created_at= element["created_at"]?.toString() ?? "";
+              String user_name= element["user_name"]?.toString() ?? "";
+              String comp_name= element["comp_name"]?.toString() ?? "";
+              list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name));
 
               setState(() {
                 isError= false;
@@ -155,7 +216,7 @@ class _HajjClaimState extends State<HajjClaim> {
               });
             }
           } else {
-            String message = body["Data"]?.toString() ?? Strings.instance.notAvail;
+            String message = body["Message"] != null ? body["Message"].toString() : Strings.instance.notAvail;
             setState(() {
               isError= true;
               errorMessage = message;
@@ -168,7 +229,9 @@ class _HajjClaimState extends State<HajjClaim> {
           });
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        if(responseCodeModel.message != null && responseCodeModel.message != "null") {
+          uiUpdates.ShowToast(responseCodeModel.message);
+        }
         setState(() {
           isError= true;
           errorMessage = Strings.instance.notAvail;
@@ -181,7 +244,6 @@ class _HajjClaimState extends State<HajjClaim> {
       });
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     } finally {
-      // Add small delay to ensure dialog is shown before dismissing
       await Future.delayed(Duration(milliseconds: 200));
       uiUpdates.DismissProgresssDialog();
     }

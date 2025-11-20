@@ -1,36 +1,33 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/models/EstateClaimModel.dart';
+import 'package:wwf_apps/screens/home/employee/estate_claim_detail.dart';
 import 'package:http/http.dart' as http;
-import 'package:wwf_apps/views/death_calim_list_item.dart';
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
-import '../../../models/DeathClaimModel.dart';
+import '../../../network/api_service.dart';
+import '../../../views/estate_claim_list_item.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
 import '../../../models/ClaimStageModel.dart';
 import '../../../widgets/empty_state_widget.dart';
-import '../../../network/api_service.dart';
-import 'death_claim.dart';
-import 'death_claim_detail.dart';
 
-class DeathClaimList extends StatefulWidget {
+class EstateClaimList extends StatefulWidget {
   @override
-  _DeathClaimListState createState() => _DeathClaimListState();
+  _EstateClaimListState createState() => _EstateClaimListState();
 }
 
-class _DeathClaimListState extends State<DeathClaimList> {
+class _EstateClaimListState extends State<EstateClaimList> {
   Constants constants;
   UIUpdates uiUpdates;
   bool isError= false;
   String errorMessage="";
-  List<DeathClaimModel> list= [];
+  List<EstateClaimModel> list= [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     constants = new Constants();
     uiUpdates= new UIUpdates(context);
@@ -48,7 +45,6 @@ class _DeathClaimListState extends State<DeathClaimList> {
               height: 70,
               width: double.infinity,
               color: AppTheme.colors.newPrimary,
-
               child: Container(
                 margin: EdgeInsets.only(top: 23),
                 child: Row(
@@ -69,7 +65,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
 
                         Padding(
                           padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("Death Claims",
+                          child: Text("Estate Claims",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: AppTheme.colors.newWhite,
@@ -81,40 +77,32 @@ class _DeathClaimListState extends State<DeathClaimList> {
                         ),
                       ],
                     ),
-
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => DeathClaim()
-                        )).then((value)  {
-                          setState(() {});
-                          if(value==true){
-                            list.clear();
-                          CheckTokenExpiry() ;
-                          }
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Icon(Icons.add_box_outlined, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
                   ],
                 ),
               ),
             ),
 
             isError ? Expanded(
-              child: EmptyStates.noClaims(type: 'Death'),
+              child: EmptyStates.noClaims(type: 'Estate'),
             ) : Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(bottom: 50),
-                  itemBuilder: (_, int index) =>
-                      DeathClaimListItem(list[index], constants: constants),
-                  itemCount: this.list.length,
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    isError = false;
+                  });
+                  await Future.delayed(Duration(milliseconds: 500));
+                  CheckTokenExpiry();
+                },
+                color: AppTheme.colors.newPrimary,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(bottom: 50),
+                    itemBuilder: (_, int index) =>
+                        EstateClaimListItem(list[index], constants: constants),
+                    itemCount: this.list.length,
+                  ),
                 ),
               ),
             )
@@ -131,7 +119,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
       }else{
         // Load claim stages before loading claims
         LoadClaimStagesIfNeeded().then((_) {
-          GetDeathClaims();
+          GetEstateClaims();
         });
       }
     });
@@ -139,7 +127,6 @@ class _DeathClaimListState extends State<DeathClaimList> {
 
   // Load claim stages from information API if not already loaded
   Future<void> LoadClaimStagesIfNeeded() async {
-    // Only load if claim stages are not already available
     if (!ClaimStagesData.instance.hasStages()) {
       try {
         List<String> tagsList = [constants.accountInfo];
@@ -159,19 +146,20 @@ class _DeathClaimListState extends State<DeathClaimList> {
           }
         }
       } catch (e) {
-        // Silently fail - claim stages might be loaded from login
+        // Silently fail
       }
     }
   }
 
-  void GetDeathClaims() async{
+  void GetEstateClaims() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"deceased_claim/", UserSessions.instance.getUserID, additionalPath: "E/"+UserSessions.instance.getRefID);
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"estate_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
-      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
-      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+          
       if (responseCodeModel.status == true) {
         try {
           var body = jsonDecode(response.body);
@@ -179,91 +167,108 @@ class _DeathClaimListState extends State<DeathClaimList> {
           String code = codeValue?.toString() ?? "0";
           
           if (code == "1" || codeValue == 1) {
-            List<dynamic> deathList= body["Data"] ?? [];
-            if(deathList.length > 0){
+            var data= body["Data"];
+            if(data != null) {
+              List<dynamic> estateList = data is List ? data : [];
               list.clear();
-              deathList.forEach((element) {
-                String claim_id= element["claim_id"]?.toString() ?? "";
-                String claim_dated= element["claim_dated"]?.toString() ?? "";
-                String claim_amount= element["claim_amount"]?.toString() ?? "";
-                String claim_payment= element["claim_payment"]?.toString() ?? "";
-                String claim_stage= element["claim_stage"]?.toString() ?? "";
-                String bene_name= element["bene_name"]?.toString() ?? "";
-                String bene_relation= element["bene_relation"]?.toString() ?? "";
-                String user_name= element["user_name"]?.toString() ?? "";
-                String user_image= element["user_image"]?.toString() ?? "";
-                String user_cnic= element["user_cnic"]?.toString() ?? "";
-                String bene_cnic= element["bene_cnic"]?.toString() ?? "";
-                String bene_contact= element["bene_contact"]?.toString() ?? "";
-                list.add(DeathClaimModel(
-                  claim_id, 
-                  claim_dated, 
-                  claim_amount, 
-                  claim_payment, 
-                  claim_stage, 
-                  bene_name, 
-                  bene_relation,
+              
+              estateList.forEach((estateData) {
+                String claim_id = estateData["claim_id"]?.toString() ?? "";
+                String claim_scheme = estateData["claim_scheme"]?.toString() ?? "-";
+                String scheme_name = estateData["scheme_name"]?.toString() ?? "-";
+                String claim_balloting = estateData["claim_balloting"]?.toString() ?? "-";
+                String claim_quota = estateData["claim_quota"]?.toString() ?? "-";
+                String claim_dated = estateData["claim_dated"]?.toString() ?? "-";
+                String claim_location = estateData["claim_location"]?.toString() ?? "-";
+                String claim_abode = estateData["claim_abode"]?.toString() ?? "-";
+                String claim_number = estateData["claim_number"]?.toString() ?? "-";
+                String claim_floor = estateData["claim_floor"]?.toString() ?? "-";
+                String claim_street = estateData["claim_street"]?.toString() ?? "-";
+                String claim_block = estateData["claim_block"]?.toString() ?? "-";
+                String claim_amount = estateData["claim_amount"]?.toString() ?? "-";
+                String claim_payment = estateData["claim_payment"]?.toString() ?? "-";
+                String claim_balance = estateData["claim_balance"]?.toString() ?? "-";
+                String claim_impound = estateData["claim_impound"]?.toString() ?? "-";
+                
+                // Optional user fields
+                String user_name = estateData["user_name"]?.toString() ?? "";
+                String user_image = estateData["user_image"]?.toString() ?? "";
+                String user_cnic = estateData["user_cnic"]?.toString() ?? "";
+                String user_gender = estateData["user_gender"]?.toString() ?? "";
+                String emp_id = estateData["emp_id"]?.toString() ?? "";
+                
+                list.add(new EstateClaimModel(
+                  claim_id,
+                  claim_scheme,
+                  scheme_name,
+                  claim_balloting,
+                  claim_quota,
+                  claim_dated,
+                  claim_location,
+                  claim_abode,
+                  claim_number,
+                  claim_floor,
+                  claim_street,
+                  claim_block,
+                  claim_amount,
+                  claim_payment,
+                  claim_balance,
+                  claim_impound,
                   user_name: user_name,
                   user_image: user_image,
                   user_cnic: user_cnic,
-                  bene_cnic: bene_cnic,
-                  bene_contact: bene_contact,
+                  user_gender: user_gender,
+                  emp_id: emp_id,
                 ));
               });
 
               setState(() {
                 isError= false;
               });
-            }else{
+            } else {
               setState(() {
                 isError= true;
                 errorMessage = Strings.instance.notFound;
               });
             }
           } else {
+            String message = body["Message"] != null ? body["Message"].toString() : "";
+            if(message.isNotEmpty && message != "null") {
+              uiUpdates.ShowToast(message);
+            } else {
+              uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+            }
             setState(() {
               isError= true;
-              errorMessage = Strings.instance.notAvail;
+              errorMessage = Strings.instance.notFound;
             });
           }
         } catch (e) {
           setState(() {
             isError= true;
-            errorMessage = Strings.instance.notAvail;
+            errorMessage = Strings.instance.notFound;
           });
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
-        try {
-          var body = jsonDecode(response.body);
-          String message = body["Message"]?.toString() ?? "";
-          
-          if(message == constants.expireToken){
-            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-          }else if(message.isNotEmpty && message != "null"){
-            uiUpdates.ShowToast(message);
-          } else {
-            setState(() {
-              isError= true;
-              errorMessage = Strings.instance.notAvail;
-            });
-          }
-        } catch (e) {
-          setState(() {
-            isError= true;
-            errorMessage = Strings.instance.notAvail;
-          });
+        if(responseCodeModel.message != null && responseCodeModel.message != "null") {
+          uiUpdates.ShowToast(responseCodeModel.message);
         }
+        setState(() {
+          isError= true;
+          errorMessage = Strings.instance.notFound;
+        });
       }
     } catch (e) {
       setState(() {
         isError= true;
-        errorMessage = Strings.instance.notAvail;
+        errorMessage = Strings.instance.notFound;
       });
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     } finally {
-      // Add small delay to ensure dialog is shown before dismissing
       await Future.delayed(Duration(milliseconds: 200));
       uiUpdates.DismissProgresssDialog();
     }
   }
 }
+

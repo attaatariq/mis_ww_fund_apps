@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:wwf_apps/models/DeathClaimModel.dart';
+import 'package:wwf_apps/models/EstateClaimModel.dart';
 
 import '../colors/app_colors.dart';
-import '../screens/home/employee/death_claim_detail.dart';
-import '../utils/claim_stages_helper.dart';
+import '../screens/home/employee/estate_claim_detail.dart';
 import '../constants/Constants.dart';
 
-class DeathClaimListItem extends StatefulWidget {
-  DeathClaimModel deathClaimModel;
+class EstateClaimListItem extends StatefulWidget {
+  EstateClaimModel estateClaimModel;
   Constants constants;
 
-  DeathClaimListItem(this.deathClaimModel, {this.constants});
+  EstateClaimListItem(this.estateClaimModel, {this.constants});
 
   @override
-  _DeathClaimListItemState createState() => _DeathClaimListItemState();
+  _EstateClaimListItemState createState() => _EstateClaimListItemState();
 }
 
-class _DeathClaimListItemState extends State<DeathClaimListItem> {
+class _EstateClaimListItemState extends State<EstateClaimListItem> {
   @override
   Widget build(BuildContext context) {
     // Get constants if not provided
     Constants constants = widget.constants ?? Constants();
     
     // Get user image from model or use default
-    String userImage = widget.deathClaimModel.user_image ?? "";
-    String userName = widget.deathClaimModel.user_name ?? "";
-    String userCnic = widget.deathClaimModel.user_cnic ?? "";
+    String userImage = widget.estateClaimModel.user_image ?? "";
+    String userName = widget.estateClaimModel.user_name ?? "";
+    String userCnic = widget.estateClaimModel.user_cnic ?? "";
+    String schemeName = widget.estateClaimModel.scheme_name ?? widget.estateClaimModel.claim_scheme ?? "";
     
     return Container(
       width: double.infinity,
@@ -91,7 +91,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              userName.isNotEmpty ? userName : "Death Claim",
+                              userName.isNotEmpty ? userName : "Estate Claim",
                               maxLines: 1,
                               textAlign: TextAlign.start,
                               overflow: TextOverflow.ellipsis,
@@ -119,33 +119,25 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                           ],
                         ),
                       ),
-
-                      SizedBox(width: 8),
-
-                      Flexible(
-                        child: ClaimStagesHelper.buildListStatusBadge(
-                          widget.deathClaimModel.claim_stage,
-                          fontSize: 10,
-                          showTooltip: true,
-                        ),
-                      ),
                     ],
                   ),
                 )
               ],
             ),
 
-          // If no user info, show status badge separately
-          if (userName.isEmpty && userImage.isEmpty)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ClaimStagesHelper.buildListStatusBadge(
-                  widget.deathClaimModel.claim_stage,
-                  fontSize: 10,
-                  showTooltip: true,
-                ),
-              ],
+          // If no user info, show scheme name
+          if (userName.isEmpty && userImage.isEmpty && schemeName.isNotEmpty)
+            Text(
+              schemeName,
+              maxLines: 1,
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 13,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold
+              ),
             ),
 
           SizedBox(height: 15),
@@ -164,12 +156,12 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                       Row(
                         children: [
                           Icon(
-                            Icons.person_outline,
+                            Icons.home_work,
                             size: 12,
                             color: AppTheme.colors.colorDarkGray,
                           ),
                           SizedBox(width: 4),
-                          Text("Beneficiary",
+                          Text("Scheme",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 color: AppTheme.colors.colorDarkGray,
@@ -180,7 +172,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                         ],
                       ),
                       SizedBox(height: 4),
-                      Text(widget.deathClaimModel.bene_name + " (" + widget.deathClaimModel.bene_relation + ")",
+                      Text(schemeName.isNotEmpty ? schemeName : widget.estateClaimModel.claim_scheme,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.start,
@@ -211,7 +203,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                             color: AppTheme.colors.colorDarkGray,
                           ),
                           SizedBox(width: 4),
-                          Text("Death Date",
+                          Text("Allotment Date",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 color: AppTheme.colors.colorDarkGray,
@@ -222,7 +214,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                         ],
                       ),
                       SizedBox(height: 4),
-                      Text(widget.deathClaimModel.claim_dated,
+                      Text(widget.estateClaimModel.claim_dated,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.start,
@@ -272,7 +264,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
                           fontWeight: FontWeight.normal
                       ),),
                     SizedBox(height: 2),
-                    Text(widget.deathClaimModel.claim_amount + " PKR",
+                    Text(widget.estateClaimModel.claim_amount + " PKR",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
@@ -296,7 +288,7 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
             child: InkWell(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => DeathClaimDetail(widget.deathClaimModel.claim_id)
+                    builder: (context) => EstateClaimDetail(widget.estateClaimModel.claim_id)
                 ));
               },
               borderRadius: BorderRadius.circular(8),
@@ -351,3 +343,4 @@ class _DeathClaimListItemState extends State<DeathClaimListItem> {
     );
   }
 }
+

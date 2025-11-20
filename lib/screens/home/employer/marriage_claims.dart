@@ -93,7 +93,7 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
                   shrinkWrap: true,
                   padding: EdgeInsets.only(bottom: 50),
                   itemBuilder: (_, int index) =>
-                      MarriageClaimListItem(list[index]),
+                      MarriageClaimListItem(list[index], constants: constants),
                   itemCount: this.list.length,
                 ),
               ),
@@ -166,9 +166,21 @@ class _MarriageClaimListState extends State<MarriageClaimList> {
                 String claim_id= element["claim_id"]?.toString() ?? "";
                 String claim_husband= element["claim_husband"]?.toString() ?? "";
                 String claim_dated= element["claim_dated"]?.toString() ?? "";
-                String claim_category= element["claim_category"]?.toString() ?? "";
+                String beneficiary= element["beneficiary"]?.toString() ?? "";
                 String claim_stage= element["claim_stage"]?.toString() ?? "";
-                list.add(MarriageClaimModel(claim_id, claim_husband, claim_dated, claim_category, claim_stage));
+                String user_name= element["user_name"]?.toString() ?? "";
+                String user_image= element["user_image"]?.toString() ?? "";
+                String user_cnic= element["user_cnic"]?.toString() ?? "";
+                list.add(MarriageClaimModel(
+                  claim_id, 
+                  claim_husband, 
+                  claim_dated, 
+                  beneficiary, 
+                  claim_stage,
+                  user_name: user_name,
+                  user_image: user_image,
+                  user_cnic: user_cnic,
+                ));
               });
 
               setState(() {

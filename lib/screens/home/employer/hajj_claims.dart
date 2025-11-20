@@ -1,55 +1,35 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:wwf_apps/Strings/Strings.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
-import 'package:wwf_apps/constants/Constants.dart';
-import 'package:wwf_apps/views/faq_list_item.dart';
-import 'package:wwf_apps/models/FaqModel.dart';
-import 'package:wwf_apps/models/ResponseCodeModel.dart';
-import 'package:wwf_apps/updates/UIUpdates.dart';
-import 'package:wwf_apps/widgets/empty_state_widget.dart';
-import 'package:wwf_apps/network/api_service.dart';
+import 'package:wwf_apps/models/HajjClaimModel.dart';
 import 'package:http/http.dart' as http;
-import 'package:wwf_apps/sessions/UserSessions.dart';
+import '../../../Strings/Strings.dart';
+import '../../../constants/Constants.dart';
+import '../../../network/api_service.dart';
+import '../../../views/hajj_claim_item.dart';
+import '../../../models/ResponseCodeModel.dart';
+import '../../../updates/UIUpdates.dart';
+import '../../../sessions/UserSessions.dart';
+import '../../../widgets/empty_state_widget.dart';
 
-class FAQs extends StatefulWidget {
+class HajjClaimList extends StatefulWidget {
   @override
-  _FAQsState createState() => _FAQsState();
+  _HajjClaimListState createState() => _HajjClaimListState();
 }
 
-class _FAQsState extends State<FAQs> {
+class _HajjClaimListState extends State<HajjClaimList> {
   Constants constants;
   UIUpdates uiUpdates;
   bool isError= false;
   String errorMessage="";
-  List<FaqModel> list= [];
+  List<HajjClaimModel> list= [];
 
   @override
   void initState() {
     super.initState();
-    constants= new Constants();
+    constants = new Constants();
     uiUpdates= new UIUpdates(context);
     CheckTokenExpiry();
-  }
-
-  // Determine if user is employee (E) or employer/company (C)
-  String _getUserType() {
-    String sector = UserSessions.instance.getUserSector;
-    String role = UserSessions.instance.getUserRole;
-    
-    // Employee: sector 7/4 with role 6/3, or sector 8 with role 9
-    if ((sector == "7" && role == "6") || 
-        (sector == "4" && role == "3") ||
-        (sector == "8" && role == "9")) {
-      return "E"; // Employee
-    }
-    // Employer/Company: sector 8 with role 7 or 8
-    else if (sector == "8" && (role == "7" || role == "8")) {
-      return "C"; // Company/Employer
-    }
-    // Default to Employee
-    return "E";
   }
 
   @override
@@ -90,7 +70,7 @@ class _FAQsState extends State<FAQs> {
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "Frequently Asked Questions",
+                        "Hajj Claims",
                         style: TextStyle(
                           color: AppTheme.colors.newWhite,
                           fontSize: 18,
@@ -114,13 +94,13 @@ class _FAQsState extends State<FAQs> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.help_outline,
+                            Icons.error_outline,
                             size: 64,
                             color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
                           ),
                           SizedBox(height: 16),
                           Text(
-                            errorMessage.isNotEmpty ? errorMessage : "No FAQs Available",
+                            errorMessage.isNotEmpty ? errorMessage : Strings.instance.notAvail,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: AppTheme.colors.colorDarkGray,
@@ -156,7 +136,6 @@ class _FAQsState extends State<FAQs> {
                     onRefresh: () async {
                       setState(() {
                         isError = false;
-                        list.clear();
                       });
                       await Future.delayed(Duration(milliseconds: 500));
                       CheckTokenExpiry();
@@ -164,35 +143,14 @@ class _FAQsState extends State<FAQs> {
                     color: AppTheme.colors.newPrimary,
                     child: list.isEmpty
                         ? Center(
-                            child: EmptyStateWidget(
-                              icon: Icons.help_outline,
-                              message: 'No FAQs Available',
-                              description: 'Frequently asked questions will appear here once available.',
-                            ),
+                            child: EmptyStates.noClaims(type: 'Hajj'),
                           )
                         : SingleChildScrollView(
                             physics: AlwaysScrollableScrollPhysics(),
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.only(bottom: 24),
                             child: Column(
                               children: [
-                                ...list.asMap().entries.map((entry) {
-                                  int index = entry.key;
-                                  FaqModel faq = entry.value;
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 12),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          OpenCloseFaq(index);
-                                        },
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: FaqListItem(faq),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                SizedBox(height: 24),
+                                ...list.map((claim) => HajjClaimItem(constants, claim)).toList(),
                               ],
                             ),
                           ),
@@ -203,94 +161,80 @@ class _FAQsState extends State<FAQs> {
     );
   }
 
-  GetFaqs(bool isRefresh) async {
-    try {
-      if(!isRefresh) {
-        uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+  void CheckTokenExpiry() {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if(constants.AgentExpiryComperission()){
+        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
+      }else{
+        GetHajjClaims();
       }
-      
-      String userType = _getUserType(); // E for Employee, C for Company/Employer
-      // Build URL: /interaction/faqs/{user_id}/{E or C}
-      String baseUrl = constants.assessments + "faqs/";
-      String userId = UserSessions.instance.getUserID;
-      var url = constants.getApiBaseURL() + baseUrl + userId + "/" + userType;
+    });
+  }
+
+  void GetHajjClaims() async{
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"hajj_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
+      
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      
+          
       if (responseCodeModel.status == true) {
         try {
           var body = jsonDecode(response.body);
           dynamic codeValue = body["Code"];
-          String code = codeValue != null ? codeValue.toString() : "0";
+          String code = codeValue?.toString() ?? "0";
           
           if (code == "1" || codeValue == 1) {
-            var data= body["Data"];
-            List<dynamic> faqs = data != null ? (data is List ? data : []) : [];
-            if(faqs.length > 0)
-            {
-              list.clear();
-              faqs.forEach((row) {
-                String faq_id= row["faq_id"]?.toString() ?? "";
-                String faq_question= row["faq_question"]?.toString() ?? "";
-                String faq_answer= row["faq_answer"]?.toString() ?? "";
-                String faq_type= row["faq_type"]?.toString() ?? "";
-                String created_at= row["created_at"]?.toString() ?? "";
-                list.add(new FaqModel(faq_id, faq_question, faq_answer, faq_type, created_at, false));
-              });
+            List<dynamic> claims= body["Data"] ?? [];
+            list.clear();
+            
+            claims.forEach((element) {
+              String claim_year= element["claim_year"]?.toString() ?? "";
+              String claim_receipt= element["claim_receipt"]?.toString() ?? "";
+              String claim_amount= element["claim_amount"]?.toString() ?? "";
+              String created_at= element["created_at"]?.toString() ?? "";
+              String user_name= element["user_name"]?.toString() ?? "";
+              String comp_name= element["comp_name"]?.toString() ?? "";
+              list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name));
+            });
 
-              setState(() {
-                isError= false;
-              });
-            }else
-            {
-              setState(() {
-                isError= true;
-                errorMessage = Strings.instance.notAvail;
-              });
-            }
+            setState(() {
+              isError= false;
+            });
           } else {
             String message = body["Message"] != null ? body["Message"].toString() : "";
             if(message.isNotEmpty && message != "null") {
               uiUpdates.ShowToast(message);
+            } else {
+              uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
             }
             setState(() {
               isError= true;
-              errorMessage = Strings.instance.notAvail;
+              errorMessage = Strings.instance.notFound;
             });
           }
         } catch (e) {
           setState(() {
             isError= true;
-            errorMessage = Strings.instance.notAvail;
+            errorMessage = Strings.instance.notFound;
           });
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
-        try {
-          var body = jsonDecode(response.body);
-          String message = body["Message"] != null ? body["Message"].toString() : "";
-          
-          if(message == constants.expireToken){
-            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-          }else if(message.isNotEmpty && message != "null"){
-            uiUpdates.ShowToast(message);
-          } else {
-            setState(() {
-              isError= true;
-              errorMessage = Strings.instance.notAvail;
-            });
-          }
-        } catch (e) {
-          setState(() {
-            isError= true;
-            errorMessage = Strings.instance.notAvail;
-          });
+        if(responseCodeModel.message != null && responseCodeModel.message != "null") {
+          uiUpdates.ShowToast(responseCodeModel.message);
         }
+        setState(() {
+          isError= true;
+          errorMessage = Strings.instance.notFound;
+        });
       }
     } catch (e) {
       setState(() {
         isError= true;
-        errorMessage = Strings.instance.notAvail;
+        errorMessage = Strings.instance.notFound;
       });
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     } finally {
@@ -298,20 +242,5 @@ class _FAQsState extends State<FAQs> {
       uiUpdates.DismissProgresssDialog();
     }
   }
-
-  void CheckTokenExpiry() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if(constants.AgentExpiryComperission()){
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        GetFaqs(false);
-      }
-    });
-  }
-
-  void OpenCloseFaq(int index) {
-    setState(() {
-      list[index].isOpen = !list[index].isOpen;
-    });
-  }
 }
+

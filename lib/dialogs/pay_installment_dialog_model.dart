@@ -31,215 +31,400 @@ class _PayInstalmentDialogModelState extends State<PayInstalmentDialogModel> {
   
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
+    remarksController.clear();
+  }
+
+  @override
+  void dispose() {
+    remarksController.clear();
+    super.dispose();
   }
   
   @override
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: Container(
-        height: 320,
-        margin: EdgeInsets.only(left: 30, right: 30),
-        decoration: BoxDecoration(
-          color: AppTheme.colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-
+      child: Center(
         child: Container(
+          constraints: BoxConstraints(maxWidth: 400, maxHeight: MediaQuery.of(context).size.height * 0.85),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: AppTheme.colors.newWhite,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: Offset(0, 10),
+                spreadRadius: 0,
+              ),
+            ],
+          ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // Header
               Container(
-                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                    color: AppTheme.colors.newPrimary,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.colors.newPrimary,
+                      AppTheme.colors.newPrimary.withOpacity(0.85),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
                 ),
-                child: Stack(
+                child: Row(
                   children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(widget.installmentModel.ins_number,
-                        style: TextStyle(
-                            color: AppTheme.colors.white,
-                            fontSize: 13,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),),
-                    ),
-
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: 0.5,
-                        width: double.infinity,
-                        color: AppTheme.colors.colorDarkGray,
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.colors.newWhite.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    )
+                      child: Icon(
+                        Icons.payment,
+                        color: AppTheme.colors.newWhite,
+                        size: 20,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.installmentModel.ins_number ?? "Pay Installment",
+                            style: TextStyle(
+                              color: AppTheme.colors.newWhite,
+                              fontSize: 16,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            "Amount: ${widget.installmentModel.ins_amount ?? "0.00"} PKR",
+                            style: TextStyle(
+                              color: AppTheme.colors.newWhite.withOpacity(0.9),
+                              fontSize: 12,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.close,
+                          color: AppTheme.colors.newWhite,
+                          size: 20,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 10, left: 20, right: 20),
+              // Form Content
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      InkWell(
-                        onTap: (){
-                          OpenBankDialog(context).then((value) {
-                            if(value != null){
-                              setState(() {
-                                selectedBankName = value;
-                              });
-                            }
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          height: 35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(selectedBankName,
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      color: selectedBankName == Strings.instance.selectBankName ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                      fontSize: 14,
-                                                      fontFamily: "AppFont",
-                                                      fontWeight: FontWeight.normal
-                                                  ),
-                                                ),
-                                              ),
-
-                                              Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
+                      // Bank Selection
+                      Text(
+                        "Bank Name",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 13,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 35,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: TextField(
-                                          controller: remarksController,
-                                          cursorColor: AppTheme.colors.newPrimary,
-                                          keyboardType: TextInputType.text,
-                                          maxLines: 1,
-                                          textInputAction: TextInputAction.done,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppTheme.colors.newBlack
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "Remarks",
-                                            hintStyle: TextStyle(
-                                                fontFamily: "AppFont",
-                                                color: AppTheme.colors.colorDarkGray
-                                            ),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
+                      SizedBox(height: 8),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: (){
+                            OpenBankDialog(context).then((value) {
+                              if(value != null){
+                                setState(() {
+                                  selectedBankName = value;
+                                });
+                              }
+                            });
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.colors.newWhite,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: selectedBankName == Strings.instance.selectBankName
+                                    ? AppTheme.colors.colorDarkGray.withOpacity(0.3)
+                                    : AppTheme.colors.newPrimary.withOpacity(0.5),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.account_balance,
+                                  color: selectedBankName == Strings.instance.selectBankName
+                                      ? AppTheme.colors.colorDarkGray
+                                      : AppTheme.colors.newPrimary,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    selectedBankName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: selectedBankName == Strings.instance.selectBankName
+                                          ? AppTheme.colors.colorDarkGray
+                                          : AppTheme.colors.newBlack,
+                                      fontSize: 14,
+                                      fontFamily: "AppFont",
+                                      fontWeight: FontWeight.normal,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: AppTheme.colors.newPrimary,
+                                  size: 24,
+                                ),
+                              ],
                             ),
+                          ),
+                        ),
+                      ),
 
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
+                      SizedBox(height: 20),
+
+                      // Remarks Field
+                      Text(
+                        "Remarks",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 13,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.colors.newWhite,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
                           ],
                         ),
+                        child: TextField(
+                          controller: remarksController,
+                          cursorColor: AppTheme.colors.newPrimary,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 3,
+                          textInputAction: TextInputAction.done,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.colors.newBlack,
+                            fontFamily: "AppFont",
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Enter remarks (optional)",
+                            hintStyle: TextStyle(
+                              fontFamily: "AppFont",
+                              color: AppTheme.colors.colorDarkGray,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(16),
+                          ),
+                        ),
                       ),
 
-                      InkWell(
-                        onTap: ()
-                        {
-                          OpenFilePicker();
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 30),
-                          height: 45,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: AppTheme.colors.newBlack, width: 1,)
-                          ),
-                          child: Center(
-                            child: Text(challanFileName,
-                              style: TextStyle(
-                                  color: AppTheme.colors.newBlack,
-                                  fontSize: 12,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.bold
+                      SizedBox(height: 20),
+
+                      // File Picker
+                      Text(
+                        "Challan Document",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 13,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            OpenFilePicker();
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: challanFilePath.isEmpty
+                                  ? AppTheme.colors.newWhite
+                                  : AppTheme.colors.colorExelent.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: challanFilePath.isEmpty
+                                    ? AppTheme.colors.colorDarkGray.withOpacity(0.3)
+                                    : AppTheme.colors.colorExelent.withOpacity(0.5),
+                                width: 1.5,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  challanFilePath.isEmpty ? Icons.upload_file : Icons.check_circle,
+                                  color: challanFilePath.isEmpty
+                                      ? AppTheme.colors.colorDarkGray
+                                      : AppTheme.colors.colorExelent,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        challanFileName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: challanFilePath.isEmpty
+                                              ? AppTheme.colors.colorDarkGray
+                                              : AppTheme.colors.newBlack,
+                                          fontSize: 14,
+                                          fontFamily: "AppFont",
+                                          fontWeight: challanFilePath.isEmpty
+                                              ? FontWeight.normal
+                                              : FontWeight.bold,
+                                        ),
+                                      ),
+                                      if (challanFilePath.isNotEmpty)
+                                        SizedBox(height: 2),
+                                      if (challanFilePath.isNotEmpty)
+                                        Text(
+                                          "Tap to change",
+                                          style: TextStyle(
+                                            color: AppTheme.colors.colorDarkGray,
+                                            fontSize: 11,
+                                            fontFamily: "AppFont",
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppTheme.colors.newPrimary,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
 
-                      InkWell(
-                        onTap: (){
-                          Validation();
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          color: AppTheme.colors.newPrimary,
-                          child: Center(
-                            child: Text("Add",
-                              style: TextStyle(
-                                  color: AppTheme.colors.newWhite,
-                                  fontSize: 12,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.bold
+                      SizedBox(height: 24),
+
+                      // Submit Button
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: (){
+                            Validation();
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppTheme.colors.newPrimary,
+                                  AppTheme.colors.newPrimary.withOpacity(0.85),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.colors.newPrimary.withOpacity(0.4),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  color: AppTheme.colors.newWhite,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Submit Payment",
+                                  style: TextStyle(
+                                    color: AppTheme.colors.newWhite,
+                                    fontSize: 15,
+                                    fontFamily: "AppFont",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -247,7 +432,7 @@ class _PayInstalmentDialogModelState extends State<PayInstalmentDialogModel> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -292,18 +477,16 @@ class _PayInstalmentDialogModelState extends State<PayInstalmentDialogModel> {
 
   void Validation() {
     if(selectedBankName == Strings.instance.selectBankName){
-      if(challanFilePath == ""){
-        if(remarksController.text.toString().isNotEmpty){
-          CheckConnection();
-        }else{
-          uiUpdates.ShowToast("Remarks shouldn't be empty");
-        }
-      }else{
-        uiUpdates.ShowToast("Select Challan Image");
-      }
-    }else{
-      uiUpdates.ShowToast("Select Bank");
+      uiUpdates.ShowToast("Please select a bank");
+      return;
     }
+    
+    if(challanFilePath.isEmpty){
+      uiUpdates.ShowToast("Please select a challan document");
+      return;
+    }
+    
+    CheckConnection();
   }
 
   void CheckConnection() {
