@@ -73,6 +73,7 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
         children: [
           // User/Child Info Row
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: 56,
@@ -117,13 +118,15 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Name and Status Badge Row
                     Row(
                       children: [
-                        Flexible(
+                        Expanded(
                           child: Text(
                             displayName.isNotEmpty ? displayName : "N/A",
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: AppTheme.colors.newBlack,
@@ -133,31 +136,18 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
-                        if (displayGender.isNotEmpty && displayGender != "-")
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: displayGender.toLowerCase() == "male" 
-                                  ? Colors.blue.withOpacity(0.1) 
-                                  : Colors.pink.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              displayGender,
-                              style: TextStyle(
-                                color: displayGender.toLowerCase() == "male" 
-                                    ? Colors.blue 
-                                    : Colors.pink,
-                                fontSize: 9,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                        SizedBox(width: 8),
+                        ClaimStagesHelper.buildListStatusBadge(
+                          claimStage,
+                          fontSize: 9,
+                          showTooltip: true,
+                        ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    
+                    SizedBox(height: 6),
+                    
+                    // CNIC
                     if (displayCnic.isNotEmpty && displayCnic != "-")
                       Text(
                         displayCnic,
@@ -170,17 +160,45 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
                           fontWeight: FontWeight.normal,
                         ),
                       ),
+                    
+                    SizedBox(height: 6),
+                    
+                    // Gender Badge
+                    if (displayGender.isNotEmpty && displayGender != "-")
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: displayGender.toLowerCase() == "male" 
+                              ? Colors.blue.withOpacity(0.1) 
+                              : Colors.pink.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              displayGender.toLowerCase() == "male" ? Icons.male : Icons.female,
+                              size: 12,
+                              color: displayGender.toLowerCase() == "male" 
+                                  ? Colors.blue 
+                                  : Colors.pink,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              displayGender,
+                              style: TextStyle(
+                                color: displayGender.toLowerCase() == "male" 
+                                    ? Colors.blue 
+                                    : Colors.pink,
+                                fontSize: 10,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
-                ),
-              ),
-              
-              SizedBox(width: 8),
-              
-              Flexible(
-                child: ClaimStagesHelper.buildListStatusBadge(
-                  claimStage,
-                  fontSize: 9,
-                  showTooltip: true,
                 ),
               ),
             ],
@@ -188,27 +206,14 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
           
           SizedBox(height: 14),
           
-          // Beneficiary Badge & Claim Period
+          // Claim Type Badge & Claim Period
           Row(
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: beneficiary == "Child" 
-                        ? [Color(0xFF6366F1), Color(0xFF8B5CF6)]
-                        : [AppTheme.colors.newPrimary, AppTheme.colors.newPrimary.withOpacity(0.8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: AppTheme.colors.colorDarkGray.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (beneficiary == "Child" ? Color(0xFF6366F1) : AppTheme.colors.newPrimary).withOpacity(0.3),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -216,16 +221,16 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
                     Icon(
                       beneficiary == "Child" ? Icons.child_care : Icons.person,
                       size: 14,
-                      color: AppTheme.colors.newWhite,
+                      color: AppTheme.colors.colorDarkGray,
                     ),
                     SizedBox(width: 4),
                     Text(
-                      beneficiary.isNotEmpty ? beneficiary : "N/A",
+                      beneficiary == "Child" ? "Child Claim" : "Self Claim",
                       style: TextStyle(
-                        color: AppTheme.colors.newWhite,
+                        color: AppTheme.colors.colorDarkGray,
                         fontSize: 11,
                         fontFamily: "AppFont",
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],

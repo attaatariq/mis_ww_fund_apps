@@ -162,10 +162,6 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
                           padding: EdgeInsets.all(16),
                           child: Column(
                             children: [
-                              // Claim Details Card
-                              _buildClaimDetailsCard(),
-                              SizedBox(height: 16),
-                              
                               // User/Child Info Card
                               if (beneficiary == "Child")
                                 _buildChildInfoCard()
@@ -173,8 +169,12 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
                                 _buildUserInfoCard(),
                               SizedBox(height: 16),
                               
-                              // Status Card
+                              // Status Card (Total Claim Amount)
                               _buildStatusCard(),
+                              SizedBox(height: 16),
+                              
+                              // Claim Details Card
+                              _buildClaimDetailsCard(),
                               SizedBox(height: 16),
                               
                               // Company & Location Information
@@ -235,7 +235,7 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
                               
                               // Payment Information
                               _buildPaymentInformationCard(),
-                              SizedBox(height: 24),
+                              SizedBox(height: 16),
                             ],
                           ),
                         ),
@@ -304,20 +304,13 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.colors.newPrimary,
-            AppTheme.colors.newPrimary.withOpacity(0.85),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppTheme.colors.newWhite,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.colors.newPrimary.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 8,
-            offset: Offset(0, 4),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -325,28 +318,26 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Claim Details",
-                style: TextStyle(
-                  color: AppTheme.colors.newWhite,
-                  fontSize: 16,
-                  fontFamily: "AppFont",
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.assignment,
+                  size: 20,
+                  color: AppTheme.colors.newPrimary,
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppTheme.colors.newWhite.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              SizedBox(width: 12),
+              Expanded(
                 child: Text(
-                  claim_id,
+                  "Claim Details",
                   style: TextStyle(
-                    color: AppTheme.colors.newWhite,
-                    fontSize: 12,
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 15,
                     fontFamily: "AppFont",
                     fontWeight: FontWeight.bold,
                   ),
@@ -355,11 +346,55 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
             ],
           ),
           SizedBox(height: 16),
-          _buildWhiteInfoRow("Support Type", support_type, "Beneficiary", beneficiary),
+          
+          // MIS ID
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.fingerprint,
+                  size: 16,
+                  color: AppTheme.colors.newPrimary,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "MIS ID: ",
+                  style: TextStyle(
+                    color: AppTheme.colors.colorDarkGray,
+                    fontSize: 12,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    claim_id,
+                    style: TextStyle(
+                      color: AppTheme.colors.newPrimary,
+                      fontSize: 13,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 12),
-          _buildWhiteInfoRow("Start Date", start_date, "End Date", end_date),
+          
+          _buildInfoRow("Support Type", support_type, "Beneficiary", beneficiary),
           SizedBox(height: 12),
-          _buildWhiteInfoRow("Submission Date", created_at, "", ""),
+          _buildInfoRow("Start Date", start_date, "End Date", end_date),
+          if (created_at != "-" && created_at.isNotEmpty)
+            SizedBox(height: 12),
+          if (created_at != "-" && created_at.isNotEmpty)
+            _buildInfoRow("Submission Date", created_at, "", ""),
         ],
       ),
     );
@@ -908,8 +943,52 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
           
           _buildInfoRow("Nature / Level", "$edu_nature / $edu_level", "Degree / Class", "$edu_degree / $edu_class"),
           SizedBox(height: 12),
-          _buildInfoRow("Session / Batch", "$edu_started - $edu_ended", "", ""),
+          
+          // Session/Batch in full width
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: AppTheme.colors.newPrimary.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_month,
+                  size: 16,
+                  color: AppTheme.colors.newPrimary,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Session / Batch: ",
+                  style: TextStyle(
+                    color: AppTheme.colors.colorDarkGray,
+                    fontSize: 12,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    "$edu_started - $edu_ended",
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 13,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 12),
+          
           _buildInfoRow("Residency", edu_living, "Transport", edu_transport),
           if (edu_mess != "-")
             SizedBox(height: 12),
@@ -1403,9 +1482,11 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
           if (remarks_1 != "-" && remarks_1.isNotEmpty)
             SizedBox(height: 12),
           if (remarks_1 != "-" && remarks_1.isNotEmpty)
-            _buildRemarkItem("Fine Remarks", remarks_1),
+            _buildFullWidthRemarkItem("Fine Remarks", remarks_1),
           if (remarks_2 != "-" && remarks_2.isNotEmpty)
-            _buildRemarkItem("Charges Remarks", remarks_2),
+            SizedBox(height: 5),
+          if (remarks_2 != "-" && remarks_2.isNotEmpty)
+            _buildFullWidthRemarkItem("Charges Remarks", remarks_2),
           
           SizedBox(height: 16),
           _buildDocumentsSection([
@@ -1859,6 +1940,45 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
             ),
           ),
           SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 12,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildFullWidthRemarkItem(String label, String value) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.colorDarkGray.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppTheme.colors.colorDarkGray.withOpacity(0.15),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 11,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
