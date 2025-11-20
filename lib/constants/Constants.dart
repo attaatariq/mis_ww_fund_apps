@@ -119,7 +119,7 @@ class Constants {
   String contactPersonInfo = "person";
   String inheritorInfo = "inheritors";
 
-  //date Dialog colors
+  // Date Dialog colors
   int dateDialogBg = 0xFF567ef1;
   int dateDialogText = 0xFFFFFFFF;
 
@@ -127,8 +127,7 @@ class Constants {
     return ImageBaseURL;
   }
 
-  /// Build API URL with user_id but without token (token goes in Authorization header)
-  /// Example: buildApiUrl("claims/fee_claim/", user_id) -> "claims/fee_claim/{user_id}/"
+  // Build API URL with user_id but without token (token goes in Authorization header)
   String buildApiUrl(String endpoint, String userId, {String additionalPath = ""}) {
     String url = endpoint;
     if (!url.endsWith("/")) {

@@ -1026,10 +1026,7 @@ class _FeeClaimDetailState extends State<FeeClaimDetail> {
   void GetFeeClaimsDetail() async {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.buildApiUrl(
-          constants.claims + "fee_info/", 
-          UserSessions.instance.getUserID, 
-          additionalPath: widget.calim_ID);
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(constants.claims + "educational_info/", UserSessions.instance.getUserID, additionalPath: widget.calim_ID);
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

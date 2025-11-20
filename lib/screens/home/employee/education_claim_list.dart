@@ -7,8 +7,8 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/views/educational_claim_list_item.dart';
 import 'package:wwf_apps/models/EducationalClaimModel.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
-import 'package:wwf_apps/screens/home/employee/create_fee_claim.dart';
-import 'package:wwf_apps/screens/home/employee/fee_claim_detail.dart';
+import 'package:wwf_apps/screens/home/employee/create_educational_claim.dart';
+import 'package:wwf_apps/screens/home/employee/educational_claim_detail.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/models/ClaimStageModel.dart';
@@ -197,7 +197,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
         uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       }
       
-      // Format: /claims/fee_claim/{user_id}/E/{emp_id}
+      // Format: /uri/endpoint/{user_id}/E/{emp_id}
       String userId = UserSessions.instance.getUserID;
       String empId = UserSessions.instance.getEmployeeID;
       
@@ -216,7 +216,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
         return;
       }
       
-      var url = constants.getApiBaseURL() + constants.claims + "fee_claim/" + userId + "/E/" + empId;
+      var url = constants.getApiBaseURL() + constants.claims + "educational_claim/" + userId + "/E/" + empId;
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

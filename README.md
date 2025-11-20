@@ -168,7 +168,7 @@ lib/
 ├── views/                 # List item widgets (19 items)
 │   ├── children_list_itemview.dart
 │   ├── complaint_list_item.dart
-│   ├── fee_claim_list_item.dart
+│   ├── educational_claim_list_item.dart
 │   └── ... (16 more)
 ├── models/                    # Data models (33 models)
 │   ├── ChildModel.dart
@@ -416,7 +416,7 @@ children/
   └── create
 
 claims/
-  ├── fee_claim
+  ├── educational_claim
   ├── marriage_claim
   ├── deceased_claim
   ├── estate_claim

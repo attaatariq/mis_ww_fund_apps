@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/models/EducationalClaimModel.dart';
-import 'package:wwf_apps/screens/home/employee/fee_claim_detail.dart';
+import 'package:wwf_apps/screens/home/employee/educational_claim_detail.dart';
 import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
@@ -227,10 +227,10 @@ class _EducationClaimListState extends State<EducationClaimList> {
         uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       }
       
-      // Format: /claims/fee_claim/{user_id}/C/{comp_id}
+      // Format: /uri/endpoint/{user_id}/C/{comp_id}
       String userId = UserSessions.instance.getUserID;
       String compId = UserSessions.instance.getRefID; // comp_id for employer
-      var url = constants.getApiBaseURL() + constants.claims + "fee_claim/" + userId + "/C/" + compId;
+      var url = constants.getApiBaseURL() + constants.claims + "educational_claim/" + userId + "/C/" + compId;
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

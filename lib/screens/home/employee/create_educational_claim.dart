@@ -2107,27 +2107,33 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
   void CreateFeeClaim() async{
     uiUpdates.HideKeyBoard();
     int trannsportCost= 0, messCharges= 0;
-    if(transportCostCon.text.toString() != ""){
+
+    if (transportCostCon.text.toString() != "") {
       trannsportCost= int.parse(transportCostCon.text.toString());
     }
-    if(messChargesCon.text.toString() != ""){
+
+    if (messChargesCon.text.toString() != "") {
       messCharges= int.parse(messChargesCon.text.toString());
     }
+
     String totalClaimAmount = GetTotalClaimAmount(trannsportCost, messCharges);
 
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL()+constants.claims+"fee_claim";
+    var url = constants.getApiBaseURL()+constants.claims+"educational_claim";
     var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['user_id'] = UserSessions.instance.getUserID;
       // Token now sent in Authorization header, not in fields
       APIService.addAuthHeaderToMultipartRequest(request);
       request.fields['emp_id'] = UserSessions.instance.getRefID;
       request.fields['company_1'] = companyID;
-      if(selectedClaimType == constants.calimSelf) { /// data for self claim
+
+      if (selectedClaimType == constants.calimSelf) { /// data for self claim
         request.fields['child_id'] = "";
-      }else{ /// data for child claim
+      } else {
+        // Data for child claim
         request.fields['child_id'] = selectedChildID;
       }
+
       request.fields['claim_category'] = selectedClaimType;
       request.fields['claim_from'] = selectedStartDate;
       request.fields['claim_to'] = selectedEndDate;

@@ -24,12 +24,10 @@ class EmployeeHome extends StatefulWidget {
 class _EmployeeHomeState extends State<EmployeeHome> {
   Constants constants;
   UIUpdates uiUpdates;
-  String totalClaim="0", reimbursed_claims= "0", inprogress_claims= "0", benefits_amount= "0",
+  String totalClaim= "0", reimbursed_claims= "0", inprogress_claims= "0", benefits_amount= "0",
       notice_1= "Not Available", notice_2= "Not Available", estate_claim_delivered= "0", hajj_claim_delivered= "0",
       total_death_amount= "0", death_amount_delivered = "0", death_amount_inprogress= "0", total_marriage_amount= "0",
-      marriage_amount_delivered= "0", marriage_amount_inprogress= "0", education_claims_count= "0", total_edu_claim_amount= "0",
-      fee_claims= "0", school_basics= "0", transport_amount= "0", residence_amount= "0", complaints= "0", feedbacks= "0",
-      total_school_basics ="0", total_transport_claim= "0", total_residence_claim= "0", total_fee_claims= "0";
+      marriage_amount_delivered= "0", marriage_amount_inprogress= "0", education_claims_count= "0", total_edu_claim_amount= "0", edu_claims= "0", school_basics= "0", transport_amount= "0", residence_amount= "0", complaints= "0", feedbacks= "0", total_school_basics ="0", total_transport_claim= "0", total_residence_claim= "0", total_edu_claims= "0";
 
   @override
   void initState() {
@@ -799,8 +797,8 @@ class _EmployeeHomeState extends State<EmployeeHome> {
                                 Expanded(
                                   child: _buildEducationSubCard(
                                     title: "Fee Claims",
-                                    count: total_fee_claims,
-                                    amount: fee_claims,
+                                    count: total_edu_claims,
+                                    amount: edu_claims,
                                     icon: Icons.receipt,
                                   ),
                                 ),
@@ -961,7 +959,7 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         reimbursed_claims= _formatCount(countObject["completed"]);
         inprogress_claims= _formatCount(countObject["pending"]);
         education_claims_count= _formatCount(countObject["education"]);
-        total_fee_claims= _formatCount(countObject["edu_fee"]);
+        total_edu_claims= _formatCount(countObject["edu_fee"]);
         
         // Parse amounts with null safety
         benefits_amount= _formatAmount(amountObject["benefits"]);
@@ -974,7 +972,7 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         marriage_amount_delivered= _formatAmount(amountObject["mrg_done"]);
         marriage_amount_inprogress= _formatAmount(amountObject["mrg_remaining"]);
         total_edu_claim_amount= _formatAmount(amountObject["education"]);
-        fee_claims= _formatAmount(amountObject["edu_fee"]);
+        edu_claims= _formatAmount(amountObject["edu_fee"]);
         school_basics= _formatAmount(amountObject["school_basics"]);
         transport_amount= _formatAmount(amountObject["transport"]);
         residence_amount= "0";
