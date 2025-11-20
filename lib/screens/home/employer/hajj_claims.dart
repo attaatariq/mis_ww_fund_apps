@@ -174,7 +174,10 @@ class _HajjClaimListState extends State<HajjClaimList> {
   void GetHajjClaims() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.claims+"hajj_claim/", UserSessions.instance.getUserID, additionalPath: "C/"+UserSessions.instance.getRefID);
+      // Format: /claims/hajj_claim/{user_id}/C/{comp_id}
+      String userId = UserSessions.instance.getUserID;
+      String compId = UserSessions.instance.getRefID; // comp_id for employer
+      var url = constants.getApiBaseURL() + constants.claims + "hajj_claim/" + userId + "/C/" + compId;
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

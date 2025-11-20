@@ -566,9 +566,10 @@ class _EstateClaimState extends State<EstateClaim> {
   void GetEstateClaim() async{
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.buildApiUrl(
-          constants.claims + "estate_claim/", 
-          UserSessions.instance.getUserID);
+      // Format: /claims/estate_claim/{user_id}/E/{emp_id}
+      String userId = UserSessions.instance.getUserID;
+      String empId = UserSessions.instance.getEmployeeID;
+      var url = constants.getApiBaseURL() + constants.claims + "estate_claim/" + userId + "/E/" + empId;
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(

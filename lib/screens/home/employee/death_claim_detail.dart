@@ -999,119 +999,149 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
     });
   }
 
-  void GetDeathClaimsDetail() async{
-    uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    var url = constants.getApiBaseURL() + constants.buildApiUrl(
-        constants.claims + "deceased_detail/", 
-        UserSessions.instance.getUserID, 
-        additionalPath: widget.calim_ID);
-    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    uiUpdates.DismissProgresssDialog();
-    ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
-    if (responseCodeModel.status == true) {
-      var bodyData = jsonDecode(response.body);
-      String code = bodyData["Code"].toString();
-      if (code == "1") {
-        var body = bodyData["Data"];
-        // Handle notings field (may be null or empty)
-        if (body["notings"] != null) {
-          List<dynamic> noteListData = body["notings"];
-          if (noteListData.isNotEmpty) {
-            noteList.clear();
-            noteListData.forEach((element) {
-              noteParahList.clear();
-              List<dynamic> noteParaListData = element["note_paras"] != null ? element["note_paras"] : [];
-              if (noteParaListData.isNotEmpty) {
-                noteParaListData.forEach((element1) {
-                  String para_no = element1["para_no"] != null ? element1["para_no"].toString() : "";
-                  String remarks = element1["remarks"] != null ? element1["remarks"].toString() : "";
-                  noteParahList.add(Note(para_no, remarks));
+  void GetDeathClaimsDetail() async {
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      var url = constants.getApiBaseURL() + constants.buildApiUrl(
+          constants.claims + "deceased_detail/", 
+          UserSessions.instance.getUserID, 
+          additionalPath: widget.calim_ID);
+      
+      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
+      
+      if (responseCodeModel.status == true) {
+        try {
+          var bodyData = jsonDecode(response.body);
+          String code = bodyData["Code"].toString();
+          
+          if (code == "1") {
+            var body = bodyData["Data"];
+            // Handle notings field (may be null or empty)
+            if (body["notings"] != null) {
+              List<dynamic> noteListData = body["notings"];
+              if (noteListData.isNotEmpty) {
+                noteList.clear();
+                noteListData.forEach((element) {
+                  noteParahList.clear();
+                  List<dynamic> noteParaListData = element["note_paras"] != null ? element["note_paras"] : [];
+                  if (noteParaListData.isNotEmpty) {
+                    noteParaListData.forEach((element1) {
+                      String para_no = element1["para_no"] != null ? element1["para_no"].toString() : "";
+                      String remarks = element1["remarks"] != null ? element1["remarks"].toString() : "";
+                      noteParahList.add(Note(para_no, remarks));
+                    });
+                  }
+                  String user_name_to = element["user_name_to"] != null ? element["user_name_to"].toString() : "";
+                  String role_name_to = element["role_name_to"] != null ? element["role_name_to"].toString() : "";
+                  String sector_name_to = element["sector_name_to"] != null ? element["sector_name_to"].toString() : "";
+                  String user_name_by = element["user_name_by"] != null ? element["user_name_by"].toString() : "";
+                  String role_name_by = element["role_name_by"] != null ? element["role_name_by"].toString() : "";
+                  String sector_name_by = element["sector_name_by"] != null ? element["sector_name_by"].toString() : "";
+                  String noting_created_at = element["created_at"] != null ? element["created_at"].toString() : "";
+                  noteList.add(NoteModel(
+                      user_name_to,
+                      role_name_to,
+                      sector_name_to,
+                      user_name_by,
+                      role_name_by,
+                      sector_name_by,
+                      noting_created_at,
+                      noteParahList));
                 });
               }
-              String user_name_to = element["user_name_to"] != null ? element["user_name_to"].toString() : "";
-              String role_name_to = element["role_name_to"] != null ? element["role_name_to"].toString() : "";
-              String sector_name_to = element["sector_name_to"] != null ? element["sector_name_to"].toString() : "";
-              String user_name_by = element["user_name_by"] != null ? element["user_name_by"].toString() : "";
-              String role_name_by = element["role_name_by"] != null ? element["role_name_by"].toString() : "";
-              String sector_name_by = element["sector_name_by"] != null ? element["sector_name_by"].toString() : "";
-              String noting_created_at = element["created_at"] != null ? element["created_at"].toString() : "";
-              noteList.add(NoteModel(
-                  user_name_to,
-                  role_name_to,
-                  sector_name_to,
-                  user_name_by,
-                  role_name_by,
-                  sector_name_by,
-                  noting_created_at,
-                  noteParahList));
+            }
+            
+            // User information
+            user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
+            user_image= body["user_image"] != null ? body["user_image"].toString() : "-";
+            user_cnic= body["user_cnic"] != null ? body["user_cnic"].toString() : "-";
+            
+            // Claim information
+            claim_stage = body["claim_stage"] != null ? body["claim_stage"].toString() : "-";
+            created_at = body["created_at"] != null ? body["created_at"].toString() : "-";
+            claim_dated = body["claim_dated"] != null ? body["claim_dated"].toString() : "-";
+            claim_amount = body["claim_amount"] != null ? body["claim_amount"].toString() : "-";
+            
+            // Employee information
+            eobiNo = body["emp_eobino"] != null ? body["emp_eobino"].toString() : "-";
+            bank_name= body["emp_bank"] != null ? body["emp_bank"].toString() : "-";
+            account_number= body["emp_account"] != null ? body["emp_account"].toString() : "-";
+            account_title= body["emp_title"] != null ? body["emp_title"].toString() : "-";
+            
+            // Documents - handle null values
+            eobiPension = body["emp_eobi_card"] != null && body["emp_eobi_card"] != "null" ? body["emp_eobi_card"].toString() : "";
+            affidavitNotClaimed = body["claim_affidavit_1"] != null && body["claim_affidavit_1"] != "null" ? body["claim_affidavit_1"].toString() : "";
+            affidavitNotMarried = body["claim_affidavit_2"] != null && body["claim_affidavit_2"] != "null" ? body["claim_affidavit_2"].toString() : "";
+            awards = body["claim_award"] != null && body["claim_award"] != "null" ? body["claim_award"].toString() : "";
+            deathCertificate = body["claim_certificate"] != null && body["claim_certificate"] != "null" ? body["claim_certificate"].toString() : "";
+            pensionBook = body["claim_book"] != null && body["claim_book"] != "null" ? body["claim_book"].toString() : "";
+            condonation = body["claim_condonation"] != null && body["claim_condonation"] != "null" ? body["claim_condonation"].toString() : "";
+            
+            // Add missing claim_eobipension field
+            claimEobiPension = body["claim_eobipension"] != null && body["claim_eobipension"] != "null" ? body["claim_eobipension"].toString() : "";
+            
+            // Beneficiary information
+            bene_name = body["bene_name"] != null ? body["bene_name"].toString() : "-";
+            bene_cnic = body["bene_cnic"] != null ? body["bene_cnic"].toString() : "-";
+            bene_relation = body["bene_relation"] != null ? body["bene_relation"].toString() : "-";
+            bene_contact = body["bene_contact"] != null ? body["bene_contact"].toString() : "-";
+            bene_guardian = body["bene_guardian"] != null ? body["bene_guardian"].toString() : "-";
+            bene_address = body["bene_address"] != null ? body["bene_address"].toString() : "-";
+            bene_city = body["bene_city"] != null ? body["bene_city"].toString() : "-";
+            bene_district = body["bene_district"] != null ? body["bene_district"].toString() : "-";
+            bene_state = body["bene_state"] != null ? body["bene_state"].toString() : "-";
+            bene_bank = body["bene_bank"] != null ? body["bene_bank"].toString() : "-";
+            bene_nature = body["bene_nature"] != null ? body["bene_nature"].toString() : "-";
+            bene_title = body["bene_title"] != null ? body["bene_title"].toString() : "-";
+            bene_account = body["bene_account"] != null ? body["bene_account"].toString() : "-";
+            bene_issued = body["bene_issued"] != null ? body["bene_issued"].toString() : "-";
+            bene_expiry = body["bene_expiry"] != null ? body["bene_expiry"].toString() : "-";
+            
+            setState(() {
+              isError = false;
+            });
+          } else {
+            uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
+            setState(() {
+              isError = true;
+              errorMessage = Strings.instance.notFound;
             });
           }
+        } catch (e) {
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          setState(() {
+            isError = true;
+            errorMessage = Strings.instance.somethingWentWrong;
+          });
         }
-        
-        // User information
-        user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
-        user_image= body["user_image"] != null ? body["user_image"].toString() : "-";
-        user_cnic= body["user_cnic"] != null ? body["user_cnic"].toString() : "-";
-        
-        // Claim information
-        claim_stage = body["claim_stage"] != null ? body["claim_stage"].toString() : "-";
-        created_at = body["created_at"] != null ? body["created_at"].toString() : "-";
-        claim_dated = body["claim_dated"] != null ? body["claim_dated"].toString() : "-";
-        claim_amount = body["claim_amount"] != null ? body["claim_amount"].toString() : "-";
-        
-        // Employee information
-        eobiNo = body["emp_eobino"] != null ? body["emp_eobino"].toString() : "-";
-        bank_name= body["emp_bank"] != null ? body["emp_bank"].toString() : "-";
-        account_number= body["emp_account"] != null ? body["emp_account"].toString() : "-";
-        account_title= body["emp_title"] != null ? body["emp_title"].toString() : "-";
-        
-        // Documents - handle null values
-        eobiPension = body["emp_eobi_card"] != null && body["emp_eobi_card"] != "null" ? body["emp_eobi_card"].toString() : "";
-        affidavitNotClaimed = body["claim_affidavit_1"] != null && body["claim_affidavit_1"] != "null" ? body["claim_affidavit_1"].toString() : "";
-        affidavitNotMarried = body["claim_affidavit_2"] != null && body["claim_affidavit_2"] != "null" ? body["claim_affidavit_2"].toString() : "";
-        awards = body["claim_award"] != null && body["claim_award"] != "null" ? body["claim_award"].toString() : "";
-        deathCertificate = body["claim_certificate"] != null && body["claim_certificate"] != "null" ? body["claim_certificate"].toString() : "";
-        pensionBook = body["claim_book"] != null && body["claim_book"] != "null" ? body["claim_book"].toString() : "";
-        condonation = body["claim_condonation"] != null && body["claim_condonation"] != "null" ? body["claim_condonation"].toString() : "";
-        
-        // Add missing claim_eobipension field
-        claimEobiPension = body["claim_eobipension"] != null && body["claim_eobipension"] != "null" ? body["claim_eobipension"].toString() : "";
-        
-        // Beneficiary information
-        bene_name = body["bene_name"] != null ? body["bene_name"].toString() : "-";
-        bene_cnic = body["bene_cnic"] != null ? body["bene_cnic"].toString() : "-";
-        bene_relation = body["bene_relation"] != null ? body["bene_relation"].toString() : "-";
-        bene_contact = body["bene_contact"] != null ? body["bene_contact"].toString() : "-";
-        bene_guardian = body["bene_guardian"] != null ? body["bene_guardian"].toString() : "-";
-        bene_address = body["bene_address"] != null ? body["bene_address"].toString() : "-";
-        bene_city = body["bene_city"] != null ? body["bene_city"].toString() : "-";
-        bene_district = body["bene_district"] != null ? body["bene_district"].toString() : "-";
-        bene_state = body["bene_state"] != null ? body["bene_state"].toString() : "-";
-        bene_bank = body["bene_bank"] != null ? body["bene_bank"].toString() : "-";
-        bene_nature = body["bene_nature"] != null ? body["bene_nature"].toString() : "-";
-        bene_title = body["bene_title"] != null ? body["bene_title"].toString() : "-";
-        bene_account = body["bene_account"] != null ? body["bene_account"].toString() : "-";
-        bene_issued = body["bene_issued"] != null ? body["bene_issued"].toString() : "-";
-        bene_expiry = body["bene_expiry"] != null ? body["bene_expiry"].toString() : "-";
-        setState(() {
-          isError = false;
-        });
       } else {
-        uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
-        setState(() {
-          isError = true;
-          errorMessage = Strings.instance.notAvail;
-        });
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"] != null ? body["Message"].toString() : "";
+          
+          if (message == constants.expireToken) {
+            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle,
+                Strings.instance.expireSessionMessage);
+          } else if (message.isNotEmpty && message != "null") {
+            uiUpdates.ShowToast(message);
+          } else {
+            uiUpdates.ShowToast(responseCodeModel.message);
+          }
+        } catch (e) {
+          uiUpdates.ShowToast(responseCodeModel.message);
+        }
       }
-    } else {
-      var body = jsonDecode(response.body);
-      String message = body["Message"].toString();
-      if (message == constants.expireToken) {
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle,
-            Strings.instance.expireSessionMessage);
-      } else {
-        uiUpdates.ShowToast(message);
-      }
+    } catch (e) {
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      setState(() {
+        isError = true;
+        errorMessage = Strings.instance.somethingWentWrong;
+      });
+    } finally {
+      await Future.delayed(Duration(milliseconds: 200));
+      uiUpdates.DismissProgresssDialog();
     }
   }
 }
