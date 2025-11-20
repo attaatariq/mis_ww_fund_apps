@@ -205,22 +205,55 @@ class _HajjClaimListState extends State<HajjClaimList> {
           String code = codeValue?.toString() ?? "0";
           
           if (code == "1" || codeValue == 1) {
-            List<dynamic> claims= body["Data"] ?? [];
+            dynamic dataField = body["Data"];
+            List<dynamic> claims = [];
+            
+            // Handle different response structures
+            if (dataField != null) {
+              if (dataField is List) {
+                claims = dataField;
+              } else if (dataField is Map) {
+                // If Data is a map, try to extract a list from it
+                if (dataField.containsKey("claims") && dataField["claims"] is List) {
+                  claims = dataField["claims"];
+                } else if (dataField.containsKey("data") && dataField["data"] is List) {
+                  claims = dataField["data"];
+                }
+              }
+            }
+            
             list.clear();
             
-            claims.forEach((element) {
-              String claim_year= element["claim_year"]?.toString() ?? "";
-              String claim_receipt= element["claim_receipt"]?.toString() ?? "";
-              String claim_amount= element["claim_amount"]?.toString() ?? "";
-              String created_at= element["created_at"]?.toString() ?? "";
-              String user_name= element["user_name"]?.toString() ?? "";
-              String comp_name= element["comp_name"]?.toString() ?? "";
-              list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name));
-            });
+            if (claims != null && claims is List && claims.length > 0) {
+              claims.forEach((element) {
+                if (element != null && element is Map) {
+                  String claim_year = element["claim_year"]?.toString() ?? "";
+                  String claim_receipt = element["claim_receipt"]?.toString() ?? "";
+                  String claim_amount = element["claim_amount"]?.toString() ?? "";
+                  String created_at = element["created_at"]?.toString() ?? "";
+                  String user_name = element["user_name"]?.toString() ?? "";
+                  String comp_name = element["comp_name"]?.toString() ?? "";
+                  list.add(new HajjClaimModel(claim_year, claim_receipt, claim_amount, created_at, user_name, comp_name));
+                }
+              });
 
-            setState(() {
-              isError= false;
-            });
+              if (list.length > 0) {
+                setState(() {
+                  isError = false;
+                  errorMessage = "";
+                });
+              } else {
+                setState(() {
+                  isError = true;
+                  errorMessage = "No Hajj claims found.";
+                });
+              }
+            } else {
+              setState(() {
+                isError = true;
+                errorMessage = "No Hajj claims found.";
+              });
+            }
           } else {
             String message = body["Message"] != null ? body["Message"].toString() : "";
             if(message.isNotEmpty && message != "null") {
@@ -235,10 +268,10 @@ class _HajjClaimListState extends State<HajjClaimList> {
           }
         } catch (e) {
           setState(() {
-            isError= true;
-            errorMessage = Strings.instance.notFound;
+            isError = true;
+            errorMessage = "Failed to parse response: ${e.toString()}";
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowToast("Error: ${e.toString()}");
         }
       } else {
         if(responseCodeModel.message != null && responseCodeModel.message != "null") {

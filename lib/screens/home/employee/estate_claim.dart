@@ -14,6 +14,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/utils/claim_stages_helper.dart';
 
 class EstateClaim extends StatefulWidget {
   @override
@@ -22,7 +23,8 @@ class EstateClaim extends StatefulWidget {
 
 class _EstateClaimState extends State<EstateClaim> {
   String claim_balloting="-", claim_scheme="-", scheme_name="-", claim_location="-", claim_quota="-", claim_dated="-", claim_abode="-", claim_number="-", claim_floor="-",
-      claim_street="-", claim_block="-", claim_impound="-", claim_amount="-", claim_payment="-", claim_balance="-", created_at="";
+      claim_street="-", claim_block="-", claim_impound="-", claim_amount="-", claim_payment="-", claim_balance="-", created_at="-", claim_stage="-";
+  String user_name="-", user_image="-", user_cnic="-", user_gender="-";
   String claim_id = ""; // Store claim ID for fetching installments
   Constants constants;
   UIUpdates uiUpdates;
@@ -51,39 +53,47 @@ class _EstateClaimState extends State<EstateClaim> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.white,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          // Modern Header with Shadow
+          Container(
+            decoration: BoxDecoration(
               color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: AppTheme.colors.newWhite,
+                          size: 24,
+                        ),
                       ),
                     ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Estate Claim",
-                        textAlign: TextAlign.center,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Estate Claim",
                         style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
+                          color: AppTheme.colors.newWhite,
+                          fontSize: 18,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -91,466 +101,164 @@ class _EstateClaimState extends State<EstateClaim> {
                 ),
               ),
             ),
+          ),
 
-            Expanded(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    hasEstateData ? Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.only(top: 20, left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.colors.colorDarkGray),
-                      ),
+          Expanded(
+            child: isError
+                ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  color: AppTheme.colors.newPrimary,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-
-                                child: Center(
-                                  child: Image(
-                                    image: AssetImage(
-                                        "archive/images/estate.png"),
-                                    alignment: Alignment.center,
-                                    height: 20.0,
-                                    width: 20.0,
-                                    color: AppTheme.colors.newWhite,
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(width: 10,),
-
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    scheme_name != "-" ? scheme_name : claim_scheme,
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-
-                                  Text(
-                                    "Baloting Date ("+claim_balloting+")",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.colorDarkGray,
-                                        fontSize: 10,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
                           ),
-
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Marit / Quota",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.colorDarkGray,
-                                            fontSize: 8,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-
-                                      Text(
-                                        claim_quota,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newBlack,
-                                            fontSize: 12,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Container(
-                                  width: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Allotment Date",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.colorDarkGray,
-                                            fontSize: 8,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-
-                                      Text(
-                                        claim_dated,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newBlack,
-                                            fontSize: 12,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Possession Date",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.colorDarkGray,
-                                            fontSize: 8,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-
-                                      Text(
-                                        claim_impound,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newBlack,
-                                            fontSize: 12,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Container(
-                                  width: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Create Date",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.colorDarkGray,
-                                            fontSize: 8,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-
-                                      Text(
-                                        created_at != "" ? constants.GetFormatedDateWithoutTime(created_at) : "-",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: AppTheme.colors.newBlack,
-                                            fontSize: 12,
-                                            fontFamily: "AppFont",
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 10,),
-
+                          SizedBox(height: 16),
                           Text(
-                            "Address / Location",
-                            maxLines: 1,
-                            textAlign: TextAlign.start,
+                            errorMessage.isNotEmpty ? errorMessage : Strings.instance.notAvail,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: AppTheme.colors.colorDarkGray,
-                                fontSize: 8,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.normal
+                              color: AppTheme.colors.colorDarkGray,
+                              fontSize: 14,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
-
-                          Text(
-                            claim_abode+" "+claim_number+", Floor "+claim_floor+", Street "+claim_street+", Block "+claim_block+", "+claim_location,
-                            maxLines: 2,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: AppTheme.colors.newBlack,
-                                fontSize: 13,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.normal
+                          SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                isError = false;
+                              });
+                              CheckTokenExpiry();
+                            },
+                            icon: Icon(Icons.refresh, size: 18),
+                            label: Text("Retry"),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(AppTheme.colors.newPrimary),
+                              foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                              padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
                             ),
                           ),
-
-                          SizedBox(height: 10,),
-
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: AppTheme.colors.newPrimary.withAlpha(200),
-                            ),
-
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "(Account)",
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.newWhite,
-                                        fontSize: 12,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                ),
-
-                                SizedBox(height: 15,),
-
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            "Total Amount",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 10,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.normal
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            claim_amount+" PKR",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 12,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-
-                                SizedBox(height: 3,),
-
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            "Amount Paid",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 10,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.normal
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            claim_payment+" PKR",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 12,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-
-                                SizedBox(height: 6,),
-
-                                Container(
-                                  width: double.infinity,
-                                  height: 1,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colors.newWhite
-                                  ),
-                                ),
-
-                                SizedBox(height: 6,),
-
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            "Remaining Balance",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 10,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.normal
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Text(
-                                            claim_balance+" PKR",
-                                            maxLines: 1,
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                                color: AppTheme.colors.newWhite,
-                                                fontSize: 12,
-                                                fontFamily: "AppFont",
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
                         ],
                       ),
-                    ) : Container(),
-
-                    hasEstateData ? SizedBox(height: 20,) : Container(),
-
-                    hasEstateData ? Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      child: Text(
-                        "Installments ("+list.length.toString()+")",
-                        maxLines: 1,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: AppTheme.colors.newBlack,
-                            fontSize: 13,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ) : Container(),
-
-                    !hasEstateData ? Expanded(
-                      child: EmptyStates.noClaims(type: 'Estate'),
-                    ) : hasInstallmentError ? Expanded(
-                      child: EmptyStateWidget(
-                        icon: Icons.receipt_long_outlined,
-                        message: 'No Installments Available',
-                        description: 'There are no installments for this estate claim.',
-                      ),
-                    ) : Flexible(
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {
+                        isError = false;
+                        list.clear();
+                      });
+                      await Future.delayed(Duration(milliseconds: 500));
+                      CheckTokenExpiry();
+                    },
+                    color: AppTheme.colors.newPrimary,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(0),
-                          itemBuilder: (_, int index) =>
-                              InstallmentItem(list[index], parentFunction),
-                          itemCount: this.list.length,
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            // User Info Card
+                            if (hasEstateData) _buildUserInfoCard(),
+                            if (hasEstateData) SizedBox(height: 16),
+
+                            // Status Card (if claim_stage is available)
+                            if (hasEstateData && claim_stage != "-" && claim_stage.isNotEmpty)
+                              ClaimStagesHelper.buildDetailStatusCard(claim_stage),
+                            if (hasEstateData && claim_stage != "-" && claim_stage.isNotEmpty)
+                              SizedBox(height: 12),
+                            
+                            // Submission Date Card
+                            if (hasEstateData && created_at != "-" && created_at.isNotEmpty)
+                              _buildSubmissionDateCard(),
+                            if (hasEstateData && created_at != "-" && created_at.isNotEmpty)
+                              SizedBox(height: 16),
+
+                            // Estate Overview Card
+                            if (hasEstateData) _buildEstateOverviewCard(),
+                            if (hasEstateData) SizedBox(height: 16),
+
+                            // Estate Details Card
+                            if (hasEstateData) _buildEstateDetailsCard(),
+                            if (hasEstateData) SizedBox(height: 16),
+
+                            // Financial Summary Card
+                            if (hasEstateData) _buildFinancialSummaryCard(),
+                            if (hasEstateData) SizedBox(height: 16),
+
+                            // Installments Section
+                            if (hasEstateData) ...[
+                              _buildSectionHeader("Installments", Icons.receipt_long),
+                              SizedBox(height: 12),
+                              if (list.isNotEmpty)
+                                ...list.map((installment) => Padding(
+                                  padding: EdgeInsets.only(bottom: 12),
+                                  child: InstallmentItem(installment, parentFunction),
+                                )).toList(),
+                              if (list.isEmpty)
+                                Container(
+                                  padding: EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.colors.newWhite,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.06),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.receipt_long_outlined,
+                                        size: 48,
+                                        color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                                      ),
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'No Installments Available',
+                                        style: TextStyle(
+                                          color: AppTheme.colors.colorDarkGray,
+                                          fontSize: 14,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        installmentErrorMessage.isNotEmpty 
+                                            ? installmentErrorMessage 
+                                            : 'There are no installments for this estate claim.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                                          fontSize: 12,
+                                          fontFamily: "AppFont",
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                            SizedBox(height: 24),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -605,14 +313,22 @@ class _EstateClaimState extends State<EstateClaim> {
                 claim_payment= estateData["claim_payment"]?.toString() ?? "-";
                 claim_balance= estateData["claim_balance"]?.toString() ?? "-";
                 claim_id = estateData["claim_id"]?.toString() ?? "";
-                created_at= ""; // Not in API response
+                // created_at and claim_stage will be fetched from estate_detail API
+                created_at = "-";
+                claim_stage = "-";
+                
+                // User info from estate_claim API (if available)
+                user_name = estateData["user_name"]?.toString() ?? "-";
+                user_image = estateData["user_image"]?.toString() ?? "-";
+                user_cnic = estateData["user_cnic"]?.toString() ?? "-";
+                user_gender = estateData["user_gender"]?.toString() ?? "-";
 
                 setState(() {
                   hasEstateData = true;
                   isError= false;
                 });
                 
-                // Now fetch installments from estate_detail API
+                // Now fetch full details (user info, claim_stage, created_at, installments) from estate_detail API
                 if (claim_id.isNotEmpty) {
                   GetEstateInstallments(claim_id);
                 } else {
@@ -694,23 +410,40 @@ class _EstateClaimState extends State<EstateClaim> {
           if (code == "1" || codeValue == 1) {
             var data = body["Data"];
             if(data != null) {
-              List<dynamic> instalments = data["instalments"] != null ? data["instalments"] : [];
-              if(instalments.length > 0) {
+              // Update user information and claim stage from estate_detail API
+              if (data["user_name"] != null) user_name = data["user_name"]?.toString() ?? user_name;
+              if (data["user_image"] != null) user_image = data["user_image"]?.toString() ?? user_image;
+              if (data["user_cnic"] != null) user_cnic = data["user_cnic"]?.toString() ?? user_cnic;
+              if (data["user_gender"] != null) user_gender = data["user_gender"]?.toString() ?? user_gender;
+              if (data["created_at"] != null) created_at = data["created_at"]?.toString() ?? created_at;
+              if (data["claim_stage"] != null) claim_stage = data["claim_stage"]?.toString() ?? claim_stage;
+              
+              // Parse installments - check both "instalments" and "installments" (API might use either)
+              List<dynamic> instalments = [];
+              if (data["instalments"] != null) {
+                instalments = data["instalments"] is List ? data["instalments"] : [];
+              } else if (data["installments"] != null) {
+                instalments = data["installments"] is List ? data["installments"] : [];
+              }
+              
+              if (instalments.length > 0) {
                 list.clear();
                 instalments.forEach((row) {
-                  String ins_id= row["ins_id"]?.toString() ?? "";
-                  String ins_number= row["ins_number"]?.toString() ?? "";
-                  String ins_amount= row["ins_amount"]?.toString() ?? "";
-                  String ins_payment= row["ins_payment"]?.toString() ?? "";
-                  String ins_balance= row["ins_balance"]?.toString() ?? "";
-                  String ins_duedate= row["ins_duedate"]?.toString() ?? "";
-                  String deposited_at= row["deposited_at"]?.toString() ?? "";
-                  String ins_bank_name= row["ins_bank_name"]?.toString() ?? "";
-                  String ins_challan_no= row["ins_challan_no"]?.toString() ?? "";
-                  String ins_challan= row["ins_challan"]?.toString() ?? "";
-                  String ins_remarks= row["ins_remarks"]?.toString() ?? "";
-                  String created_at= row["created_at"]?.toString() ?? "";
-                  list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
+                  if (row != null) {
+                    String ins_id = row["ins_id"]?.toString() ?? "";
+                    String ins_number = row["ins_number"]?.toString() ?? "";
+                    String ins_amount = row["ins_amount"]?.toString() ?? "";
+                    String ins_payment = row["ins_payment"]?.toString() ?? "";
+                    String ins_balance = row["ins_balance"]?.toString() ?? "";
+                    String ins_duedate = row["ins_duedate"]?.toString() ?? "";
+                    String deposited_at = row["deposited_at"]?.toString() ?? "";
+                    String ins_bank_name = row["ins_bank_name"]?.toString() ?? "";
+                    String ins_challan_no = row["ins_challan_no"]?.toString() ?? "";
+                    String ins_challan = row["ins_challan"]?.toString() ?? "";
+                    String ins_remarks = row["ins_remarks"]?.toString() ?? "";
+                    String created_at = row["created_at"]?.toString() ?? "";
+                    list.add(new InstallmentModel(ins_id, ins_number, ins_amount, ins_payment, ins_balance, ins_duedate, deposited_at, ins_bank_name, ins_challan_no, ins_challan, ins_remarks, created_at));
+                  }
                 });
 
                 setState(() {
@@ -718,39 +451,567 @@ class _EstateClaimState extends State<EstateClaim> {
                 });
               } else {
                 setState(() {
-                  hasInstallmentError = true;
-                  installmentErrorMessage = Strings.instance.notFound;
+                  hasInstallmentError = false; // Don't show error, just empty state
+                  installmentErrorMessage = "No installments available for this estate claim.";
                 });
               }
             } else {
               setState(() {
-                hasInstallmentError = true;
-                installmentErrorMessage = Strings.instance.notFound;
+                hasInstallmentError = false;
+                installmentErrorMessage = "No installments available for this estate claim.";
               });
             }
           } else {
             setState(() {
-              hasInstallmentError = true;
-              installmentErrorMessage = Strings.instance.notFound;
+              hasInstallmentError = false;
+              installmentErrorMessage = "No installments available for this estate claim.";
             });
           }
         } catch (e) {
           setState(() {
-            hasInstallmentError = true;
-            installmentErrorMessage = Strings.instance.notFound;
+            hasInstallmentError = false;
+            installmentErrorMessage = "No installments available for this estate claim.";
           });
         }
       } else {
         setState(() {
-          hasInstallmentError = true;
-          installmentErrorMessage = Strings.instance.notFound;
+          hasInstallmentError = false;
+          installmentErrorMessage = "No installments available for this estate claim.";
         });
       }
     } catch (e) {
       setState(() {
-        hasInstallmentError = true;
-        installmentErrorMessage = Strings.instance.notFound;
+        hasInstallmentError = false;
+        installmentErrorMessage = "No installments available for this estate claim.";
       });
     }
+  }
+
+  // Helper Methods for Professional UI (same as estate_claim_detail.dart)
+
+  Widget _buildUserInfoCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: AppTheme.colors.newPrimary.withOpacity(0.2),
+                width: 2,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(26),
+              child: user_image != "null" &&
+                  user_image != "" &&
+                  user_image != "NULL" &&
+                  user_image != "-" &&
+                  user_image != "N/A"
+                  ? FadeInImage(
+                      image: NetworkImage(constants.getImageBaseURL() + user_image),
+                      placeholder: AssetImage("archive/images/no_image.jpg"),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "archive/images/no_image.jpg",
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      "archive/images/no_image.jpg",
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user_name != "-" ? user_name : "Estate Claim",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 16,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (user_cnic != "-" && user_cnic.isNotEmpty)
+                  SizedBox(height: 4),
+                if (user_cnic != "-" && user_cnic.isNotEmpty)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.badge_outlined,
+                        size: 14,
+                        color: AppTheme.colors.colorDarkGray,
+                      ),
+                      SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          user_cnic,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppTheme.colors.colorDarkGray,
+                            fontSize: 12,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: AppTheme.colors.newPrimary,
+            ),
+            child: Text(
+              "Estate Claim",
+              style: TextStyle(
+                color: AppTheme.colors.newWhite,
+                fontSize: 11,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEstateOverviewCard() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.colors.newPrimary,
+            AppTheme.colors.newPrimary.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.colors.newPrimary.withOpacity(0.3),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.home_work,
+                color: AppTheme.colors.newWhite,
+                size: 32,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Scheme Name",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite.withOpacity(0.9),
+                        fontSize: 12,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      scheme_name != "-" ? scheme_name : claim_scheme,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite,
+                        fontSize: 16,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Divider(color: AppTheme.colors.newWhite.withOpacity(0.3), height: 1),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Balloting Date",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite.withOpacity(0.9),
+                        fontSize: 11,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      claim_balloting != "-" ? claim_balloting : "N/A",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite,
+                        fontSize: 13,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Allotment Date",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite.withOpacity(0.9),
+                        fontSize: 11,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      claim_dated != "-" ? claim_dated : "N/A",
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite,
+                        fontSize: 13,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEstateDetailsCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionSubHeader("Estate Details", Icons.info_outline),
+          SizedBox(height: 16),
+          _buildInfoRow("Quota", claim_quota, "Location", claim_location),
+          if (claim_quota != "-" || claim_location != "-") SizedBox(height: 12),
+          _buildInfoRow("Abode Type", claim_abode, "Unit Number", claim_number),
+          if (claim_abode != "-" || claim_number != "-") SizedBox(height: 12),
+          _buildInfoRow("Floor", claim_floor, "Street", claim_street),
+          if (claim_floor != "-" || claim_street != "-") SizedBox(height: 12),
+          _buildInfoRow("Block", claim_block, "Possession Date", claim_impound),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFinancialSummaryCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionSubHeader("Financial Summary", Icons.account_balance_wallet),
+          SizedBox(height: 16),
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children: [
+                _buildFinancialRow("Total Amount", claim_amount, true),
+                SizedBox(height: 12),
+                Divider(height: 1),
+                SizedBox(height: 12),
+                _buildFinancialRow("Amount Paid", claim_payment, false),
+                SizedBox(height: 12),
+                Divider(height: 1),
+                SizedBox(height: 12),
+                _buildFinancialRow("Remaining Balance", claim_balance, true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFinancialRow(String label, String amount, bool isBold) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: AppTheme.colors.colorDarkGray,
+            fontSize: 13,
+            fontFamily: "AppFont",
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          amount != "-" ? amount + " PKR" : "N/A",
+          style: TextStyle(
+            color: isBold ? AppTheme.colors.newPrimary : AppTheme.colors.newBlack,
+            fontSize: 14,
+            fontFamily: "AppFont",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(String label1, String value1, String label2, String value2) {
+    if ((value1.isEmpty || value1 == "-") && (value2.isEmpty || value2 == "-")) {
+      return SizedBox.shrink();
+    }
+    
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label1,
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 11,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                (value1.isEmpty || value1 == "-") ? "N/A" : value1,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: (value1.isEmpty || value1 == "-") ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                  fontSize: 13,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label2,
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 11,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                (value2.isEmpty || value2 == "-") ? "N/A" : value2,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: (value2.isEmpty || value2 == "-") ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
+                  fontSize: 13,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: AppTheme.colors.newPrimary,
+        ),
+        SizedBox(width: 8),
+        Text(
+          title + (list.isNotEmpty ? " (${list.length})" : ""),
+          style: TextStyle(
+            color: AppTheme.colors.newBlack,
+            fontSize: 16,
+            fontFamily: "AppFont",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionSubHeader(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newPrimary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppTheme.colors.newPrimary.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: AppTheme.colors.newPrimary,
+          ),
+          SizedBox(width: 8),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 13,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubmissionDateCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newPrimary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.calendar_today,
+              size: 20,
+              color: AppTheme.colors.newPrimary,
+            ),
+          ),
+          SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Submitted Date",
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 11,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: 2),
+              Text(
+                created_at != "-" ? created_at : "N/A",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

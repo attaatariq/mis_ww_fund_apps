@@ -200,6 +200,22 @@ class _EducationClaimListState extends State<EducationClaimList> {
       // Format: /claims/fee_claim/{user_id}/E/{emp_id}
       String userId = UserSessions.instance.getUserID;
       String empId = UserSessions.instance.getEmployeeID;
+      
+      // If emp_id is empty, try to fetch from information API
+      if (empId.isEmpty || empId == "") {
+        empId = await _fetchEmployeeID();
+      }
+      
+      if (empId.isEmpty || empId == "") {
+        setState(() {
+          isError = true;
+          errorMessage = "Employee ID not found. Please try again.";
+          isLoading = false;
+        });
+        uiUpdates.DismissProgresssDialog();
+        return;
+      }
+      
       var url = constants.getApiBaseURL() + constants.claims + "fee_claim/" + userId + "/E/" + empId;
       var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
       
@@ -213,12 +229,30 @@ class _EducationClaimListState extends State<EducationClaimList> {
           String code = codeValue?.toString() ?? "0";
           
           if (code == "1" || codeValue == 1) {
-            List<dynamic> claimsData = body["Data"] ?? [];
+            dynamic dataField = body["Data"];
+            List<dynamic> claimsData = [];
+            
+            // Handle different response structures
+            if (dataField != null) {
+              if (dataField is List) {
+                claimsData = dataField;
+              } else if (dataField is Map) {
+                // If Data is a map, try to extract a list from it
+                if (dataField.containsKey("claims") && dataField["claims"] is List) {
+                  claimsData = dataField["claims"];
+                } else if (dataField.containsKey("data") && dataField["data"] is List) {
+                  claimsData = dataField["data"];
+                }
+              }
+            }
+            
             educationClaimsList.clear();
             
-            if (claimsData.length > 0) {
+            // Handle case where Data might be null or not a list
+            if (claimsData != null && claimsData is List && claimsData.length > 0) {
               claimsData.forEach((row) {
-                EducationalClaimModel claim = EducationalClaimModel(
+                if (row != null && row is Map) {
+                  EducationalClaimModel claim = EducationalClaimModel(
                   // Basic Info
                   claim_id: row["claim_id"]?.toString() ?? "",
                   beneficiary: row["beneficiary"]?.toString() ?? "",
@@ -285,38 +319,53 @@ class _EducationClaimListState extends State<EducationClaimList> {
                   child_check: row["child_check"]?.toString() ?? "",
                 );
                 
-                educationClaimsList.add(claim);
+                  educationClaimsList.add(claim);
+                }
               });
 
-              setState(() {
-                isError = false;
-                isLoading = false;
-              });
+              if (educationClaimsList.length > 0) {
+                setState(() {
+                  isError = false;
+                  isLoading = false;
+                });
+              } else {
+                setState(() {
+                  isError = true;
+                  errorMessage = "No educational claims found.";
+                  isLoading = false;
+                });
+              }
             } else {
               setState(() {
                 isError = true;
-                errorMessage = Strings.instance.notFound;
+                errorMessage = "No educational claims available.";
                 isLoading = false;
               });
             }
           } else {
             String message = body["Message"]?.toString() ?? "";
-            if (message.isNotEmpty && message != "null") {
+            if (message.isNotEmpty && message != "null" && message != "NULL") {
               uiUpdates.ShowToast(message);
+              setState(() {
+                isError = true;
+                errorMessage = message;
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                isError = true;
+                errorMessage = "No educational claims found.";
+                isLoading = false;
+              });
             }
-            setState(() {
-              isError = true;
-              errorMessage = Strings.instance.notFound;
-              isLoading = false;
-            });
           }
         } catch (e) {
           setState(() {
             isError = true;
-            errorMessage = Strings.instance.somethingWentWrong;
+            errorMessage = "Failed to parse response: ${e.toString()}";
             isLoading = false;
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowToast("Failed to load educational claims. Please try again.");
         }
       } else {
         uiUpdates.ShowToast(responseCodeModel.message);
@@ -337,6 +386,37 @@ class _EducationClaimListState extends State<EducationClaimList> {
       await Future.delayed(Duration(milliseconds: 200));
       uiUpdates.DismissProgresssDialog();
     }
+  }
+
+  Future<String> _fetchEmployeeID() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(Uri.parse(url), body: data, headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 15));
+      
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account["emp_id"] != null) {
+            String empId = account["emp_id"].toString();
+            if (empId.isNotEmpty && empId != "null") {
+              UserSessions.instance.setEmployeeID(empId);
+              return empId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    return "";
   }
 
   void CheckTokenExpiry() {
