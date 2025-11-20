@@ -184,17 +184,17 @@ class _EducationClaimListState extends State<EducationClaimList> {
                           color: AppTheme.colors.newPrimary,
                           child: ListView.builder(
                             padding: EdgeInsets.symmetric(vertical: 12),
-                            itemBuilder: (_, int index) => InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FeeClaimDetail(educationClaimsList[index].claim_id),
-                                  ),
-                                );
-                              },
-                              child: EducationalClaimListItem(constants, educationClaimsList[index]),
-                            ),
+                          itemBuilder: (_, int index) => InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EducationalClaimDetail(educationClaimsList[index].claim_id),
+                                ),
+                              );
+                            },
+                            child: EducationalClaimListItem(constants, educationClaimsList[index]),
+                          ),
                             itemCount: educationClaimsList.length,
                           ),
                         ),
@@ -252,11 +252,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
                   // Basic Info
                   claim_id: row["claim_id"]?.toString() ?? "",
                   beneficiary: row["beneficiary"]?.toString() ?? "",
-                  comp_id: row["comp_id"]?.toString() ?? "",
-                  emp_id: row["emp_id"]?.toString() ?? "",
                   start_date: row["start_date"]?.toString() ?? "",
                   end_date: row["end_date"]?.toString() ?? "",
                   claim_stage: row["claim_stage"]?.toString() ?? "",
+                  claim_gateway: row["claim_gateway"]?.toString() ?? "",
+                  reference_number: row["reference_number"]?.toString() ?? "",
+                  bank_status: row["bank_status"]?.toString() ?? "",
                   created_at: row["created_at"]?.toString() ?? "",
                   
                   // Financial
@@ -264,55 +265,17 @@ class _EducationClaimListState extends State<EducationClaimList> {
                   claim_payment: row["claim_payment"]?.toString() ?? "",
                   claim_excluded: row["claim_excluded"]?.toString() ?? "",
                   
-                  // Fee Breakdown
-                  tuition_fee: row["tuition_fee"]?.toString() ?? "",
-                  registration_fee: row["registration_fee"]?.toString() ?? "",
-                  prospectus_fee: row["prospectus_fee"]?.toString() ?? "",
-                  security_fee: row["security_fee"]?.toString() ?? "",
-                  library_fee: row["library_fee"]?.toString() ?? "",
-                  examination_fee: row["examination_fee"]?.toString() ?? "",
-                  computer_fee: row["computer_fee"]?.toString() ?? "",
-                  sports_fee: row["sports_fee"]?.toString() ?? "",
-                  washing_fee: row["washing_fee"]?.toString() ?? "",
-                  development: row["development"]?.toString() ?? "",
-                  outstanding_fee: row["outstanding_fee"]?.toString() ?? "",
-                  adjustment: row["adjustment"]?.toString() ?? "",
-                  reimbursement: row["reimbursement"]?.toString() ?? "",
-                  tax_amount: row["tax_amount"]?.toString() ?? "",
-                  late_fee_fine: row["late_fee_fine"]?.toString() ?? "",
-                  other_fine: row["other_fine"]?.toString() ?? "",
-                  other_charges: row["other_charges"]?.toString() ?? "",
+                  // User Information
+                  user_name: row["user_name"]?.toString() ?? "",
+                  user_cnic: row["user_cnic"]?.toString() ?? "",
+                  user_gender: row["user_gender"]?.toString() ?? "",
+                  user_image: row["user_image"]?.toString() ?? "",
                   
-                  // Transport & Hostel
-                  transport_cost: row["transport_cost"]?.toString() ?? "",
-                  transport_voucher: row["transport_voucher"]?.toString() ?? "",
-                  hostel_rent: row["hostel_rent"]?.toString() ?? "",
-                  mess_charges: row["mess_charges"]?.toString() ?? "",
-                  hostel_voucher: row["hostel_voucher"]?.toString() ?? "",
-                  
-                  // Documents
-                  application_form: row["application_form"]?.toString() ?? "",
-                  result_card: row["result_card"]?.toString() ?? "",
-                  fee_structure: row["fee_structure"]?.toString() ?? "",
-                  fee_voucher: row["fee_voucher"]?.toString() ?? "",
-                  
-                  // Remarks
-                  remarks_1: row["remarks_1"]?.toString() ?? "",
-                  remarks_2: row["remarks_2"]?.toString() ?? "",
-                  
-                  // Child Info
-                  child_id: row["child_id"]?.toString() ?? "",
+                  // Child Information (when beneficiary = "Child")
                   child_name: row["child_name"]?.toString() ?? "",
                   child_cnic: row["child_cnic"]?.toString() ?? "",
-                  child_issued: row["child_issued"]?.toString() ?? "",
-                  child_expiry: row["child_expiry"]?.toString() ?? "",
                   child_gender: row["child_gender"]?.toString() ?? "",
-                  child_birthday: row["child_birthday"]?.toString() ?? "",
                   child_image: row["child_image"]?.toString() ?? "",
-                  child_identity: row["child_identity"]?.toString() ?? "",
-                  child_upload: row["child_upload"]?.toString() ?? "",
-                  child_status: row["child_status"]?.toString() ?? "",
-                  child_check: row["child_check"]?.toString() ?? "",
                 );
                 
                 educationClaimsList.add(claim);

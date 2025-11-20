@@ -17,9 +17,28 @@ class EducationalClaimListItem extends StatefulWidget {
 class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
   @override
   Widget build(BuildContext context) {
-    String childImage = widget.claimModel.child_image ?? "";
-    String childName = widget.claimModel.child_name ?? "";
-    String childCnic = widget.claimModel.child_cnic ?? "";
+    // Determine which image and name to display
+    String displayImage = "";
+    String displayName = "";
+    String displayCnic = "";
+    String displayGender = "";
+    
+    if (widget.claimModel.beneficiary == "Child" && 
+        widget.claimModel.child_name != null && 
+        widget.claimModel.child_name.isNotEmpty) {
+      // Show child information
+      displayImage = widget.claimModel.child_image ?? "";
+      displayName = widget.claimModel.child_name ?? "";
+      displayCnic = widget.claimModel.child_cnic ?? "";
+      displayGender = widget.claimModel.child_gender ?? "";
+    } else {
+      // Show user information
+      displayImage = widget.claimModel.user_image ?? "";
+      displayName = widget.claimModel.user_name ?? "";
+      displayCnic = widget.claimModel.user_cnic ?? "";
+      displayGender = widget.claimModel.user_gender ?? "";
+    }
+    
     String beneficiary = widget.claimModel.beneficiary ?? "";
     String startDate = widget.claimModel.start_date ?? "";
     String endDate = widget.claimModel.end_date ?? "";
@@ -27,11 +46,11 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
     String claimStage = widget.claimModel.claim_stage ?? "";
     String createdAt = widget.claimModel.created_at ?? "";
     
-    bool isValidImage = childImage != "null" && 
-                       childImage != "" && 
-                       childImage != "NULL" &&
-                       childImage != "-" &&
-                       childImage != "N/A";
+    bool isValidImage = displayImage != "null" && 
+                       displayImage != "" && 
+                       displayImage != "NULL" &&
+                       displayImage != "-" &&
+                       displayImage != "N/A";
     
     return Container(
       width: double.infinity,
@@ -52,7 +71,7 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Child Info Row
+          // User/Child Info Row
           Row(
             children: [
               Container(
@@ -76,7 +95,7 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
                   borderRadius: BorderRadius.circular(100),
                   child: isValidImage
                       ? FadeInImage(
-                          image: NetworkImage(widget.constants.getImageBaseURL() + childImage),
+                          image: NetworkImage(widget.constants.getImageBaseURL() + displayImage),
                           placeholder: AssetImage("archive/images/no_image.jpg"),
                           fit: BoxFit.cover,
                           imageErrorBuilder: (context, error, stackTrace) {
@@ -99,26 +118,54 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      childName.isNotEmpty ? childName : "Child",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 16,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            displayName.isNotEmpty ? displayName : "N/A",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppTheme.colors.newBlack,
+                              fontSize: 15,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        if (displayGender.isNotEmpty && displayGender != "-")
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: displayGender.toLowerCase() == "male" 
+                                  ? Colors.blue.withOpacity(0.1) 
+                                  : Colors.pink.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              displayGender,
+                              style: TextStyle(
+                                color: displayGender.toLowerCase() == "male" 
+                                    ? Colors.blue 
+                                    : Colors.pink,
+                                fontSize: 9,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     SizedBox(height: 4),
-                    if (childCnic.isNotEmpty && childCnic != "-")
+                    if (displayCnic.isNotEmpty && displayCnic != "-")
                       Text(
-                        childCnic,
+                        displayCnic,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppTheme.colors.colorDarkGray,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontFamily: "AppFont",
                           fontWeight: FontWeight.normal,
                         ),
@@ -132,105 +179,53 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
               Flexible(
                 child: ClaimStagesHelper.buildListStatusBadge(
                   claimStage,
-                  fontSize: 10,
+                  fontSize: 9,
                   showTooltip: true,
                 ),
               ),
             ],
           ),
           
-          SizedBox(height: 16),
+          SizedBox(height: 14),
           
-          // Claim Period & Amount Row
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Period",
-                      style: TextStyle(
-                        color: AppTheme.colors.colorDarkGray,
-                        fontSize: 11,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "$startDate - $endDate",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 13,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              SizedBox(width: 16),
-              
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Claim Amount",
-                      style: TextStyle(
-                        color: AppTheme.colors.colorDarkGray,
-                        fontSize: 11,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "PKR ${claimAmount}",
-                      style: TextStyle(
-                        color: AppTheme.colors.newPrimary,
-                        fontSize: 15,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          
-          SizedBox(height: 12),
-          
-          // Beneficiary & Created Date
+          // Beneficiary Badge & Claim Period
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  gradient: LinearGradient(
+                    colors: beneficiary == "Child" 
+                        ? [Color(0xFF6366F1), Color(0xFF8B5CF6)]
+                        : [AppTheme.colors.newPrimary, AppTheme.colors.newPrimary.withOpacity(0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (beneficiary == "Child" ? Color(0xFF6366F1) : AppTheme.colors.newPrimary).withOpacity(0.3),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       beneficiary == "Child" ? Icons.child_care : Icons.person,
-                      size: 12,
-                      color: AppTheme.colors.newPrimary,
+                      size: 14,
+                      color: AppTheme.colors.newWhite,
                     ),
                     SizedBox(width: 4),
                     Text(
                       beneficiary.isNotEmpty ? beneficiary : "N/A",
                       style: TextStyle(
-                        color: AppTheme.colors.newPrimary,
+                        color: AppTheme.colors.newWhite,
                         fontSize: 11,
                         fontFamily: "AppFont",
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -239,14 +234,94 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
               
               Spacer(),
               
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "Claim Period",
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray,
+                      fontSize: 10,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    "$startDate - $endDate",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 11,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          SizedBox(height: 12),
+          Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+          SizedBox(height: 12),
+          
+          // Claim Amount & Created Date
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Claim Amount",
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray,
+                      fontSize: 10,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "PKR ${claimAmount}",
+                    style: TextStyle(
+                      color: AppTheme.colors.colorExelent,
+                      fontSize: 16,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              
               if (createdAt.isNotEmpty && createdAt != "-")
-                Text(
-                  createdAt,
-                  style: TextStyle(
-                    color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
-                    fontSize: 11,
-                    fontFamily: "AppFont",
-                    fontWeight: FontWeight.normal,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.colors.colorDarkGray.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 12,
+                        color: AppTheme.colors.colorDarkGray,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        createdAt,
+                        style: TextStyle(
+                          color: AppTheme.colors.colorDarkGray,
+                          fontSize: 11,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],
@@ -256,4 +331,3 @@ class _EducationalClaimListItemState extends State<EducationalClaimListItem> {
     );
   }
 }
-

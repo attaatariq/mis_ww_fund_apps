@@ -1,14 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:wwf_apps/views/noting_item.dart';
 import 'package:http/http.dart' as http;
 import '../../../viewer/ImageViewer.dart';
 import '../../../Strings/Strings.dart';
 import '../../../colors/app_colors.dart';
 import '../../../constants/Constants.dart';
-import '../../../models/Note.dart';
-import '../../../models/NoteModel.dart';
 import '../../../models/ResponseCodeModel.dart';
 import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
@@ -42,8 +39,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
       bene_account = "-", bene_issued = "-", bene_expiry = "-";
   bool isError = false;
   String errorMessage = "";
-  List<Note> noteParahList = [];
-  List<NoteModel> noteList = [];
 
   @override
   void initState() {
@@ -156,7 +151,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
                     onRefresh: () async {
                       setState(() {
                         isError = false;
-                        noteList.clear();
                       });
                       await Future.delayed(Duration(milliseconds: 500));
                       CheckTokenExpiry();
@@ -190,11 +184,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
 
                             // Documents Section
                             _buildDocumentsSection(),
-                            SizedBox(height: 16),
-
-                            // Notes Section
-                            if (noteList.isNotEmpty) _buildNotesSection(),
-                            if (noteList.isNotEmpty) SizedBox(height: 24),
                           ],
                         ),
                       ),
@@ -801,23 +790,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
     );
   }
 
-  Widget _buildNotesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader("Notes", Icons.note_alt_outlined),
-        SizedBox(height: 12),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.all(0),
-          itemBuilder: (_, int index) => NotingItem(noteList[index], constants),
-          itemCount: noteList.length,
-        ),
-      ],
-    );
-  }
-
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
@@ -1018,40 +990,6 @@ class _DeathClaimDetailState extends State<DeathClaimDetail> {
           
           if (code == "1") {
             var body = bodyData["Data"];
-            // Handle notings field (may be null or empty)
-            if (body["notings"] != null) {
-              List<dynamic> noteListData = body["notings"];
-              if (noteListData.isNotEmpty) {
-                noteList.clear();
-                noteListData.forEach((element) {
-                  noteParahList.clear();
-                  List<dynamic> noteParaListData = element["note_paras"] != null ? element["note_paras"] : [];
-                  if (noteParaListData.isNotEmpty) {
-                    noteParaListData.forEach((element1) {
-                      String para_no = element1["para_no"] != null ? element1["para_no"].toString() : "";
-                      String remarks = element1["remarks"] != null ? element1["remarks"].toString() : "";
-                      noteParahList.add(Note(para_no, remarks));
-                    });
-                  }
-                  String user_name_to = element["user_name_to"] != null ? element["user_name_to"].toString() : "";
-                  String role_name_to = element["role_name_to"] != null ? element["role_name_to"].toString() : "";
-                  String sector_name_to = element["sector_name_to"] != null ? element["sector_name_to"].toString() : "";
-                  String user_name_by = element["user_name_by"] != null ? element["user_name_by"].toString() : "";
-                  String role_name_by = element["role_name_by"] != null ? element["role_name_by"].toString() : "";
-                  String sector_name_by = element["sector_name_by"] != null ? element["sector_name_by"].toString() : "";
-                  String noting_created_at = element["created_at"] != null ? element["created_at"].toString() : "";
-                  noteList.add(NoteModel(
-                      user_name_to,
-                      role_name_to,
-                      sector_name_to,
-                      user_name_by,
-                      role_name_by,
-                      sector_name_by,
-                      noting_created_at,
-                      noteParahList));
-                });
-              }
-            }
             
             // User information
             user_name= body["user_name"] != null ? body["user_name"].toString() : "-";
