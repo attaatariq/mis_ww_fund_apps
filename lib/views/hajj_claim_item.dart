@@ -47,66 +47,72 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppTheme.colors.newPrimary,
-                          AppTheme.colors.newPrimary.withOpacity(0.8),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.colors.newPrimary.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
+              Flexible(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.colors.newPrimary,
+                            AppTheme.colors.newPrimary.withOpacity(0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.mosque,
-                      color: AppTheme.colors.newWhite,
-                      size: 24,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Hajj Claim",
-                          style: TextStyle(
-                            color: AppTheme.colors.newBlack,
-                            fontSize: 16,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.colors.newPrimary.withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        if (widget.hajjClaimModel.user_name != null && widget.hajjClaimModel.user_name.isNotEmpty)
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.mosque,
+                        color: AppTheme.colors.newWhite,
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                           Text(
-                            widget.hajjClaimModel.user_name,
+                            "Hajj Claim",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 12,
+                              color: AppTheme.colors.newBlack,
+                              fontSize: 16,
                               fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                      ],
+                          SizedBox(height: 4),
+                          if (widget.hajjClaimModel.user_name != null && widget.hajjClaimModel.user_name.isNotEmpty)
+                            Text(
+                              widget.hajjClaimModel.user_name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppTheme.colors.colorDarkGray,
+                                fontSize: 12,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              SizedBox(width: 8),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -215,8 +221,10 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.account_balance_wallet,
@@ -224,13 +232,17 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                             color: AppTheme.colors.colorExelent,
                           ),
                           SizedBox(width: 4),
-                          Text(
-                            "Amount",
-                            style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 11,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal,
+                          Flexible(
+                            child: Text(
+                              "Amount",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppTheme.colors.colorDarkGray,
+                                fontSize: 11,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
                         ],
@@ -265,8 +277,10 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.calendar_today,
@@ -274,13 +288,17 @@ class _HajjClaimItemState extends State<HajjClaimItem> {
                             color: AppTheme.colors.colorDarkGray,
                           ),
                           SizedBox(width: 4),
-                          Text(
-                            "Submitted",
-                            style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 11,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal,
+                          Flexible(
+                            child: Text(
+                              "Submitted",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppTheme.colors.colorDarkGray,
+                                fontSize: 11,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
                         ],
