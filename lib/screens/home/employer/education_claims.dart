@@ -13,6 +13,7 @@ import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
 import '../../../models/ClaimStageModel.dart';
 import '../../../widgets/empty_state_widget.dart';
+import '../../../widgets/standard_header.dart';
 
 class EducationClaimList extends StatefulWidget {
   @override
@@ -69,74 +70,11 @@ class _EducationClaimListState extends State<EducationClaimList> {
         bottom: false,
         child: Column(
           children: [
-            // Professional Header
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.colors.newPrimary,
-                    AppTheme.colors.newPrimary.withOpacity(0.8),
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: AppTheme.colors.newWhite,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Educational Claims",
-                              style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 20,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (educationClaimsList.isNotEmpty)
-                              Text(
-                                "${educationClaimsList.length} ${educationClaimsList.length == 1 ? 'Claim' : 'Claims'}",
-                                style: TextStyle(
-                                  color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                  fontSize: 12,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            StandardHeader(
+              title: "Educational Claims",
+              subtitle: educationClaimsList.isNotEmpty
+                  ? "${educationClaimsList.length} ${educationClaimsList.length == 1 ? 'Claim' : 'Claims'}"
+                  : null,
             ),
 
             // Content

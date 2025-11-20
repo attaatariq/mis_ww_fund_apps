@@ -13,6 +13,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 
 class ChildrenList extends StatefulWidget {
@@ -46,99 +47,23 @@ class _ChildrenListState extends State<ChildrenList> {
         child: Column(
           children: [
             // Professional Header
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.colors.newPrimary,
-                    AppTheme.colors.newPrimary.withOpacity(0.8),
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: AppTheme.colors.newWhite,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "My Children",
-                              style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 20,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (childrenModelList.isNotEmpty)
-                              Text(
-                                "${childrenModelList.length} ${childrenModelList.length == 1 ? 'Child' : 'Children'}",
-                                style: TextStyle(
-                                  color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                  fontSize: 12,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AddChild()),
-                          ).then((value) {
-                            if (value == true) {
-                              childrenModelList.clear();
-                              CheckTokenExpiry();
-                            }
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppTheme.colors.newWhite.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.add_circle_outline,
-                            color: AppTheme.colors.newWhite,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            StandardHeader(
+              title: "My Children",
+              subtitle: childrenModelList.isNotEmpty
+                  ? "${childrenModelList.length} ${childrenModelList.length == 1 ? 'Child' : 'Children'}"
+                  : null,
+              actionIcon: Icons.add_circle_outline,
+              onActionPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddChild()),
+                ).then((value) {
+                  if (value == true) {
+                    childrenModelList.clear();
+                    CheckTokenExpiry();
+                  }
+                });
+              },
             ),
 
             // Content

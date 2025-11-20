@@ -11,6 +11,7 @@ import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -41,51 +42,8 @@ class _HajjClaimState extends State<HajjClaim> {
       backgroundColor: Color(0xFFF5F7FA),
       body: Column(
         children: [
-          // Modern Header with Shadow
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.colors.newPrimary,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: AppTheme.colors.newWhite,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Hajj Claim",
-                        style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 18,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          StandardHeader(
+            title: "Hajj Claim",
           ),
 
           Expanded(

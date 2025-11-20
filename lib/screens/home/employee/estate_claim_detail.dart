@@ -13,6 +13,7 @@ import '../../../sessions/UserSessions.dart';
 import '../../../network/api_service.dart';
 import '../../../widgets/empty_state_widget.dart';
 import '../../../utils/claim_stages_helper.dart';
+import '../../../widgets/standard_header.dart';
 
 class EstateClaimDetail extends StatefulWidget {
   String claim_id = "";
@@ -57,51 +58,8 @@ class _EstateClaimDetailState extends State<EstateClaimDetail> {
       backgroundColor: Color(0xFFF5F7FA),
       body: Column(
         children: [
-          // Modern Header with Shadow
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.colors.newPrimary,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: AppTheme.colors.newWhite,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Estate Claim Details",
-                        style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 18,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          StandardHeader(
+            title: "Estate Claim Details",
           ),
 
           Expanded(

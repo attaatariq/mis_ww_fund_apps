@@ -10,6 +10,7 @@ import '../../../models/ResponseCodeModel.dart';
 import '../../../network/api_service.dart';
 import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
+import '../../../widgets/standard_header.dart';
 
 class DeoDetail extends StatefulWidget {
   @override
@@ -39,60 +40,17 @@ class _DeoDetailState extends State<DeoDetail> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("DEO",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => AddDeo()
-                        )).then((value) => {
-                          setState(() {}),
-                          CheckTokenExpiry()
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Icon(Icons.add_box_outlined, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "DEO",
+              actionIcon: Icons.add_box_outlined,
+              onActionPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => AddDeo()
+                )).then((value) {
+                  setState(() {});
+                  CheckTokenExpiry();
+                });
+              },
             ),
 
             !isError ? SingleChildScrollView(

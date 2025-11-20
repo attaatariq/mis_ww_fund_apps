@@ -13,6 +13,7 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/models/ClaimStageModel.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/network/api_service.dart';
 
@@ -73,53 +74,12 @@ class _EducationClaimListState extends State<EducationClaimList> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("Educational Claims",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                      InkWell(
-                        onTap: () {
-                          CheckEducationDetail();
-                        },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Icon(Icons.add_box_outlined, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "Educational Claims",
+              actionIcon: Icons.add_box_outlined,
+              onActionPressed: () {
+                CheckEducationDetail();
+              },
             ),
 
             // Content

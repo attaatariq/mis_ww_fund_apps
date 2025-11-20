@@ -12,6 +12,7 @@ import '../../../models/ResponseCodeModel.dart';
 import '../../../updates/UIUpdates.dart';
 import '../../../sessions/UserSessions.dart';
 import '../../../models/ClaimStageModel.dart';
+import '../../../widgets/standard_header.dart';
 import '../../../widgets/empty_state_widget.dart';
 
 class EstateClaimList extends StatefulWidget {
@@ -41,45 +42,8 @@ class _EstateClaimListState extends State<EstateClaimList> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("Estate Claims",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "Estate Claims",
             ),
 
             isError ? Expanded(
