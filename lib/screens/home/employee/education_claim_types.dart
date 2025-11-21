@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 
 class EducationClaimTypes extends StatefulWidget {
   @override
@@ -17,41 +18,8 @@ class _EducationClaimTypesState extends State<EducationClaimTypes> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Claims",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "Claims",
             ),
 
             Expanded(

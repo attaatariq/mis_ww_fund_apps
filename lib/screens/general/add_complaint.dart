@@ -7,6 +7,7 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/dialogs/complaint_type_dialog_model.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
@@ -39,41 +40,8 @@ class _AddComplaintState extends State<AddComplaint> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("Send Complaint",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "Send Complaint",
             ),
 
             Expanded(

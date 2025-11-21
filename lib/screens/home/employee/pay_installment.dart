@@ -14,6 +14,7 @@ import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 
 class PayInstallment extends StatefulWidget {
   InstallmentModel installmentModel;
@@ -60,8 +61,9 @@ class _PayInstallmentState extends State<PayInstallment> {
       backgroundColor: Color(0xFFF5F7FA),
       body: Column(
         children: [
-          // Header Section
-          _buildHeader(),
+          StandardHeader(
+            title: "Pay Installment",
+          ),
           
           // Form Section
           Expanded(
@@ -388,127 +390,6 @@ class _PayInstallmentState extends State<PayInstallment> {
     );
   }
 
-  Widget _buildHeader() {
-    String installmentNumber = widget.installmentModel.ins_number ?? "1st Instalment";
-    String claimType = widget.claimType.isNotEmpty 
-        ? widget.claimType 
-        : "Estate (Housing & Flats) Claim";
-    String employeeName = widget.employeeName.isNotEmpty 
-        ? widget.employeeName 
-        : UserSessions.instance.getUserName;
-    String dueDate = widget.dueDate.isNotEmpty 
-        ? widget.dueDate 
-        : (widget.installmentModel.ins_duedate ?? "");
-    
-    String subtitle = "$installmentNumber | $claimType | Employee $employeeName";
-    if (dueDate.isNotEmpty) {
-      subtitle += " | Due Date $dueDate";
-    }
-    
-    return Container(
-      child: Column(
-        children: [
-          // Yellow Banner
-          Container(
-            height: 8,
-            width: double.infinity,
-            color: Color(0xFFFFC107), // Yellow
-          ),
-          
-          // Main Header with Background Image
-          Container(
-            height: 180,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Color(0xFF363636), // Dark grey
-            ),
-            child: Stack(
-              children: [
-                // Background Image
-                Positioned.fill(
-                  child: Opacity(
-                    opacity: 0.3,
-                    child: Image.asset(
-                      "archive/images/banners/transact.png",
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(); // Hide if image not found
-                      },
-                    ),
-                  ),
-                ),
-                
-                // Content
-                SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Close Button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: AppTheme.colors.newPrimary.withOpacity(0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.close,
-                                  color: AppTheme.colors.newWhite,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        
-                        Spacer(),
-                        
-                        // Title
-                        Text(
-                          "Pay $installmentNumber",
-                          style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 24,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        
-                        SizedBox(height: 8),
-                        
-                        // Subtitle
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            color: AppTheme.colors.newWhite.withOpacity(0.9),
-                            fontSize: 12,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.normal,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildFormField({String label, Widget child}) {
     return Column(

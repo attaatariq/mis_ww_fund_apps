@@ -10,6 +10,7 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 
 class EditProfile extends StatefulWidget {
@@ -43,46 +44,8 @@ class _EditProfileState extends State<EditProfile> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("Edit",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            StandardHeader(
+              title: "Edit Profile",
             ),
 
             Container(
