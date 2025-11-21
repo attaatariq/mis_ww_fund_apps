@@ -1370,18 +1370,18 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.selfEducationMessage);
+          uiUpdates.ShowSuccess(Strings.instance.selfEducationMessage);
           Navigator.of(context).pop(true);
         } else {
-          uiUpdates.ShowToast(Strings.instance.failedSelfEducation);
+          uiUpdates.ShowError(Strings.instance.failedSelfEducation);
         }
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 
@@ -1420,7 +1420,7 @@ class _AddSelfEducationState extends State<AddSelfEducation> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }

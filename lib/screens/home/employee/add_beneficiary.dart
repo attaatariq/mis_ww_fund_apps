@@ -1073,7 +1073,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }
@@ -1132,7 +1132,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.beneficiaryMessage);
+          uiUpdates.ShowSuccess(Strings.instance.beneficiaryMessage);
           Navigator.of(context).pop(true);
         } else {
           uiUpdates.ShowToast(Strings.instance.failedbeneficiary);
@@ -1140,7 +1140,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }catch(e){
       uiUpdates.ShowToast(e);

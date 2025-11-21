@@ -594,18 +594,18 @@ class _DeathClaimState extends State<DeathClaim> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.deathClaimRequestMessage);
+          uiUpdates.ShowSuccess(Strings.instance.deathClaimRequestMessage);
           Navigator.of(context).pop(true);
         } else {
-          uiUpdates.ShowToast(Strings.instance.faileddeathClaim);
+          uiUpdates.ShowError(Strings.instance.faileddeathClaim);
         }
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 
@@ -652,7 +652,7 @@ class _DeathClaimState extends State<DeathClaim> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }

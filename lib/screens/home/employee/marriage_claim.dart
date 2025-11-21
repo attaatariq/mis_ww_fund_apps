@@ -650,18 +650,18 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.marriageClaimRequestMessage);
+          uiUpdates.ShowSuccess(Strings.instance.marriageClaimRequestMessage);
           Navigator.of(context).pop(true);
         } else {
-          uiUpdates.ShowToast(Strings.instance.failedMarriageClaim);
+          uiUpdates.ShowError(Strings.instance.failedMarriageClaim);
         }
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 
@@ -724,7 +724,7 @@ class _MarraiageClaimState extends State<MarraiageClaim> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }

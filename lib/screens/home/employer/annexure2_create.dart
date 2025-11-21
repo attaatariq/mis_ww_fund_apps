@@ -1685,7 +1685,7 @@ class _Annex3AState extends State<Annex3A> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.annexAAdded);
+          uiUpdates.ShowSuccess(Strings.instance.annexAAdded);
           var dataObject = body["Data"].toString();
           UserSessions.instance.setRefID(dataObject);
           Navigator.pop(context);
@@ -1698,7 +1698,7 @@ class _Annex3AState extends State<Annex3A> {
         if(message == constants.expireToken){
           constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
         }else{
-          uiUpdates.ShowToast(message);
+          uiUpdates.ShowError(message);
         }
       }
     }catch(e){

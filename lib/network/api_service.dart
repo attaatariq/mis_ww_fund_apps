@@ -39,7 +39,7 @@ static Future<String> postRequest({
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.mobile &&
           connectivityResult != ConnectivityResult.wifi) {
-        uiUpdates.ShowToast(Strings.instance.internetNotConnected);
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
         return null;
       }
       
@@ -55,29 +55,29 @@ static Future<String> postRequest({
           return jsonString;
           break;
         case HttpStatus.gatewayTimeout:
-          uiUpdates.ShowToast(jsonDecode(jsonString)["Data"]??Strings.instance.noServerResponse);
+          uiUpdates.ShowError(jsonDecode(jsonString)["Data"]??Strings.instance.noServerResponse);
           return null;
           break;
         case HttpStatus.badRequest:
-          uiUpdates.ShowToast(jsonDecode(jsonString)["Data"]??Strings.instance.badRequestError);
+          uiUpdates.ShowError(jsonDecode(jsonString)["Data"]??Strings.instance.badRequestError);
           return null;
           break;
         case HttpStatus.notFound:
-          uiUpdates.ShowToast(jsonDecode(jsonString)["Data"]??Strings.instance.pageNotFound);
+          uiUpdates.ShowError(jsonDecode(jsonString)["Data"]??Strings.instance.pageNotFound);
           return null;
           break;
         case HttpStatus.internalServerError:
-          uiUpdates.ShowToast(jsonDecode(jsonString)["Data"]??Strings.instance.internalServerError);
+          uiUpdates.ShowError(jsonDecode(jsonString)["Data"]??Strings.instance.internalServerError);
           return null;
           break;
         default:
-          uiUpdates.ShowToast(jsonDecode(jsonString)["Data"]??Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(jsonDecode(jsonString)["Data"]??Strings.instance.somethingWentWrong);
           return null;
           break;
       }
     }catch(e)
   {
-    uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     return null;
   }
 }
@@ -92,7 +92,7 @@ static Future<String> postRequest({
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.mobile &&
           connectivityResult != ConnectivityResult.wifi) {
-        uiUpdates.ShowToast(Strings.instance.internetNotConnected);
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
         return null;
       }
       
@@ -109,17 +109,17 @@ static Future<String> postRequest({
           return jsonString;
           break;
         case HttpStatus.gatewayTimeout:
-          uiUpdates.ShowToast(Strings.instance.noServerResponse);
+          uiUpdates.ShowError(Strings.instance.noServerResponse);
           return null;
           break;
         default:
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
           return null;
           break;
       }
     }catch(e)
     {
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       return null;
     }
   }

@@ -87,19 +87,21 @@ class AppPermissionHandler {
           // Android 13+ - check photos permission
           var status = await Permission.photos.status;
           if (!status.isGranted) {
-            // Request permission if not granted
+            // Always request permission if not granted (including denied, limited, restricted)
             if (status.isDenied || status.isLimited || status.isRestricted) {
               status = await Permission.photos.request();
             }
             
-            if (status.isPermanentlyDenied) {
-              if (context != null) {
-                _showPermissionDeniedDialog(context, "Photos");
-              }
-              return false;
-            }
-            
+            // If still not granted after request, check if permanently denied
             if (!status.isGranted) {
+              if (status.isPermanentlyDenied) {
+                if (context != null) {
+                  _showPermissionDeniedDialog(context, "Photos");
+                }
+                return false;
+              }
+              // If just denied (not permanently), return false but don't show dialog
+              // User can try again and it will request again
               return false;
             }
           }
@@ -108,19 +110,21 @@ class AppPermissionHandler {
           // Android 12 and below - check storage permission
           var status = await Permission.storage.status;
           if (!status.isGranted) {
-            // Request permission if not granted
+            // Always request permission if not granted (including denied, limited, restricted)
             if (status.isDenied || status.isLimited || status.isRestricted) {
               status = await Permission.storage.request();
             }
             
-            if (status.isPermanentlyDenied) {
-              if (context != null) {
-                _showPermissionDeniedDialog(context, "Storage");
-              }
-              return false;
-            }
-            
+            // If still not granted after request, check if permanently denied
             if (!status.isGranted) {
+              if (status.isPermanentlyDenied) {
+                if (context != null) {
+                  _showPermissionDeniedDialog(context, "Storage");
+                }
+                return false;
+              }
+              // If just denied (not permanently), return false but don't show dialog
+              // User can try again and it will request again
               return false;
             }
           }

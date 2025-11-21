@@ -1364,7 +1364,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }
@@ -1482,7 +1482,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.selfEducationMessage);
+          uiUpdates.ShowSuccess(Strings.instance.selfEducationMessage);
           Navigator.pop(context);
         } else {
           uiUpdates.ShowToast(Strings.instance.failedSelfEducation);
@@ -1490,7 +1490,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
       } else {
         var body = jsonDecode(resp.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }catch(e){
       uiUpdates.ShowToast(e);

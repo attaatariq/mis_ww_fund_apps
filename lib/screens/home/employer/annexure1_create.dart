@@ -2475,7 +2475,7 @@ class _AnnexAState extends State<AnnexA> {
               Strings.instance.expireSessionTitle,
               Strings.instance.expireSessionMessage);
         } else {
-          uiUpdates.ShowToast(message);
+          uiUpdates.ShowError(message);
         }
       }
     } catch (e) {
@@ -2526,7 +2526,7 @@ class _AnnexAState extends State<AnnexA> {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

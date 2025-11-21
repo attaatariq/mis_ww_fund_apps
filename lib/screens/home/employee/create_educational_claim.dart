@@ -2019,7 +2019,7 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 
@@ -2229,13 +2229,13 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.beneficiaryMessage);
+          uiUpdates.ShowSuccess(Strings.instance.beneficiaryMessage);
           Navigator.pop(context);
         } else {
-          uiUpdates.ShowToast(Strings.instance.failedbeneficiary);
+          uiUpdates.ShowError(Strings.instance.failedbeneficiary);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     }catch(e){
       uiUpdates.ShowToast(e);
