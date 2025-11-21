@@ -5,7 +5,7 @@ import 'package:wwf_apps/screens/general/complaints.dart';
 import 'package:wwf_apps/screens/general/faqs.dart';
 import 'package:wwf_apps/screens/general/notifications_screen.dart';
 import 'package:wwf_apps/screens/general/notices_news_screen.dart';
-import 'package:wwf_apps/screens/general/send_feedback.dart';
+import 'package:wwf_apps/dialogs/feedback_dialog.dart';
 import 'package:wwf_apps/screens/home/employer/contact_person.dart';
 import 'package:wwf_apps/screens/home/employer/death_claim_list.dart';
 import 'package:wwf_apps/screens/home/employer/estate_claims.dart';
@@ -362,9 +362,7 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                     title: "Send Feedback",
                     onTap: () {
                       Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => SendFeedback()
-                      ));
+                      showFeedbackDialog(context);
                     },
                   ),
 

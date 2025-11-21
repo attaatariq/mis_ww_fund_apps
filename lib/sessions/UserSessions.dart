@@ -24,6 +24,9 @@ class UserSessions{
   //D.E.O Info
   String DeoID= "DeoID";
 
+  //Feedback Dialog
+  String FeedbackDialogShown= "FeedbackDialogShown";
+
   SharedPreferences prefs;
 
   factory UserSessions()
@@ -195,5 +198,15 @@ class UserSessions{
   get getUserType
   {
     return prefs.getString(UserType);
+  }
+
+  Future setFeedbackDialogShown(bool data)
+  {
+    return prefs.setBool(FeedbackDialogShown, data);
+  }
+
+  get getFeedbackDialogShown
+  {
+    return prefs.getBool(FeedbackDialogShown) ?? false;
   }
 }

@@ -15,6 +15,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/models/ClaimStageModel.dart';
+import 'package:wwf_apps/dialogs/feedback_dialog.dart';
 import 'package:http/http.dart' as http;
 
 import 'drawer/drawer_view.dart';
@@ -28,6 +29,7 @@ class _EmployerHomeState extends State<EmployerHome> {
 
   Constants constants;
   UIUpdates uiUpdates;
+  bool _feedbackDialogShownThisSession = false;
   String companyName="Unknown", companyAddress="Unknown", companyLogo="null";
   String totalEmployee="0", totalDisable="0", totalAvailingBenefits="0", totalClaim="0", totalReimbursed="0", totalInprogress="0", totalAmountReimbursed="0",
       annexureAAmount="0", annexure3AAmount="0", totalAnnexesAmount="0", estateClaimCount="0", estateClaimAmount="0", hajjClaims="0", hajjClaimAmount="0",
@@ -37,7 +39,6 @@ class _EmployerHomeState extends State<EmployerHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
@@ -45,6 +46,21 @@ class _EmployerHomeState extends State<EmployerHome> {
     constants.CheckForNewUpdate(context);
     GetDashBoardData();
     GetTokenAndSave();
+    // Show feedback dialog once after login
+    _checkAndShowFeedbackDialog();
+  }
+
+  void _checkAndShowFeedbackDialog() {
+    // Show feedback dialog once per login session
+    if (!_feedbackDialogShownThisSession) {
+      // Wait a bit for the screen to load, then show dialog
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        if (mounted && !_feedbackDialogShownThisSession) {
+          _feedbackDialogShownThisSession = true;
+          showFeedbackDialog(context);
+        }
+      });
+    }
   }
 
   @override

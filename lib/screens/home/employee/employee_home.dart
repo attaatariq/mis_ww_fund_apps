@@ -11,6 +11,7 @@ import 'package:wwf_apps/screens/home/employee/InformationSelection.dart';
 import 'package:wwf_apps/screens/home/employee/death_claim.dart';
 import 'package:wwf_apps/screens/home/employee/drawer/drawer_view.dart';
 import 'package:wwf_apps/screens/home/employee/marriage_claim.dart';
+import 'package:wwf_apps/dialogs/feedback_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
@@ -24,6 +25,7 @@ class EmployeeHome extends StatefulWidget {
 class _EmployeeHomeState extends State<EmployeeHome> {
   Constants constants;
   UIUpdates uiUpdates;
+  bool _feedbackDialogShownThisSession = false;
   String totalClaim= "0", reimbursed_claims= "0", inprogress_claims= "0", benefits_amount= "0",
       notice_1= "Not Available", notice_2= "Not Available", estate_claim_delivered= "0", hajj_claim_delivered= "0",
       total_death_amount= "0", death_amount_delivered = "0", death_amount_inprogress= "0", total_marriage_amount= "0",
@@ -1009,8 +1011,23 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         if(constants.CheckDataNullSafety(UserSessions.instance.getRefID)) {
           GetDashBoardData();
         }
+        // Show feedback dialog once after login
+        _checkAndShowFeedbackDialog();
       }
     });
+  }
+
+  void _checkAndShowFeedbackDialog() {
+    // Show feedback dialog once per login session
+    if (!_feedbackDialogShownThisSession) {
+      // Wait a bit for the screen to load, then show dialog
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        if (mounted && !_feedbackDialogShownThisSession) {
+          _feedbackDialogShownThisSession = true;
+          showFeedbackDialog(context);
+        }
+      });
+    }
   }
 
   void GetTokenAndSave() async{
