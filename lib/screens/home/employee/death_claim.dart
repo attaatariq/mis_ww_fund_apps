@@ -420,49 +420,64 @@ class _DeathClaimState extends State<DeathClaim> {
   }
 
   void OpenFilePicker(int position) async{
-    var status = await Permission.storage.status;
-    if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.storage,
-      ].request();
-    }
-    FilePickerResult result = await FilePicker.platform.pickFiles(
-        allowMultiple: false,
-        type: FileType.custom,
-        allowedExtensions: ["pdf", "png", "jpeg", "jpg"]
-    );
-
-    if(result != null) {
-      PlatformFile file = result.files.first;
-      setState(() {
-        if(position == 1) {
-          eobiFileName = file.name;
-          eobiFilePath = file.path;
-        }else if(position == 2){
-          affidavitNotClaimName = file.name;
-          affidavitNotClaimPath = file.path;
-        }else if(position == 3){
-          affaiadavitNotMarriedName = file.name;
-          affaiadavitNotMarriedPath = file.path;
-        }else if(position == 4){
-          compansationAwardName = file.name;
-          compansationAwardPath = file.path;
-        }else if(position == 5){
-          deathCertificateName = file.name;
-          deathCertificatePath = file.path;
-        }else if(position == 6){
-          pensionBookName = file.name;
-          pensionBookPath = file.path;
-        }else if(position == 7){
-          condonationName = file.name;
-          condonationPath = file.path;
-        }else if(position == 8){
-          cnicFileName = file.name;
-          cnicFilePath = file.path;
+    try {
+      var status = await Permission.storage.status;
+      if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.storage,
+        ].request();
+        // Check if permission was granted
+        if (statuses[Permission.storage] != PermissionStatus.granted) {
+          uiUpdates.ShowToast("Storage permission is required to select files");
+          return;
         }
-      });
-    } else {
-      uiUpdates.ShowToast("Failed To Get File, Try Again");
+      }
+      
+      FilePickerResult result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ["pdf", "png", "jpeg", "jpg"]
+      );
+
+      if(result != null && result.files.isNotEmpty) {
+        PlatformFile file = result.files.first;
+        if (file.path != null && file.path.isNotEmpty) {
+          setState(() {
+            if(position == 1) {
+              eobiFileName = file.name;
+              eobiFilePath = file.path;
+            }else if(position == 2){
+              affidavitNotClaimName = file.name;
+              affidavitNotClaimPath = file.path;
+            }else if(position == 3){
+              affaiadavitNotMarriedName = file.name;
+              affaiadavitNotMarriedPath = file.path;
+            }else if(position == 4){
+              compansationAwardName = file.name;
+              compansationAwardPath = file.path;
+            }else if(position == 5){
+              deathCertificateName = file.name;
+              deathCertificatePath = file.path;
+            }else if(position == 6){
+              pensionBookName = file.name;
+              pensionBookPath = file.path;
+            }else if(position == 7){
+              condonationName = file.name;
+              condonationPath = file.path;
+            }else if(position == 8){
+              cnicFileName = file.name;
+              cnicFilePath = file.path;
+            }
+          });
+          uiUpdates.ShowToast("File selected: ${file.name}");
+        } else {
+          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+        }
+      } else {
+        // User cancelled file picker - no need to show error
+      }
+    } catch (e) {
+      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
     }
   }
 
