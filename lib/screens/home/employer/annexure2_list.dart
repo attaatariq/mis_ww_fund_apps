@@ -6,6 +6,7 @@ import 'package:wwf_apps/views/wpf_distribution_item.dart';
 import 'package:wwf_apps/models/WPFDistributionModel.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/screens/home/employer/annexure1_create.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
 import '../../../constants/Constants.dart';
@@ -23,104 +24,162 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
   List<WPFDistributionModel> list = [];
   Constants constants;
   UIUpdates uiUpdates;
-  bool isError= false;
-  String errorMessage="";
+  bool isLoading = true;
+  bool isError = false;
+  String errorMessage = "";
 
   @override
   void initState() {
     super.initState();
     constants = new Constants();
-    uiUpdates= new UIUpdates(context);
+    uiUpdates = new UIUpdates(context);
     CheckTokenExpiry();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.white,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          StandardHeader(
+            title: "WPF Distribution Sheet",
+            subtitle: list.isNotEmpty
+                ? "${list.length} ${list.length == 1 ? 'Record' : 'Records'}"
+                : null,
+            actionIcon: Icons.add_box_outlined,
+            onActionPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => AnnexA()
+              )).then((value) {
+                if (value == true) {
+                  setState(() {
+                    list.clear();
+                    isLoading = true;
+                  });
+                  GetAllAnnexA();
+                }
+              });
+            },
+          ),
 
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text("WPF Distribution Sheet",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : isError
+                    ? _buildErrorState()
+                    : list.isEmpty
+                        ? _buildEmptyState()
+                        : RefreshIndicator(
+                            onRefresh: () async {
+                              setState(() {
+                                list.clear();
+                                isLoading = true;
+                              });
+                              await Future.delayed(Duration(milliseconds: 500));
+                              GetAllAnnexA();
+                            },
+                            color: AppTheme.colors.newPrimary,
+                            child: SingleChildScrollView(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Column(
+                                children: list.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  WPFDistributionModel annexure = entry.value;
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child: WPFDistributionItem(annexure),
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => AnnexA()
-                        )).then((value) => {
-                          setState(() {})
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Icon(Icons.add_box_outlined, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-                  ],
-                ),
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
+            ),
+            SizedBox(height: 16),
+            Text(
+              errorMessage.isNotEmpty ? errorMessage : "No WPF Distribution Available",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppTheme.colors.colorDarkGray,
+                fontSize: 14,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.normal,
               ),
             ),
+            SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  isError = false;
+                  isLoading = true;
+                });
+                GetAllAnnexA();
+              },
+              icon: Icon(Icons.refresh, size: 18),
+              label: Text("Retry"),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppTheme.colors.newPrimary),
+                foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                )),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            isError ? Expanded(
-              child: EmptyStateWidget(
-                icon: Icons.description_outlined,
-                message: 'No WPF Distribution Available',
-                description: 'WPF distribution records will appear here once available.',
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.description_outlined,
+              size: 80,
+              color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+            ),
+            SizedBox(height: 16),
+            Text(
+              "No WPF Distribution",
+              style: TextStyle(
+                color: AppTheme.colors.colorDarkGray,
+                fontSize: 16,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.w600,
               ),
-            ) : Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
-                  itemBuilder: (_, int index) =>
-                      InkWell(
-                          onTap: (){
-                            // Navigator.push(context, MaterialPageRoute(
-                            //     builder: (context) => OtherClaimDetail(listOther[index].claim_id)
-                            // ));
-                          },
-                          child: WPFDistributionItem(list[index])),
-                  itemCount: this.list.length,
-                ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              "WPF distribution records will appear here once available",
+              style: TextStyle(
+                color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                fontSize: 14,
+                fontFamily: "AppFont",
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -137,12 +196,28 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
     });
   }
 
-  void GetAllAnnexA() async{
+  void GetAllAnnexA() async {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL()+constants.buildApiUrl(constants.companies+"annexure_1/", UserSessions.instance.getUserID, additionalPath: UserSessions.instance.getRefID);
-      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
-      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      String userId = UserSessions.instance.getUserID;
+      String compId = UserSessions.instance.getRefID;
+      
+      // API endpoint: /companies/annexure_1/{user_id}/{comp_id}
+      var url = constants.getApiBaseURL() + 
+                constants.companies + 
+                "annexure_1/" + 
+                userId + "/" + 
+                compId;
+      
+      var response = await http.get(
+        Uri.parse(url),
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 30));
+      
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+      
+      uiUpdates.DismissProgresssDialog();
       
       if (responseCodeModel.status == true) {
         try {
@@ -151,79 +226,85 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
           String code = codeValue != null ? codeValue.toString() : "0";
           
           if (code == "1" || codeValue == 1) {
-            List<dynamic> entitlements= body["Data"] != null ? body["Data"] : [];
-            if(entitlements.isNotEmpty){
-              list.clear();
+            List<dynamic> entitlements = body["Data"] != null ? (body["Data"] is List ? body["Data"] : []) : [];
+            
+            list.clear();
+            
+            if (entitlements.isNotEmpty) {
               entitlements.forEach((row) {
-            String anx_id= row["anx_id"].toString();
-            String comp_id= row["comp_id"].toString();
-            String anx_year= row["anx_year"].toString();
-            String anx_statement= row["anx_statement"].toString();
-            String anx_received= row["anx_received"].toString();
-            String anx_financial= row["anx_financial"].toString();
-            String anx_net_profit= row["anx_net_profit"].toString();
-            String anx_allocated= row["anx_allocated"].toString();
-            String anx_count_cat1= row["anx_count_cat1"].toString();
-            String anx_count_cat2= row["anx_count_cat2"].toString();
-            String anx_count_cat3= row["anx_count_cat3"].toString();
-            String anx_workers= row["anx_workers"].toString();
-            String anx_amount_1= row["anx_amount_1"].toString();
-            String anx_amount_2= row["anx_amount_2"].toString();
-            String anx_amount_3= row["anx_amount_3"].toString();
-            String anx_dispense_1= row["anx_dispense_1"].toString();
-            String anx_dispense_2= row["anx_dispense_2"].toString();
-            String anx_dispense_3= row["anx_dispense_3"].toString();
-            String anx_dispensed= row["anx_dispensed"].toString();
-            String anx_transfered= row["anx_transfered"].toString();
-            String anx_mode= row["anx_mode"].toString();
-            String anx_number= row["anx_number"].toString();
-            String anx_proof= row["anx_proof"].toString();
-            String anx_bank= row["anx_bank"].toString();
-            String anx_payment= row["anx_payment"].toString();
-            String anx_paid_at= row["anx_paid_at"].toString();
-            String anx_percent= row["anx_percent"].toString();
-            String anx_employees= row["anx_employees"].toString();
-            String anx_medium= row["anx_medium"].toString();
-            String created_at= row["created_at"].toString();
-            list.add(WPFDistributionModel(anx_id, comp_id, anx_year, anx_statement, anx_received, anx_financial, anx_net_profit, anx_allocated, anx_count_cat1, anx_count_cat2, anx_count_cat3, anx_workers, anx_amount_1, anx_amount_2, anx_amount_3, anx_dispense_1, anx_dispense_2, anx_dispense_3, anx_dispensed, anx_transfered, anx_mode, anx_number, anx_proof, anx_bank, anx_payment, anx_paid_at, anx_percent, anx_employees, anx_medium, created_at));
-          });
+                list.add(WPFDistributionModel(
+                  anx_id: row["anx_id"]?.toString() ?? "",
+                  comp_id: row["comp_id"]?.toString() ?? "",
+                  anx_year: row["anx_year"]?.toString() ?? "",
+                  anx_financial: row["anx_financial"]?.toString() ?? "",
+                  anx_received: row["anx_received"]?.toString() ?? "",
+                  anx_dispensed: row["anx_dispensed"]?.toString() ?? "",
+                  anx_workers: row["anx_workers"]?.toString() ?? "",
+                  anx_transfered: row["anx_transfered"]?.toString() ?? "",
+                  anx_bank: row["anx_bank"]?.toString() ?? "",
+                  anx_paid_at: row["anx_paid_at"]?.toString() ?? "",
+                  anx_proof: row["anx_proof"]?.toString() ?? "",
+                  anx_mode: row["anx_mode"]?.toString() ?? "",
+                  anx_number: row["anx_number"]?.toString() ?? "",
+                  anx_percent: row["anx_percent"]?.toString() ?? "",
+                  anx_statement: row["anx_statement"]?.toString() ?? "",
+                  comp_name: row["comp_name"]?.toString() ?? "",
+                  comp_logo: row["comp_logo"]?.toString() ?? "",
+                ));
+              });
+              
               setState(() {
+                isLoading = false;
                 isError = false;
               });
-            }else{
+            } else {
               setState(() {
-                isError = true;
-                errorMessage = Strings.instance.notAvail;
+                isLoading = false;
+                isError = false;
               });
             }
           } else {
+            String message = body["Message"]?.toString() ?? "";
+            if (message.isNotEmpty && message != "null") {
+              uiUpdates.ShowToast(message);
+            }
             setState(() {
+              isLoading = false;
               isError = true;
-              errorMessage = Strings.instance.notAvail;
+              errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
             });
           }
         } catch (e) {
           setState(() {
+            isLoading = false;
             isError = true;
-            errorMessage = Strings.instance.notAvail;
+            errorMessage = Strings.instance.somethingWentWrong;
           });
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
           var body = jsonDecode(response.body);
-          String message = body["Data"] != null ? body["Data"].toString() : "";
-          if(message == constants.expireToken){
-            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-          }else if(message.isNotEmpty && message != "null"){
+          String message = body["Message"]?.toString() ?? "";
+          
+          if (message == constants.expireToken) {
+            constants.OpenLogoutDialog(
+              context,
+              Strings.instance.expireSessionTitle,
+              Strings.instance.expireSessionMessage,
+            );
+          } else if (message.isNotEmpty && message != "null") {
             uiUpdates.ShowToast(message);
-          } else {
-            setState(() {
-              isError = true;
-              errorMessage = Strings.instance.notAvail;
-            });
           }
+          
+          setState(() {
+            isLoading = false;
+            isError = true;
+            errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+          });
         } catch (e) {
           setState(() {
+            isLoading = false;
             isError = true;
             errorMessage = Strings.instance.notAvail;
           });
@@ -231,13 +312,12 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
       }
     } catch (e) {
       setState(() {
+        isLoading = false;
         isError = true;
-        errorMessage = Strings.instance.notAvail;
+        errorMessage = Strings.instance.somethingWentWrong;
       });
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
-    } finally {
-      await Future.delayed(Duration(milliseconds: 200));
       uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
   }
 }

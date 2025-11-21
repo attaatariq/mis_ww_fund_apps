@@ -1,28 +1,26 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
-import 'package:wwf_apps/views/interst_distribution_item.dart';
-import 'package:wwf_apps/models/InterstDistributionModel.dart';
+import 'package:wwf_apps/constants/Constants.dart';
+import 'package:wwf_apps/models/ResponseCodeModel.dart';
+import 'package:wwf_apps/models/WorkerModel.dart';
 import 'package:wwf_apps/network/api_service.dart';
-import 'package:wwf_apps/screens/home/employer/annexure2_create.dart';
-import 'package:wwf_apps/screens/home/employer/annexure2_create_new.dart';
+import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
-
+import 'package:wwf_apps/views/worker_list_item.dart';
+import 'package:wwf_apps/screens/home/employer/add_worker.dart';
+import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
-import '../../../constants/Constants.dart';
-import '../../../models/ResponseCodeModel.dart';
-import '../../../updates/UIUpdates.dart';
-import '../../../sessions/UserSessions.dart';
-import '../../../widgets/empty_state_widget.dart';
 
-class InterstDistributionList extends StatefulWidget {
+class WorkersList extends StatefulWidget {
   @override
-  _InterstDistributionListState createState() => _InterstDistributionListState();
+  _WorkersListState createState() => _WorkersListState();
 }
 
-class _InterstDistributionListState extends State<InterstDistributionList> {
-  List<InterstDistributionModel> list = [];
+class _WorkersListState extends State<WorkersList> {
+  List<WorkerModel> workersList = [];
   Constants constants;
   UIUpdates uiUpdates;
   bool isLoading = true;
@@ -36,6 +34,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
     uiUpdates = new UIUpdates(context);
     CheckTokenExpiry();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,21 +42,24 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
       body: Column(
         children: [
           StandardHeader(
-            title: "Interest Distribution Sheet",
-            subtitle: list.isNotEmpty
-                ? "${list.length} ${list.length == 1 ? 'Record' : 'Records'}"
+            title: "Workers",
+            subtitle: workersList.isNotEmpty
+                ? "${workersList.length} ${workersList.length == 1 ? 'Worker' : 'Workers'}"
                 : null,
-            actionIcon: Icons.add_box_outlined,
+            actionIcon: Icons.add,
             onActionPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => Annex3ANew()
-              )).then((value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddWorker(),
+                ),
+              ).then((value) {
                 if (value == true) {
                   setState(() {
-                    list.clear();
+                    workersList.clear();
                     isLoading = true;
                   });
-                  GetAllAnnexA();
+                  GetWorkersList();
                 }
               });
             },
@@ -68,30 +70,27 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
                 ? Center(child: CircularProgressIndicator())
                 : isError
                     ? _buildErrorState()
-                    : list.isEmpty
+                    : workersList.isEmpty
                         ? _buildEmptyState()
                         : RefreshIndicator(
                             onRefresh: () async {
                               setState(() {
-                                list.clear();
+                                workersList.clear();
                                 isLoading = true;
                               });
                               await Future.delayed(Duration(milliseconds: 500));
-                              GetAllAnnexA();
+                              GetWorkersList();
                             },
                             color: AppTheme.colors.newPrimary,
-                            child: SingleChildScrollView(
+                            child: ListView.builder(
                               padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Column(
-                                children: list.asMap().entries.map((entry) {
-                                  int index = entry.key;
-                                  InterstDistributionModel annexure = entry.value;
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: InterstDistributionItem(annexure),
-                                  );
-                                }).toList(),
-                              ),
+                              itemCount: workersList.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 12),
+                                  child: WorkerListItem(workersList[index]),
+                                );
+                              },
                             ),
                           ),
           ),
@@ -114,7 +113,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             ),
             SizedBox(height: 16),
             Text(
-              errorMessage.isNotEmpty ? errorMessage : "No Interest Distribution Available",
+              errorMessage.isNotEmpty ? errorMessage : "No Workers Available",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray,
@@ -130,7 +129,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
                   isError = false;
                   isLoading = true;
                 });
-                GetAllAnnexA();
+                GetWorkersList();
               },
               icon: Icon(Icons.refresh, size: 18),
               label: Text("Retry"),
@@ -157,13 +156,13 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.account_balance_wallet_outlined,
+              Icons.people_outline,
               size: 80,
               color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
             ),
             SizedBox(height: 16),
             Text(
-              "No Interest Distribution",
+              "No Workers",
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray,
                 fontSize: 16,
@@ -173,7 +172,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             ),
             SizedBox(height: 8),
             Text(
-              "Interest distribution records will appear here once available",
+              "Workers will appear here once added",
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
                 fontSize: 14,
@@ -186,73 +185,90 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
     );
   }
 
-  void CheckTokenExpiry() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if(constants.AgentExpiryComperission()){
-        constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-      }else{
-        GetAllAnnexA();
-      }
-    });
-  }
-
-  void GetAllAnnexA() async {
+  void GetWorkersList() async {
     try {
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       String userId = UserSessions.instance.getUserID;
       String compId = UserSessions.instance.getRefID;
-      
-      // API endpoint: /companies/annexure_2/{user_id}/{comp_id}
-      var url = constants.getApiBaseURL() + 
-                constants.companies + 
-                "annexure_2/" + 
-                userId + "/" + 
+
+      // Fetch comp_id if not available
+      if (compId.isEmpty || compId == "" || compId == "null") {
+        compId = await _fetchCompanyID();
+      }
+
+      if (compId.isEmpty || compId == "" || compId == "null") {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = "Company ID not found. Please try again.";
+        });
+        uiUpdates.DismissProgresssDialog();
+        return;
+      }
+
+      // API endpoint: /employees/index/{user_id}/{comp_id}
+      var url = constants.getApiBaseURL() +
+                constants.employees +
+                "index/" +
+                userId + "/" +
                 compId;
-      
+
       var response = await http.get(
         Uri.parse(url),
         headers: APIService.getDefaultHeaders(),
       ).timeout(Duration(seconds: 30));
-      
+
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      
+
       uiUpdates.DismissProgresssDialog();
-      
+
       if (responseCodeModel.status == true) {
         try {
           var body = jsonDecode(response.body);
           dynamic codeValue = body["Code"];
           String code = codeValue != null ? codeValue.toString() : "0";
-          
+
           if (code == "1" || codeValue == 1) {
-            List<dynamic> entitlements = body["Data"] != null ? (body["Data"] is List ? body["Data"] : []) : [];
-            
-            list.clear();
-            
-            if (entitlements.isNotEmpty) {
-              entitlements.forEach((row) {
-                list.add(InterstDistributionModel(
-                  anx_id: row["anx_id"]?.toString() ?? "",
-                  comp_id: row["comp_id"]?.toString() ?? "",
-                  anx_year: row["anx_year"]?.toString() ?? "",
-                  anx_financial: row["anx_financial"]?.toString() ?? "",
-                  anx_received: row["anx_received"]?.toString() ?? "",
-                  anx_dispensed: row["anx_dispensed"]?.toString() ?? "",
-                  anx_workers: row["anx_workers"]?.toString() ?? "",
-                  anx_transfered: row["anx_transfered"]?.toString() ?? "",
-                  anx_bank: row["anx_bank"]?.toString() ?? "",
-                  anx_payment: row["anx_payment"]?.toString() ?? "",
-                  anx_paid_at: row["anx_paid_at"]?.toString() ?? "",
-                  anx_proof: row["anx_proof"]?.toString() ?? "",
-                  anx_mode: row["anx_mode"]?.toString() ?? "",
-                  anx_number: row["anx_number"]?.toString() ?? "",
-                  anx_statement: row["anx_statement"]?.toString() ?? "",
-                  comp_name: row["comp_name"]?.toString() ?? "",
-                  comp_logo: row["comp_logo"]?.toString() ?? "",
+            List<dynamic> dataList = body["Data"] != null
+                ? (body["Data"] is List ? body["Data"] : [])
+                : [];
+
+            workersList.clear();
+
+            if (dataList.isNotEmpty) {
+              dataList.forEach((row) {
+                workersList.add(WorkerModel(
+                  user_id: row["user_id"]?.toString() ?? "",
+                  user_name: row["user_name"]?.toString() ?? "",
+                  user_image: row["user_image"]?.toString() ?? "",
+                  user_cnic: row["user_cnic"]?.toString() ?? "",
+                  user_gender: row["user_gender"]?.toString() ?? "",
+                  user_email: row["user_email"]?.toString() ?? "",
+                  user_contact: row["user_contact"]?.toString() ?? "",
+                  emp_id: row["emp_id"]?.toString() ?? "",
+                  emp_father: row["emp_father"]?.toString() ?? "",
+                  emp_birthday: row["emp_birthday"]?.toString() ?? "",
+                  emp_ssno: row["emp_ssno"]?.toString() ?? "",
+                  emp_eobino: row["emp_eobino"]?.toString() ?? "",
+                  emp_check: row["emp_check"]?.toString() ?? "",
+                  emp_address: row["emp_address"]?.toString() ?? "",
+                  city_name: row["city_name"]?.toString() ?? "",
+                  district_name: row["district_name"]?.toString() ?? "",
+                  state_name: row["state_name"]?.toString() ?? "",
+                  emp_issued: row["emp_issued"]?.toString() ?? "",
+                  emp_expiry: row["emp_expiry"]?.toString() ?? "",
+                  emp_about: row["emp_about"]?.toString() ?? "",
+                  emp_bank: row["emp_bank"]?.toString() ?? "",
+                  emp_title: row["emp_title"]?.toString() ?? "",
+                  emp_account: row["emp_account"]?.toString() ?? "",
+                  emp_status: row["emp_status"]?.toString() ?? "",
+                  appointed_at: row["appointed_at"]?.toString() ?? "",
+                  created_at: row["created_at"]?.toString() ?? "",
+                  updated_at: row["updated_at"]?.toString() ?? "",
                 ));
               });
-              
+
               setState(() {
                 isLoading = false;
                 isError = false;
@@ -286,7 +302,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
         try {
           var body = jsonDecode(response.body);
           String message = body["Message"]?.toString() ?? "";
-          
+
           if (message == constants.expireToken) {
             constants.OpenLogoutDialog(
               context,
@@ -296,7 +312,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
           } else if (message.isNotEmpty && message != "null") {
             uiUpdates.ShowToast(message);
           }
-          
+
           setState(() {
             isLoading = false;
             isError = true;
@@ -320,4 +336,53 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
   }
+
+  Future<String> _fetchCompanyID() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account["comp_id"] != null) {
+            String compId = account["comp_id"].toString();
+            if (compId.isNotEmpty && compId != "null") {
+              UserSessions.instance.setRefID(compId);
+              return compId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    return "";
+  }
+
+  void CheckTokenExpiry() {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (constants.AgentExpiryComperission()) {
+        constants.OpenLogoutDialog(
+            context,
+            Strings.instance.expireSessionTitle,
+            Strings.instance.expireSessionMessage);
+      } else {
+        GetWorkersList();
+      }
+    });
+  }
 }
+

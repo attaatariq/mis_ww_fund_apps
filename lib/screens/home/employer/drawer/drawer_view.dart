@@ -22,6 +22,8 @@ import '../annexure1_create.dart';
 import '../deo_detail.dart';
 import '../annexure1_list.dart';
 import '../annexure2_list.dart';
+import '../workers_list.dart';
+import '../add_worker.dart';
 
 class EmployerDrawerView extends StatefulWidget {
   @override
@@ -176,6 +178,18 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => ContactPerson()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.people_outlined,
+                    iconAsset: "archive/images/person.png",
+                    title: "Workers",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => WorkersList()
                       ));
                     },
                   ),
