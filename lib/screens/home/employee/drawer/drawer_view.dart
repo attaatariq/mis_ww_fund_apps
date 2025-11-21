@@ -5,7 +5,8 @@ import 'package:wwf_apps/screens/general/change_password.dart';
 import 'package:wwf_apps/screens/general/complaints.dart';
 import 'package:wwf_apps/screens/general/faqs.dart';
 import 'package:wwf_apps/screens/general/my_profile.dart';
-import 'package:wwf_apps/screens/general/notifications_alerts.dart';
+import 'package:wwf_apps/screens/general/notifications_screen.dart';
+import 'package:wwf_apps/screens/general/notices_news_screen.dart';
 import 'package:wwf_apps/screens/general/send_feedback.dart';
 import 'package:wwf_apps/screens/general/turn_over_history.dart';
 import 'package:wwf_apps/screens/home/employee/add_beneficiary.dart';
@@ -302,7 +303,19 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => NotificationsAndAlerts()
+                          builder: (context) => NotificationsScreen()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.announcement_outlined,
+                    iconAsset: "archive/images/bell.png",
+                    title: "Notices & News",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => NoticesNewsScreen()
                       ));
                     },
                   ),

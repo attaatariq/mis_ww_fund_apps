@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:wwf_apps/Strings/Strings.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/constants/Constants.dart';
-import 'package:wwf_apps/views/complaint_list_item.dart';
-import 'package:wwf_apps/models/ComplaintModel.dart';
+import 'package:wwf_apps/views/notification_list_item.dart';
+import 'package:wwf_apps/models/NotificationModel.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
-import 'package:wwf_apps/screens/general/add_complaint.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
@@ -15,18 +14,18 @@ import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
-class Complaints extends StatefulWidget {
+class NotificationsScreen extends StatefulWidget {
   @override
-  _ComplaintsState createState() => _ComplaintsState();
+  _NotificationsScreenState createState() => _NotificationsScreenState();
 }
 
-class _ComplaintsState extends State<Complaints> {
+class _NotificationsScreenState extends State<NotificationsScreen> {
   Constants constants;
   UIUpdates uiUpdates;
   bool isLoading = true;
   bool isError = false;
   String errorMessage = "";
-  List<ComplaintModel> list = [];
+  List<NotificationModel> notificationList = [];
 
   @override
   void initState() {
@@ -36,6 +35,24 @@ class _ComplaintsState extends State<Complaints> {
     CheckTokenExpiry();
   }
 
+  // Determine user type for API: W for Worker/Employee, C for Company
+  String _getUserType() {
+    String sector = UserSessions.instance.getUserSector;
+    String role = UserSessions.instance.getUserRole;
+    
+    // Employee/Worker: sector 7/4 with role 6/3, or sector 8 with role 9
+    if ((sector == "7" && role == "6") || 
+        (sector == "4" && role == "3") ||
+        (sector == "8" && role == "9")) {
+      return "W"; // Worker/Employee
+    }
+    // Employer/Company: sector 8 with role 7 or 8
+    else if (sector == "8" && (role == "7" || role == "8")) {
+      return "C"; // Company/Employer
+    }
+    // Default to Worker
+    return "W";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,24 +61,10 @@ class _ComplaintsState extends State<Complaints> {
       body: Column(
         children: [
           StandardHeader(
-            title: "Complaints",
-            subtitle: list.isNotEmpty
-                ? "${list.length} ${list.length == 1 ? 'Complaint' : 'Complaints'}"
+            title: "Notifications",
+            subtitle: notificationList.isNotEmpty
+                ? "${notificationList.length} ${notificationList.length == 1 ? 'Notification' : 'Notifications'}"
                 : null,
-            actionIcon: Icons.add_box_outlined,
-            onActionPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => AddComplaint()
-              )).then((value) {
-                if (value == true) {
-                  setState(() {
-                    list.clear();
-                    isLoading = true;
-                  });
-                  GetComplaints(false);
-                }
-              });
-            },
           ),
 
           Expanded(
@@ -69,27 +72,27 @@ class _ComplaintsState extends State<Complaints> {
                 ? Center(child: CircularProgressIndicator())
                 : isError
                     ? _buildErrorState()
-                    : list.isEmpty
+                    : notificationList.isEmpty
                         ? _buildEmptyState()
                         : RefreshIndicator(
                             onRefresh: () async {
                               setState(() {
-                                list.clear();
+                                notificationList.clear();
                                 isLoading = true;
                               });
                               await Future.delayed(Duration(milliseconds: 500));
-                              GetComplaints(false);
+                              GetNotifications(false);
                             },
                             color: AppTheme.colors.newPrimary,
                             child: SingleChildScrollView(
                               padding: EdgeInsets.symmetric(vertical: 12),
                               child: Column(
-                                children: list.asMap().entries.map((entry) {
+                                children: notificationList.asMap().entries.map((entry) {
                                   int index = entry.key;
-                                  ComplaintModel complaint = entry.value;
+                                  NotificationModel notification = entry.value;
                                   return Padding(
                                     padding: EdgeInsets.only(bottom: 20),
-                                    child: ComplaintItem(complaint),
+                                    child: NotificationListItem(notification),
                                   );
                                 }).toList(),
                               ),
@@ -115,7 +118,7 @@ class _ComplaintsState extends State<Complaints> {
             ),
             SizedBox(height: 16),
             Text(
-              errorMessage.isNotEmpty ? errorMessage : "No Complaints Available",
+              errorMessage.isNotEmpty ? errorMessage : "No Notifications Available",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray,
@@ -131,7 +134,7 @@ class _ComplaintsState extends State<Complaints> {
                   isError = false;
                   isLoading = true;
                 });
-                GetComplaints(false);
+                GetNotifications(false);
               },
               icon: Icon(Icons.refresh, size: 18),
               label: Text("Retry"),
@@ -158,13 +161,13 @@ class _ComplaintsState extends State<Complaints> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.receipt_long_outlined,
+              Icons.notifications_none_outlined,
               size: 80,
               color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
             ),
             SizedBox(height: 16),
             Text(
-              "No Complaints",
+              "No Notifications",
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray,
                 fontSize: 16,
@@ -174,7 +177,7 @@ class _ComplaintsState extends State<Complaints> {
             ),
             SizedBox(height: 8),
             Text(
-              "You haven't submitted any complaints yet",
+              "You don't have any notifications yet",
               style: TextStyle(
                 color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
                 fontSize: 14,
@@ -196,23 +199,25 @@ class _ComplaintsState extends State<Complaints> {
           Strings.instance.expireSessionMessage,
         );
       } else {
-        GetComplaints(false);
+        GetNotifications(false);
       }
     });
   }
 
-  GetComplaints(bool isRefresh) async {
+  GetNotifications(bool isRefresh) async {
     try {
       if (!isRefresh) {
         uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       }
 
-      // API endpoint: interaction/complaints/{user_id}
+      String userType = _getUserType(); // W for Worker/Employee, C for Company
       String userId = UserSessions.instance.getUserID;
+      // API endpoint: /alerts/notifications/{user_id}/{W or C}
       var url = constants.getApiBaseURL() + 
-                constants.assessments + 
-                "complaints/" + 
-                userId;
+                constants.alerts + 
+                "notifications/" + 
+                userId + "/" + 
+                userType;
       
       var response = await http.get(
         Uri.parse(url),
@@ -232,26 +237,20 @@ class _ComplaintsState extends State<Complaints> {
           
           if (code == "1" || codeValue == 1) {
             var data = body["Data"];
-            List<dynamic> complaints = data != null ? (data is List ? data : []) : [];
+            List<dynamic> notifications = data != null ? (data is List ? data : []) : [];
             
-            list.clear();
+            notificationList.clear();
             
-            if (complaints.length > 0) {
-              complaints.forEach((row) {
-                list.add(ComplaintModel(
-                  id: row["com_id"]?.toString() ?? "",
-                  type: row["com_type"]?.toString() ?? "",
-                  subject: row["com_subject"]?.toString() ?? "",
-                  message: row["com_message"]?.toString() ?? "",
-                  complaintResponse: row["com_response"]?.toString() ?? "",
-                  respondBy: row["respond_by"]?.toString() ?? "",
-                  responderName: row["user_name"]?.toString() ?? "",
-                  responderGender: row["user_gender"]?.toString() ?? "",
-                  responderImage: row["user_image"]?.toString() ?? "",
-                  responderSectorName: row["sector_name"]?.toString() ?? "",
-                  responderRoleName: row["role_name"]?.toString() ?? "",
-                  respondedAt: row["respond_at"]?.toString() ?? "",
-                  createdAt: row["created_at"]?.toString() ?? "",
+            if (notifications.length > 0) {
+              notifications.forEach((row) {
+                notificationList.add(NotificationModel(
+                  not_id: row["not_id"]?.toString() ?? "",
+                  user_id: row["user_id"]?.toString() ?? "",
+                  not_subject: row["not_subject"]?.toString() ?? "",
+                  not_message: row["not_message"]?.toString() ?? "",
+                  not_recipient: row["not_recipient"]?.toString() ?? "",
+                  not_read: row["not_read"]?.toString() ?? "0",
+                  created_at: row["created_at"]?.toString() ?? "",
                 ));
               });
 
@@ -323,3 +322,4 @@ class _ComplaintsState extends State<Complaints> {
     }
   }
 }
+

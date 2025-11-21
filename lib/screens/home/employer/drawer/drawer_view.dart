@@ -3,7 +3,8 @@ import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/screens/general/complaints.dart';
 import 'package:wwf_apps/screens/general/faqs.dart';
-import 'package:wwf_apps/screens/general/notifications_alerts.dart';
+import 'package:wwf_apps/screens/general/notifications_screen.dart';
+import 'package:wwf_apps/screens/general/notices_news_screen.dart';
 import 'package:wwf_apps/screens/general/send_feedback.dart';
 import 'package:wwf_apps/screens/home/employer/contact_person.dart';
 import 'package:wwf_apps/screens/home/employer/death_claim_list.dart';
@@ -198,7 +199,19 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => NotificationsAndAlerts()
+                          builder: (context) => NotificationsScreen()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.announcement_outlined,
+                    iconAsset: "archive/images/bell.png",
+                    title: "Notices & News",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => NoticesNewsScreen()
                       ));
                     },
                   ),

@@ -82,23 +82,17 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: AppTheme.colors.newWhite,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: levelColor.withOpacity(0.3),
-          width: 2,
+          color: levelColor.withOpacity(0.25),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: levelColor.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 8,
             offset: Offset(0, 2),
             spreadRadius: 0,
@@ -107,8 +101,9 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Header Section with Gradient
+          // Compact Header
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -116,54 +111,54 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
                 end: Alignment.bottomRight,
                 colors: [
                   levelColor,
-                  levelColor.withOpacity(0.8),
+                  levelColor.withOpacity(0.85),
                 ],
               ),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(14),
-                topRight: Radius.circular(14),
+                topLeft: Radius.circular(10.5),
+                topRight: Radius.circular(10.5),
               ),
             ),
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: AppTheme.colors.newWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     levelIcon,
                     color: AppTheme.colors.newWhite,
-                    size: 28,
+                    size: 18,
                   ),
                 ),
-                SizedBox(width: 12),
+                SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         eduLevel.isNotEmpty ? eduLevel : "Education Record",
                         style: TextStyle(
                           color: AppTheme.colors.newWhite,
-                          fontSize: 18,
+                          fontSize: 15,
                           fontFamily: "AppFont",
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (eduDegree.isNotEmpty || eduClass.isNotEmpty)
-                        SizedBox(height: 4),
+                        SizedBox(height: 2),
                       if (eduDegree.isNotEmpty || eduClass.isNotEmpty)
                         Text(
                           "${eduDegree.isNotEmpty ? eduDegree : ""}${eduDegree.isNotEmpty && eduClass.isNotEmpty ? " - " : ""}${eduClass.isNotEmpty ? eduClass : ""}",
                           style: TextStyle(
                             color: AppTheme.colors.newWhite.withOpacity(0.9),
-                            fontSize: 13,
+                            fontSize: 11,
                             fontFamily: "AppFont",
                             fontWeight: FontWeight.w500,
                           ),
@@ -177,178 +172,127 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
             ),
           ),
 
-          // Content Section
+          // Compact Content
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // School/Institution Information
+                // School Name (Compact)
                 if (schoolName.isNotEmpty && schoolName != "-" && schoolName != "null")
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: levelColor.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: levelColor.withOpacity(0.2),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.account_balance,
-                          size: 18,
-                          color: levelColor,
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Institution",
-                                style: TextStyle(
-                                  color: AppTheme.colors.colorDarkGray,
-                                  fontSize: 10,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                schoolName,
-                                style: TextStyle(
-                                  color: AppTheme.colors.newBlack,
-                                  fontSize: 13,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                if (schoolName.isNotEmpty && schoolName != "-" && schoolName != "null")
-                  SizedBox(height: 12),
-
-                // Education Details Grid
-                Row(
-                  children: [
-                    // Education Nature
-                    if (eduNature.isNotEmpty && eduNature != "-" && eduNature != "null")
-                      Expanded(
-                        child: _buildInfoCard(
-                          icon: Icons.category,
-                          label: "Nature",
-                          value: eduNature,
-                          color: levelColor,
-                        ),
-                      ),
-                    if (eduNature.isNotEmpty && eduNature != "-" && eduNature != "null" && eduLiving.isNotEmpty && eduLiving != "-" && eduLiving != "null")
-                      SizedBox(width: 10),
-                    // Living Status
-                    if (eduLiving.isNotEmpty && eduLiving != "-" && eduLiving != "null")
-                      Expanded(
-                        child: _buildInfoCard(
-                          icon: Icons.home,
-                          label: "Residency",
-                          value: eduLiving,
-                          color: levelColor,
-                        ),
-                      ),
-                  ],
-                ),
-
-                SizedBox(height: 12),
-
-                // Date Range
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colors.colorLightGray,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
+                  Row(
                     children: [
                       Icon(
-                        Icons.calendar_today,
-                        size: 16,
+                        Icons.account_balance,
+                        size: 14,
                         color: levelColor,
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          schoolName,
+                          style: TextStyle(
+                            color: AppTheme.colors.newBlack,
+                            fontSize: 12,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                if (schoolName.isNotEmpty && schoolName != "-" && schoolName != "null")
+                  SizedBox(height: 8),
+
+                // Compact Info Row
+                Row(
+                  children: [
+                    // Nature
+                    if (eduNature.isNotEmpty && eduNature != "-" && eduNature != "null")
                       Expanded(
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Start Date",
-                                    style: TextStyle(
-                                      color: AppTheme.colors.colorDarkGray,
-                                      fontSize: 10,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Text(
-                                    _formatDate(eduStarted),
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newBlack,
-                                      fontSize: 12,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Icon(
+                              Icons.category,
+                              size: 12,
+                              color: levelColor,
                             ),
-                            Container(
-                              width: 1,
-                              height: 30,
-                              color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "End Date",
-                                    style: TextStyle(
-                                      color: AppTheme.colors.colorDarkGray,
-                                      fontSize: 10,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Text(
-                                    _formatDate(eduEnded),
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newBlack,
-                                      fontSize: 12,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
+                            SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                eduNature,
+                                style: TextStyle(
+                                  color: AppTheme.colors.newBlack,
+                                  fontSize: 11,
+                                  fontFamily: "AppFont",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    if (eduNature.isNotEmpty && eduNature != "-" && eduNature != "null" && eduLiving.isNotEmpty && eduLiving != "-" && eduLiving != "null")
+                      SizedBox(width: 12),
+                    // Living
+                    if (eduLiving.isNotEmpty && eduLiving != "-" && eduLiving != "null")
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.home,
+                              size: 12,
+                              color: levelColor,
+                            ),
+                            SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                eduLiving,
+                                style: TextStyle(
+                                  color: AppTheme.colors.newBlack,
+                                  fontSize: 11,
+                                  fontFamily: "AppFont",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+
+                SizedBox(height: 8),
+
+                // Compact Date Range
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 12,
+                      color: levelColor,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      "${_formatDate(eduStarted)} - ${_formatDate(eduEnded)}",
+                      style: TextStyle(
+                        color: AppTheme.colors.colorDarkGray,
+                        fontSize: 11,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -358,60 +302,4 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
     );
   }
 
-  Widget _buildInfoCard({
-    IconData icon,
-    String label,
-    String value,
-    Color color,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: color,
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: AppTheme.colors.colorDarkGray,
-                    fontSize: 9,
-                    fontFamily: "AppFont",
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: AppTheme.colors.newBlack,
-                    fontSize: 11,
-                    fontFamily: "AppFont",
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

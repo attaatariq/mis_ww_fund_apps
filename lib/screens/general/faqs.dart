@@ -179,7 +179,7 @@ class _FAQsState extends State<FAQs> {
                                   int index = entry.key;
                                   FaqModel faq = entry.value;
                                   return Padding(
-                                    padding: EdgeInsets.only(bottom: 12),
+                                    padding: EdgeInsets.only(bottom: 20),
                                     child: Material(
                                       color: Colors.transparent,
                                       child: InkWell(

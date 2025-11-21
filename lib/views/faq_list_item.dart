@@ -26,7 +26,7 @@ class _FaqListItemState extends State<FaqListItem> {
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      margin: EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: AppTheme.colors.newWhite,
         borderRadius: BorderRadius.circular(12),

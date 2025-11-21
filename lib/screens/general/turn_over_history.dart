@@ -11,6 +11,7 @@ import 'package:wwf_apps/models/TurnoverHistoryModel.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/empty_state_widget.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,13 +21,13 @@ class TurnOverHistory extends StatefulWidget {
 }
 
 class _TurnOverHistoryState extends State<TurnOverHistory> {
-  String comp_name="-", comp_type="-", comp_landline="-", comp_fax_no="-", comp_logo="-", comp_address= "-";
-
   Constants constants;
   UIUpdates uiUpdates;
-  bool isError= false;
-  String errorMessage="";
-  List<TurnoverHistoryModel> list= [];
+  bool isLoading = true;
+  bool isError = false;
+  String errorMessage = "";
+  TurnoverHistoryModel currentEmployment;
+  List<TurnoverHistoryModel> previousEmploymentList = [];
 
   @override
   void initState() {
@@ -41,259 +42,230 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          StandardHeader(
+            title: "Turnover History",
+            subtitle: currentEmployment != null || previousEmploymentList.isNotEmpty
+                ? "${currentEmployment != null ? 1 : 0} Current, ${previousEmploymentList.length} Previous"
+                : null,
+          ),
 
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text("History",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            Expanded(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.only(top: 20, left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.colors.colorDarkGray),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Currently Employee",
-                            maxLines: 1,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: AppTheme.colors.newBlack,
-                                fontSize: 13,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-
-                          SizedBox(height: 20,),
-
-                          Row(
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : isError
+                    ? _buildErrorState()
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          setState(() {
+                            isLoading = true;
+                            isError = false;
+                            currentEmployment = null;
+                            previousEmploymentList.clear();
+                          });
+                          await Future.delayed(Duration(milliseconds: 500));
+                          GetTurnOverHistory();
+                        },
+                        color: AppTheme.colors.newPrimary,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                height: 60,
-                                width: 60,
-                                margin: EdgeInsets.only(left: 10, right: 10),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: comp_logo != "null" && comp_logo != "" && comp_logo != "-" && comp_logo != "NULL" ? FadeInImage(
-                                    image: NetworkImage(constants.getImageBaseURL()+comp_logo),
-                                    placeholder: AssetImage("archive/images/no_image.jpg"),
-                                    fit: BoxFit.fill,
-                                  ) : Image.asset("archive/images/no_image.jpg",
-                                    height: 60.0,
-                                    width: 60,
-                                    fit: BoxFit.fill,
+                              // Current Employment Section
+                              if (currentEmployment != null) ...[
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Text(
+                                    "Current Employment",
+                                    style: TextStyle(
+                                      color: AppTheme.colors.newBlack,
+                                      fontSize: 16,
+                                      fontFamily: "AppFont",
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
+                                SizedBox(height: 8),
+                                TurnOverHistoryItem(
+                                  currentEmployment,
+                                  isCurrent: true,
+                                ),
+                                SizedBox(height: 24),
+                              ],
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    comp_name,
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
+                              // Previous Employment Section
+                              if (previousEmploymentList.isNotEmpty) ...[
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Text(
+                                    "Previous Employment",
                                     style: TextStyle(
-                                        color: AppTheme.colors.newBlack,
-                                        fontSize: 15,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.bold
+                                      color: AppTheme.colors.newBlack,
+                                      fontSize: 16,
+                                      fontFamily: "AppFont",
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                ),
+                                SizedBox(height: 8),
+                                ...previousEmploymentList.map((employment) => TurnOverHistoryItem(
+                                      employment,
+                                      isCurrent: false,
+                                    )),
+                                SizedBox(height: 16),
+                              ],
 
-                                  Text(
-                                    comp_type,
-                                    maxLines: 1,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        color: AppTheme.colors.colorDarkGray,
-                                        fontSize: 13,
-                                        fontFamily: "AppFont",
-                                        fontWeight: FontWeight.normal
+                              // Empty State
+                              if (currentEmployment == null && previousEmploymentList.isEmpty)
+                                Padding(
+                                  padding: EdgeInsets.all(32),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.work_outline,
+                                          size: 80,
+                                          color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          "No Employment History",
+                                          style: TextStyle(
+                                            color: AppTheme.colors.colorDarkGray,
+                                            fontSize: 16,
+                                            fontFamily: "AppFont",
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "Employment history will appear here once available",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                                            fontSize: 14,
+                                            fontFamily: "AppFont",
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              )
+                                ),
                             ],
                           ),
-
-                          SizedBox(height: 20,),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.call, size: 15, color: AppTheme.colors.newPrimary,),
-
-                                SizedBox(width: 10,),
-
-                                Text(
-                                  comp_landline,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.newBlack,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.normal
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 10,),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.local_print_shop_outlined, size: 15, color: AppTheme.colors.newPrimary,),
-
-                                SizedBox(width: 10,),
-
-                                Text(
-                                  comp_fax_no,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.newBlack,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.normal
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 10,),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Icon(Icons.location_on_outlined, size: 15, color: AppTheme.colors.newPrimary,),
-
-                                SizedBox(width: 10,),
-
-                                Text(
-                                  comp_address,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      color: AppTheme.colors.newBlack,
-                                      fontSize: 13,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.normal
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 20,),
-
-                    Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      child: Text(
-                        "Previous Employment",
-                        maxLines: 1,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: AppTheme.colors.newBlack,
-                            fontSize: 13,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.bold
                         ),
                       ),
-                    ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                    isError ? Expanded(
-                      child: EmptyStateWidget(
-                        icon: Icons.history_outlined,
-                        message: 'No History Available',
-                        description: 'Previous employment history will appear here once available.',
-                      ),
-                    ) : Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 0),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(0),
-                          itemBuilder: (_, int index) =>
-                              TurnOverHistoryItem(list[index]),
-                          itemCount: this.list.length,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
+            ),
+            SizedBox(height: 16),
+            Text(
+              errorMessage.isNotEmpty ? errorMessage : Strings.instance.notAvail,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppTheme.colors.colorDarkGray,
+                fontSize: 14,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.normal,
               ),
-            )
+            ),
+            SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  isError = false;
+                  isLoading = true;
+                });
+                GetTurnOverHistory();
+              },
+              icon: Icon(Icons.refresh, size: 18),
+              label: Text("Retry"),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppTheme.colors.newPrimary),
+                foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                )),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  void GetTurnOverHistory() async{
+  void GetTurnOverHistory() async {
     try {
+      String userId = UserSessions.instance.getUserID;
+      String compId = UserSessions.instance.getRefID;
+      String empId = UserSessions.instance.getEmployeeID;
+
+      // Fetch comp_id if not available
+      if (compId.isEmpty || compId == "" || compId == "null") {
+        compId = await _fetchCompanyID();
+      }
+
+      // Fetch emp_id if not available
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        empId = await _fetchEmployeeID();
+      }
+
+      if (compId.isEmpty || compId == "" || compId == "null") {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = "Company ID not found. Please try again.";
+        });
+        return;
+      }
+
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = "Employee ID not found. Please try again.";
+        });
+        return;
+      }
+
       uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      var url = constants.getApiBaseURL() + constants.buildApiUrl(
-          constants.companies + "turnovers/", 
-          UserSessions.instance.getUserID, 
-          additionalPath: "7/4");
-      var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders()).timeout(Duration(seconds: 30));
+      // Format: /companies/turnovers/{user_id}/{comp_id}/{emp_id}
+      var url = constants.getApiBaseURL() + 
+                constants.companies + 
+                "turnovers/" + 
+                userId + "/" + 
+                compId + "/" + 
+                empId;
+      
+      var response = await http.get(
+        Uri.parse(url),
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 30));
+      
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
+      
+      uiUpdates.DismissProgresssDialog();
       
       if (responseCodeModel.status == true) {
         try {
@@ -302,91 +274,183 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
           String code = codeValue != null ? codeValue.toString() : "0";
           
           if (code == "1" || codeValue == 1) {
-            var data= body["Data"];
-            if(data != null) {
-              var currentEmployee= data["current"];
-              if(currentEmployee != null && currentEmployee.length > 0) {
-                var currentComp= currentEmployee[0];
-                comp_name = currentComp["comp_name"] != null ? currentComp["comp_name"].toString() : "-";
-                comp_type = currentComp["comp_type"] != null ? currentComp["comp_type"].toString() : "-";
-                comp_landline = currentComp["comp_landline"] != null ? currentComp["comp_landline"].toString() : "-";
-                comp_fax_no = currentComp["comp_fax_no"] != null ? currentComp["comp_fax_no"].toString() : "-";
-                comp_logo = currentComp["comp_logo"] != null ? currentComp["comp_logo"].toString() : "-";
-                comp_address= currentComp["comp_address"] != null ? currentComp["comp_address"].toString() : "-";
+            var data = body["Data"];
+            if (data != null) {
+              // Parse current employment
+              var currentList = data["current"];
+              if (currentList != null && currentList is List && currentList.length > 0) {
+                var currentComp = currentList[0];
+                currentEmployment = TurnoverHistoryModel(
+                  comp_name: currentComp["comp_name"]?.toString() ?? "",
+                  comp_address: currentComp["comp_address"]?.toString() ?? "",
+                  comp_city: currentComp["comp_city"]?.toString() ?? "",
+                  comp_district: currentComp["comp_district"]?.toString() ?? "",
+                  comp_province: currentComp["comp_province"]?.toString() ?? "",
+                  comp_status: currentComp["comp_status"]?.toString() ?? "",
+                  appointed_at: currentComp["appointed_at"]?.toString() ?? "",
+                  comp_type: currentComp["comp_type"]?.toString() ?? "",
+                  comp_landline: currentComp["comp_landline"]?.toString() ?? "",
+                  city_name: currentComp["city_name"]?.toString() ?? "",
+                  district_name: currentComp["district_name"]?.toString() ?? "",
+                  state_name: currentComp["state_name"]?.toString() ?? "",
+                );
               }
 
-              // Previous employment
-              List<dynamic> entitlements = data["previous"] != null ? data["previous"] : [];
-              if(entitlements.length > 0)
-              {
-                list.clear();
-                entitlements.forEach((row) {
-                  String comp_name= row["comp_name"] != null ? row["comp_name"].toString() : "";
-                  String comp_address= row["comp_address"] != null ? row["comp_address"].toString() : "";
-                  String city_name= row["city_name"] != null ? row["city_name"].toString() : "";
-                  list.add(new TurnoverHistoryModel(comp_name, comp_address+", "+city_name));
-                });
-
-                setState(() {
-                  isError= false;
-                });
-              }else
-              {
-                setState(() {
-                  isError= true;
-                  errorMessage = Strings.instance.notAvail;
+              // Parse previous employment
+              var previousList = data["previous"];
+              previousEmploymentList.clear();
+              if (previousList != null && previousList is List && previousList.length > 0) {
+                previousList.forEach((row) {
+                  previousEmploymentList.add(TurnoverHistoryModel(
+                    comp_name: row["comp_name"]?.toString() ?? "",
+                    comp_address: row["comp_address"]?.toString() ?? "",
+                    comp_city: row["comp_city"]?.toString() ?? "",
+                    comp_district: row["comp_district"]?.toString() ?? "",
+                    comp_province: row["comp_province"]?.toString() ?? "",
+                    comp_status: row["comp_status"]?.toString() ?? "",
+                    appointed_at: row["appointed_at"]?.toString() ?? "",
+                    comp_type: row["comp_type"]?.toString() ?? "",
+                    comp_landline: row["comp_landline"]?.toString() ?? "",
+                    city_name: row["city_name"]?.toString() ?? "",
+                    district_name: row["district_name"]?.toString() ?? "",
+                    state_name: row["state_name"]?.toString() ?? "",
+                  ));
                 });
               }
+
+              setState(() {
+                isLoading = false;
+                isError = false;
+              });
             } else {
               setState(() {
-                isError= true;
+                isLoading = false;
+                isError = true;
                 errorMessage = Strings.instance.notAvail;
               });
             }
           } else {
             setState(() {
-              isError= true;
+              isLoading = false;
+              isError = true;
               errorMessage = Strings.instance.notAvail;
             });
           }
         } catch (e) {
           setState(() {
-            isError= true;
-            errorMessage = Strings.instance.notAvail;
+            isLoading = false;
+            isError = true;
+            errorMessage = Strings.instance.somethingWentWrong;
           });
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
           var body = jsonDecode(response.body);
-          String message = body["Message"] != null ? body["Message"].toString() : "";
+          String message = body["Message"]?.toString() ?? "";
           
-          if(message == constants.expireToken){
-            constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
-          }else if(message.isNotEmpty && message != "null"){
+          if (message == constants.expireToken) {
+            constants.OpenLogoutDialog(
+              context,
+              Strings.instance.expireSessionTitle,
+              Strings.instance.expireSessionMessage,
+            );
+          } else if (message.isNotEmpty && message != "null") {
             uiUpdates.ShowToast(message);
-          } else {
-            setState(() {
-              isError= true;
-              errorMessage = Strings.instance.notAvail;
-            });
           }
+          
+          setState(() {
+            isLoading = false;
+            isError = true;
+            errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+          });
         } catch (e) {
           setState(() {
-            isError= true;
+            isLoading = false;
+            isError = true;
             errorMessage = Strings.instance.notAvail;
           });
         }
       }
     } catch (e) {
       setState(() {
-        isError= true;
-        errorMessage = Strings.instance.notAvail;
+        isLoading = false;
+        isError = true;
+        errorMessage = Strings.instance.somethingWentWrong;
       });
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
-    } finally {
-      await Future.delayed(Duration(milliseconds: 200));
       uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
+  }
+
+  Future<String> _fetchCompanyID() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+      
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account["comp_id"] != null) {
+            String compId = account["comp_id"].toString();
+            if (compId.isNotEmpty && compId != "null") {
+              UserSessions.instance.setRefID(compId);
+              return compId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    return "";
+  }
+
+  Future<String> _fetchEmployeeID() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+      
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account["emp_id"] != null) {
+            String empId = account["emp_id"].toString();
+            if (empId.isNotEmpty && empId != "null") {
+              UserSessions.instance.setEmployeeID(empId);
+              return empId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    return "";
   }
 
   void CheckTokenExpiry() {

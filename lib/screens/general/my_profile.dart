@@ -4,6 +4,7 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/screens/general/edit_my_profile.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/widgets/standard_header.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -16,458 +17,530 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    constants= new Constants();
-    uiUpdates= new UIUpdates(context);
+    constants = new Constants();
+    uiUpdates = new UIUpdates(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    String userName = UserSessions.instance.getUserName ?? "";
+    String userImage = UserSessions.instance.getUserImage ?? "";
+    String userEmail = UserSessions.instance.getUserEmail ?? "";
+    String userCNIC = UserSessions.instance.getUserCNIC ?? "";
+    String userNumber = UserSessions.instance.getUserNumber ?? "";
+    String userAbout = UserSessions.instance.getUserAbout ?? "";
+    String userAccount = UserSessions.instance.getUserAccount ?? "";
+    String userSector = UserSessions.instance.getUserSector ?? "";
+    String userRole = UserSessions.instance.getUserRole ?? "";
+    String userID = UserSessions.instance.getUserID ?? "";
+    String empID = UserSessions.instance.getEmployeeID ?? "";
+    String refID = UserSessions.instance.getRefID ?? "";
+    String agentExpiry = UserSessions.instance.getAgentExpiry ?? "";
+
+    bool isValidImage = userImage != "null" &&
+                       userImage != "" &&
+                       userImage != "NULL" &&
+                       userImage != "-" &&
+                       userImage != "N/A";
+
     return Scaffold(
-      backgroundColor: AppTheme.colors.white,
-      body: Container(
-        child: SingleChildScrollView(
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          StandardHeader(
+            title: "My Profile",
+            actionIcon: Icons.edit,
+            onActionPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => EditProfile()
+              )).then((value) {
+                setState(() {});
+              });
+            },
+          ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Profile Header Card
+                  _buildProfileHeaderCard(userName, userImage, userEmail, userCNIC, isValidImage),
+
+                  SizedBox(height: 16),
+
+                  // About Section
+                  if (userAbout.isNotEmpty && userAbout != "null" && userAbout != "-" && userAbout != "N/A")
+                    _buildAboutCard(userAbout),
+
+                  // Personal Information Section
+                  _buildPersonalInfoCard(userName, userEmail, userNumber, userCNIC),
+
+                  // Account Information Section
+                  _buildAccountInfoCard(userAccount, userSector, userRole, userID, empID, refID),
+
+                  // Additional Information (if available)
+                  if (agentExpiry.isNotEmpty && agentExpiry != "null" && agentExpiry != "-")
+                    _buildAdditionalInfoCard(agentExpiry),
+
+                  SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileHeaderCard(String name, String image, String email, String cnic, bool isValidImage) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.colors.newPrimary,
+            AppTheme.colors.newPrimary.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.colors.newPrimary.withOpacity(0.3),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 24),
+          // Profile Image
+          Container(
+            height: 120,
+            width: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppTheme.colors.newWhite.withOpacity(0.3),
+                width: 4,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: isValidImage
+                  ? FadeInImage(
+                      image: NetworkImage(constants.getImageBaseURL() + image),
+                      placeholder: AssetImage("archive/images/no_image.jpg"),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "archive/images/no_image.jpg",
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      "archive/images/no_image.jpg",
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+          SizedBox(height: 16),
+          // Name
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              name.isNotEmpty ? name : "N/A",
+              style: TextStyle(
+                color: AppTheme.colors.newWhite,
+                fontSize: 22,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          SizedBox(height: 8),
+          // Email
+          if (email.isNotEmpty && email != "null" && email != "-")
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.email_outlined, size: 14, color: AppTheme.colors.newWhite.withOpacity(0.9)),
+                  SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      email,
+                      style: TextStyle(
+                        color: AppTheme.colors.newWhite.withOpacity(0.9),
+                        fontSize: 13,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // CNIC
+          if (cnic.isNotEmpty && cnic != "null" && cnic != "-")
+            Padding(
+              padding: EdgeInsets.only(top: 4, left: 20, right: 20, bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.badge_outlined, size: 14, color: AppTheme.colors.newWhite.withOpacity(0.9)),
+                  SizedBox(width: 6),
+                  Text(
+                    cnic,
+                    style: TextStyle(
+                      color: AppTheme.colors.newWhite.withOpacity(0.9),
+                      fontSize: 12,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutCard(String about) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text(
+                "About",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 16,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            about,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 13,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.normal,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoCard(String name, String email, String number, String cnic) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.person_outline,
+                  size: 18,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text(
+                "Personal Information",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 16,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          _buildInfoRow(Icons.person, "Full Name", name.isNotEmpty ? name : "N/A"),
+          if (email.isNotEmpty && email != "null" && email != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.email_outlined, "Email Address", email),
+          ],
+          if (number.isNotEmpty && number != "null" && number != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.phone_outlined, "Contact Number", number),
+          ],
+          if (cnic.isNotEmpty && cnic != "null" && cnic != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.badge_outlined, "CNIC", cnic),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccountInfoCard(String account, String sector, String role, String userID, String empID, String refID) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.account_circle_outlined,
+                  size: 18,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text(
+                "Account Information",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 16,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          _buildInfoRow(Icons.perm_identity, "User ID", userID.isNotEmpty ? userID : "N/A"),
+          if (account.isNotEmpty && account != "null" && account != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.account_balance_wallet_outlined, "Account Type", account),
+          ],
+          if (sector.isNotEmpty && sector != "null" && sector != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.business_outlined, "Sector", sector),
+          ],
+          if (role.isNotEmpty && role != "null" && role != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.work_outline, "Role", role),
+          ],
+          if (empID.isNotEmpty && empID != "null" && empID != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.badge, "Employee ID", empID),
+          ],
+          if (refID.isNotEmpty && refID != "null" && refID != "-") ...[
+            SizedBox(height: 12),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            SizedBox(height: 12),
+            _buildInfoRow(Icons.business_center_outlined, "Company ID", refID),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdditionalInfoCard(String agentExpiry) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newWhite,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.calendar_today_outlined,
+                  size: 18,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text(
+                "Additional Information",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 16,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          _buildInfoRow(Icons.event_outlined, "Agent Expiry", agentExpiry),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppTheme.colors.colorLightGray,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            size: 16,
+            color: AppTheme.colors.newPrimary,
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 70,
-                width: double.infinity,
-                color: AppTheme.colors.newPrimary,
-
-                child: Container(
-                  margin: EdgeInsets.only(top: 23),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                            ),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Text("Profile",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: AppTheme.colors.newWhite,
-                                  fontSize: 14,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => EditProfile()
-                          )).then((value) => {
-                            setState(() {})
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 15.0),
-                          child: Icon(Icons.edit, color: AppTheme.colors.newWhite, size: 20,),
-                        ),
-                      ),
-                    ],
-                  ),
+              Text(
+                label,
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 11,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.normal,
                 ),
               ),
-
-              Container(
-                height: 230,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppTheme.colors.newPrimary,
-                        AppTheme.colors.colorD4,
-                      ],
-                    )
+              SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w600,
                 ),
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 100,
-                      width: 100,
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: UserSessions.instance.getUserImage != "null" && 
-                               UserSessions.instance.getUserImage != "" && 
-                               UserSessions.instance.getUserImage != "NULL" &&
-                               UserSessions.instance.getUserImage != "-" &&
-                               UserSessions.instance.getUserImage != "N/A" ? FadeInImage(
-                          image: NetworkImage(constants.getImageBaseURL()+UserSessions.instance.getUserImage),
-                          placeholder: AssetImage("archive/images/no_image.jpg"),
-                          fit: BoxFit.fill,
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset("archive/images/no_image.jpg",
-                              height: 60.0,
-                              width: 60,
-                              fit: BoxFit.fill,
-                            );
-                          },
-                        ) : Image.asset("archive/images/no_image.jpg",
-                          height: 60.0,
-                          width: 60,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 10,),
-
-                    Text(
-                      UserSessions.instance.getUserName,
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 16,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold),
-                    ),
-
-                    Text(
-                      UserSessions.instance.getUserEmail,
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 10,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.normal),
-                    ),
-
-                    Text(
-                      UserSessions.instance.getUserCNIC,
-                      maxLines: 1,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 10,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
-                child: Text(
-                  "About",
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      color: AppTheme.colors.newBlack,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0, left: 20, right: 20),
-                child: Text(
-                  UserSessions.instance.getUserAbout,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                      color: AppTheme.colors.colorDarkGray,
-                      fontSize: 12,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
-                child: Text(
-                  "Account Info",
-                  maxLines: 1,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      color: AppTheme.colors.newBlack,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              Container(
-                margin: EdgeInsets.only(top: 15, left: 20, right: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 40.0,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppTheme.colors.newPrimary,
-                              AppTheme.colors.colorD4,
-                            ],
-                          ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Image.asset("archive/images/profile_ic.png",
-                          height: 20.0,
-                          width: 20,
-                          color: AppTheme.colors.newWhite,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 15,),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Name",
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-
-                        Text(
-                          UserSessions.instance.getUserName,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                margin: EdgeInsets.only(top: 25, left: 20, right: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 40.0,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppTheme.colors.newPrimary,
-                            AppTheme.colors.colorD4,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Image.asset("archive/images/phone_ic.png",
-                          height: 20.0,
-                          width: 20,
-                          color: AppTheme.colors.newWhite,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 15,),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Contact Number",
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-
-                        Text(
-                          UserSessions.instance.getUserNumber,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                margin: EdgeInsets.only(top: 25, left: 20, right: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 40.0,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppTheme.colors.newPrimary,
-                            AppTheme.colors.colorD4,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Image.asset("archive/images/email_ic.png",
-                          height: 20.0,
-                          width: 20,
-                          color: AppTheme.colors.newWhite,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 15,),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Email",
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-
-                        Text(
-                          UserSessions.instance.getUserEmail,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                margin: EdgeInsets.only(top: 25, left: 20, right: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 40.0,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppTheme.colors.newPrimary,
-                            AppTheme.colors.colorD4,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Image.asset("archive/images/cnic_ic.png",
-                          height: 20.0,
-                          width: 20,
-                          color: AppTheme.colors.newWhite,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 15,),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "CNIC",
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-
-                        Text(
-                          UserSessions.instance.getUserCNIC,
-                          maxLines: 1,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: AppTheme.colors.colorDarkGray,
-                              fontSize: 12,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

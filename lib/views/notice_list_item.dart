@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/constants/Constants.dart';
-import 'package:wwf_apps/models/NotificationModel.dart';
+import 'package:wwf_apps/models/NoticeModel.dart';
 
-class NotificationListItem extends StatefulWidget {
-  NotificationModel notificationModel;
+class NoticeListItem extends StatefulWidget {
+  NoticeModel noticeModel;
+  bool isNews;
 
-  NotificationListItem(this.notificationModel);
+  NoticeListItem(this.noticeModel, {this.isNews = false});
 
   @override
-  _NotificationListItemState createState() => _NotificationListItemState();
+  _NoticeListItemState createState() => _NoticeListItemState();
 }
 
-class _NotificationListItemState extends State<NotificationListItem> {
+class _NoticeListItemState extends State<NoticeListItem> {
   Constants constants;
 
   @override
@@ -23,11 +24,15 @@ class _NotificationListItemState extends State<NotificationListItem> {
 
   @override
   Widget build(BuildContext context) {
-    bool isRead = widget.notificationModel.isRead;
-    String subject = widget.notificationModel.not_subject ?? "";
-    String message = widget.notificationModel.not_message ?? "";
-    String recipient = widget.notificationModel.not_recipient ?? "";
-    String createdAt = widget.notificationModel.created_at ?? "";
+    String heading = widget.noticeModel.alert_heading ?? "";
+    String subject = widget.noticeModel.alert_subject ?? "";
+    String message = widget.noticeModel.alert_message ?? "";
+    String recipient = widget.noticeModel.alert_recipient ?? "";
+    String createdAt = widget.noticeModel.created_at ?? "";
+
+    Color primaryColor = widget.isNews 
+        ? Color(0xFF2196F3) // Blue for News
+        : Color(0xFFFF9800); // Orange for Notices
 
     return Container(
       width: double.infinity,
@@ -36,18 +41,14 @@ class _NotificationListItemState extends State<NotificationListItem> {
         color: AppTheme.colors.newWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isRead
-              ? Colors.grey.withOpacity(0.2)
-              : AppTheme.colors.newPrimary.withOpacity(0.4),
-          width: isRead ? 1 : 1.5,
+          color: primaryColor.withOpacity(0.3),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: isRead
-                ? Colors.black.withOpacity(0.06)
-                : AppTheme.colors.newPrimary.withOpacity(0.15),
-            blurRadius: isRead ? 8 : 12,
-            offset: Offset(0, isRead ? 2 : 4),
+            color: primaryColor.withOpacity(0.1),
+            blurRadius: 12,
+            offset: Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
@@ -59,39 +60,32 @@ class _NotificationListItemState extends State<NotificationListItem> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: isRead
-                  ? null
-                  : LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.colors.newPrimary,
-                        AppTheme.colors.newPrimary.withOpacity(0.8),
-                      ],
-                    ),
-              color: isRead ? AppTheme.colors.colorLightGray : null,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  primaryColor,
+                  primaryColor.withOpacity(0.8),
+                ],
+              ),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+                topLeft: Radius.circular(14.5),
+                topRight: Radius.circular(14.5),
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Notification Icon
+                // Icon
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: isRead
-                        ? AppTheme.colors.colorDarkGray.withOpacity(0.1)
-                        : AppTheme.colors.newWhite.withOpacity(0.2),
+                    color: AppTheme.colors.newWhite.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    Icons.notifications_outlined,
-                    color: isRead
-                        ? AppTheme.colors.colorDarkGray
-                        : AppTheme.colors.newWhite,
+                    widget.isNews ? Icons.newspaper : Icons.announcement,
+                    color: AppTheme.colors.newWhite,
                     size: 20,
                   ),
                 ),
@@ -100,33 +94,32 @@ class _NotificationListItemState extends State<NotificationListItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Unread Badge
-                      if (!isRead)
+                      // Heading Badge
+                      if (heading.isNotEmpty && heading != "null" && heading != "-")
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppTheme.colors.newWhite.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            "New",
+                            heading,
                             style: TextStyle(
                               color: AppTheme.colors.newWhite,
-                              fontSize: 9,
+                              fontSize: 10,
                               fontFamily: "AppFont",
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      if (!isRead) SizedBox(height: 6),
+                      if (heading.isNotEmpty && heading != "null" && heading != "-")
+                        SizedBox(height: 8),
                       // Subject
                       Text(
                         subject.isNotEmpty ? subject : "No Subject",
                         style: TextStyle(
-                          color: isRead
-                              ? AppTheme.colors.newBlack
-                              : AppTheme.colors.newWhite,
-                          fontSize: 16,
+                          color: AppTheme.colors.newWhite,
+                          fontSize: 17,
                           fontFamily: "AppFont",
                           fontWeight: FontWeight.bold,
                         ),
@@ -134,17 +127,6 @@ class _NotificationListItemState extends State<NotificationListItem> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                  ),
-                ),
-                // Read/Unread Indicator
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isRead
-                        ? Colors.transparent
-                        : AppTheme.colors.newWhite,
                   ),
                 ),
               ],
@@ -170,13 +152,13 @@ class _NotificationListItemState extends State<NotificationListItem> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                          color: primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           recipient,
                           style: TextStyle(
-                            color: AppTheme.colors.newPrimary,
+                            color: primaryColor,
                             fontSize: 10,
                             fontFamily: "AppFont",
                             fontWeight: FontWeight.w600,
@@ -188,17 +170,17 @@ class _NotificationListItemState extends State<NotificationListItem> {
                 if (recipient.isNotEmpty && recipient != "null" && recipient != "-")
                   SizedBox(height: 12),
 
-                // Message Label
+                // Message
                 Row(
                   children: [
                     Icon(
-                      Icons.message_outlined,
+                      Icons.description_outlined,
                       size: 14,
                       color: AppTheme.colors.colorDarkGray,
                     ),
                     SizedBox(width: 6),
                     Text(
-                      "Message",
+                      widget.isNews ? "News" : "Notice",
                       style: TextStyle(
                         color: AppTheme.colors.colorDarkGray,
                         fontSize: 11,
@@ -209,7 +191,6 @@ class _NotificationListItemState extends State<NotificationListItem> {
                   ],
                 ),
                 SizedBox(height: 8),
-                // Message Content
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(12),
