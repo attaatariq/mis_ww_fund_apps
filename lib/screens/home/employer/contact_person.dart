@@ -439,7 +439,6 @@ class _ContactPersonState extends State<ContactPerson> {
         "user_id": UserSessions.instance.getUserID,
         "api_tags": jsonEncode(tagsList).toString(),
       };
-      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       var url = constants.getApiBaseURL() + constants.authentication + "information";
       var response = await http.post(
         Uri.parse(url),
@@ -449,7 +448,6 @@ class _ContactPersonState extends State<ContactPerson> {
 
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      uiUpdates.DismissProgresssDialog();
 
       if (responseCodeModel.status == true) {
         try {
@@ -539,11 +537,12 @@ class _ContactPersonState extends State<ContactPerson> {
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        hasContactPerson = false;
-      });
-      uiUpdates.DismissProgresssDialog();
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          hasContactPerson = false;
+        });
+      }
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
   }

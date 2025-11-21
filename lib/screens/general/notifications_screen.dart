@@ -206,10 +206,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   GetNotifications(bool isRefresh) async {
     try {
-      if (!isRefresh) {
-        uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      }
-
       String userType = _getUserType(); // W for Worker/Employee, C for Company
       String userId = UserSessions.instance.getUserID;
       // API endpoint: /alerts/notifications/{user_id}/{W or C}
@@ -226,8 +222,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      
-      uiUpdates.DismissProgresssDialog();
       
       if (responseCodeModel.status == true) {
         try {
@@ -312,12 +306,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-        errorMessage = Strings.instance.somethingWentWrong;
-      });
-      uiUpdates.DismissProgresssDialog();
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = Strings.instance.somethingWentWrong;
+        });
+      }
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
   }

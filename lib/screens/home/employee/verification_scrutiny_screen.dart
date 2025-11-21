@@ -15,7 +15,7 @@ import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
 import '../../general/my_profile.dart';
 import '../../general/change_password.dart';
-import '../employee_home.dart';
+import 'employee_home.dart';
 
 class VerificationScrutinyScreen extends StatefulWidget {
   @override
@@ -51,6 +51,10 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
             StandardHeader(
               title: "Account Verification",
               showBackButton: false,
+              actionIcon: Icons.power_settings_new,
+              onActionPressed: () {
+                _showLogoutDialog();
+              },
             ),
             Expanded(
               child: isLoading
@@ -61,6 +65,9 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
                           isLoading = true;
                         });
                         await Future.delayed(Duration(milliseconds: 500));
+                        // Reload proof stages and check verification status
+                        await _loadProofStages();
+                        await _loadEmployeeInfo();
                         GetVerificationStatus();
                       },
                       color: AppTheme.colors.newPrimary,
@@ -760,6 +767,76 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
         GetVerificationStatus();
       }
     });
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            Strings.instance.logout,
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 18,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            Strings.instance.logoutMessage,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 14,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: AppTheme.colors.colorDarkGray,
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                constants.LogoutUser(context);
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(AppTheme.colors.newPrimary),
+                foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                )),
+              ),
+              child: Text(
+                Strings.instance.logout,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

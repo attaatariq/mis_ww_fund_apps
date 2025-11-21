@@ -198,7 +198,6 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
 
   void GetAllAnnexA() async {
     try {
-      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
       String userId = UserSessions.instance.getUserID;
       String compId = UserSessions.instance.getRefID;
       
@@ -216,8 +215,6 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      
-      uiUpdates.DismissProgresssDialog();
       
       if (responseCodeModel.status == true) {
         try {
@@ -311,12 +308,13 @@ class _WpfDistributionListState extends State<WpfDistributionList> {
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-        errorMessage = Strings.instance.somethingWentWrong;
-      });
-      uiUpdates.DismissProgresssDialog();
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = Strings.instance.somethingWentWrong;
+        });
+      }
       uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
     }
   }

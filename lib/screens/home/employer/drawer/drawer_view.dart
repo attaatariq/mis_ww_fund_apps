@@ -24,6 +24,7 @@ import '../annexure1_list.dart';
 import '../annexure2_list.dart';
 import '../workers_list.dart';
 import '../add_worker.dart';
+import '../employer_settings.dart';
 
 class EmployerDrawerView extends StatefulWidget {
   @override
@@ -321,37 +322,13 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                   _buildSectionHeader("Settings"),
 
                   _buildMenuItem(
-                    icon: Icons.business_outlined,
-                    iconAsset: "archive/images/company.png",
-                    title: "Company Detail",
+                    icon: Icons.settings_outlined,
+                    iconAsset: "archive/images/settings.png",
+                    title: "Settings",
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => AddContactPerson()
-                      ));
-                    },
-                  ),
-
-                  _buildMenuItem(
-                    icon: Icons.person_outline,
-                    iconAsset: "archive/images/profile.png",
-                    title: "My Profile",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => AddContactPerson()
-                      ));
-                    },
-                  ),
-
-                  _buildMenuItem(
-                    icon: Icons.lock_outline,
-                    iconAsset: "archive/images/key.png",
-                    title: "Change Password",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => AddContactPerson()
+                          builder: (context) => EmployerSettings()
                       ));
                     },
                   ),
