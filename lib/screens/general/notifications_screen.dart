@@ -84,18 +84,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               GetNotifications(false);
                             },
                             color: AppTheme.colors.newPrimary,
-                            child: SingleChildScrollView(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Column(
-                                children: notificationList.asMap().entries.map((entry) {
-                                  int index = entry.key;
-                                  NotificationModel notification = entry.value;
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: NotificationListItem(notification),
-                                  );
-                                }).toList(),
-                              ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              itemCount: notificationList.length,
+                              itemBuilder: (context, index) {
+                                return NotificationListItem(notificationList[index]);
+                              },
                             ),
                           ),
           ),
@@ -206,6 +200,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   GetNotifications(bool isRefresh) async {
     try {
+      if (!isRefresh) {
+        uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      }
+      
       String userType = _getUserType(); // W for Worker/Employee, C for Company
       String userId = UserSessions.instance.getUserID;
       // API endpoint: /alerts/notifications/{user_id}/{W or C}
@@ -222,6 +220,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
+      
+      if (!isRefresh) {
+        uiUpdates.DismissProgresssDialog();
+      }
       
       if (responseCodeModel.status == true) {
         try {
@@ -248,34 +250,42 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ));
               });
 
-              setState(() {
-                isLoading = false;
-                isError = false;
-              });
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                  isError = false;
+                });
+              }
             } else {
-              setState(() {
-                isLoading = false;
-                isError = false;
-              });
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                  isError = false;
+                });
+              }
             }
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
+            if (mounted) {
+              setState(() {
+                isLoading = false;
+                isError = true;
+                errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+              });
+            }
+          }
+        } catch (e) {
+          if (mounted) {
             setState(() {
               isLoading = false;
               isError = true;
-              errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+              errorMessage = Strings.instance.somethingWentWrong;
             });
           }
-        } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.somethingWentWrong;
-          });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -289,20 +299,30 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+            });
+          }
+          if (!isRefresh) {
+            uiUpdates.DismissProgresssDialog();
+          }
         } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+          if (!isRefresh) {
+            uiUpdates.DismissProgresssDialog();
+          }
         }
       }
     } catch (e) {
@@ -313,7 +333,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           errorMessage = Strings.instance.somethingWentWrong;
         });
       }
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      if (!isRefresh) {
+        uiUpdates.DismissProgresssDialog();
+      }
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

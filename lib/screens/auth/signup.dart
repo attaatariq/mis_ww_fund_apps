@@ -751,7 +751,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
   void Validation() {
     // Validate Registration Type
     if (selectedSectorCategory == "Please Select Registration Type") {
-      uiUpdates.ShowToast(Strings.instance.companyCategoryMessage);
+      uiUpdates.ShowError(Strings.instance.companyCategoryMessage);
       setState(() {
         _isLoading = false;
       });
@@ -760,7 +760,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Full Name
     if (fullNameController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.fullnameMessage);
+      uiUpdates.ShowError(Strings.instance.fullnameMessage);
       setState(() {
         _isLoading = false;
       });
@@ -769,7 +769,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Email
     if (emailController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.emailMessage);
+      uiUpdates.ShowError(Strings.instance.emailMessage);
       setState(() {
         _isLoading = false;
       });
@@ -778,7 +778,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Email Format
     if (!constants.IsValidEmail(emailController.text.trim())) {
-      uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
+      uiUpdates.ShowError(Strings.instance.invalidEmailMessage);
       setState(() {
         _isLoading = false;
       });
@@ -787,7 +787,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Contact Number
     if (numberController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.numberMessage);
+      uiUpdates.ShowError(Strings.instance.numberMessage);
       setState(() {
         _isLoading = false;
       });
@@ -796,7 +796,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Contact Number Length
     if (numberController.text.toString().length != 11) {
-      uiUpdates.ShowToast(Strings.instance.invalidNumberMessage);
+      uiUpdates.ShowError(Strings.instance.invalidNumberMessage);
       setState(() {
         _isLoading = false;
       });
@@ -805,7 +805,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate CNIC
     if (cnicController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.cnicMessage);
+      uiUpdates.ShowError(Strings.instance.cnicMessage);
       setState(() {
         _isLoading = false;
       });
@@ -814,7 +814,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate CNIC Length
     if (cnicController.text.toString().length != 15) {
-      uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
+      uiUpdates.ShowError(Strings.instance.invalidCNICMessage);
       setState(() {
         _isLoading = false;
       });
@@ -823,7 +823,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Password
     if (passwordController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.passwordMessage);
+      uiUpdates.ShowError(Strings.instance.passwordMessage);
       setState(() {
         _isLoading = false;
       });
@@ -833,7 +833,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
     // Validate Password Length (4-20 characters)
     String password = passwordController.text.trim();
     if (password.length < 4 || password.length > 20) {
-      uiUpdates.ShowToast(Strings.instance.invalidPasswordLengthMessage);
+      uiUpdates.ShowError(Strings.instance.invalidPasswordLengthMessage);
       setState(() {
         _isLoading = false;
       });
@@ -842,7 +842,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Confirm Password
     if (confirmPasswordController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.confirmPasswordMessage);
+      uiUpdates.ShowError(Strings.instance.confirmPasswordMessage);
       setState(() {
         _isLoading = false;
       });
@@ -851,7 +851,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
     // Validate Password Match
     if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
-      uiUpdates.ShowToast(Strings.instance.passwordMatchMessage);
+      uiUpdates.ShowError(Strings.instance.passwordMatchMessage);
       setState(() {
         _isLoading = false;
       });
@@ -867,17 +867,17 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
   void CheckConnectivity() {
     uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-    constants.CheckConnectivity(context).then((value) => {
-          if (value) {
-            SendVerificationCodes()
-          } else {
-            uiUpdates.DismissProgresssDialog(),
-            uiUpdates.ShowToast(Strings.instance.internetNotConnected),
-            setState(() {
-              _isLoading = false;
-            })
-          }
+    constants.CheckConnectivity(context).then((value) {
+      if (value) {
+        SendVerificationCodes();
+      } else {
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
+        setState(() {
+          _isLoading = false;
         });
+      }
+    });
   }
 
   SendVerificationCodes() async {
@@ -901,7 +901,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
       String code = body["Code"].toString();
       String message = body["Message"].toString();
       if (code == "1") {
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowSuccess(message);
         String emailCode = body["Data"]["email_code"].toString();
         String otpCode = body["Data"]["phone_code"].toString();
         SignupDataModel signupDataModel = new SignupDataModel(
@@ -919,10 +919,10 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
           MaterialPageRoute(builder: (context) => Verification(signupDataModel)),
         );
       } else {
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 

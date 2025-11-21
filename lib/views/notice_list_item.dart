@@ -22,6 +22,24 @@ class _NoticeListItemState extends State<NoticeListItem> {
     constants = new Constants();
   }
 
+  String _getBannerImagePath() {
+    String heading = widget.noticeModel.alert_heading ?? "";
+    
+    // For News items, always use news.jpg
+    if (widget.isNews) {
+      return "archive/images/banners/news.jpg";
+    }
+    
+    // For Notices, use alert_heading converted to lowercase + .jpg
+    if (heading.isNotEmpty && heading != "null" && heading != "-") {
+      String lowerHeading = heading.toLowerCase().trim();
+      return "archive/images/banners/$lowerHeading.jpg";
+    }
+    
+    // Default fallback
+    return "archive/images/banners/announcement.jpg";
+  }
+
   @override
   Widget build(BuildContext context) {
     String heading = widget.noticeModel.alert_heading ?? "";
@@ -33,6 +51,8 @@ class _NoticeListItemState extends State<NoticeListItem> {
     Color primaryColor = widget.isNews 
         ? Color(0xFF2196F3) // Blue for News
         : Color(0xFFFF9800); // Orange for Notices
+
+    String bannerImagePath = _getBannerImagePath();
 
     return Container(
       width: double.infinity,
@@ -56,41 +76,70 @@ class _NoticeListItemState extends State<NoticeListItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
+          // Header Section with Banner Image
           Container(
-            padding: EdgeInsets.all(16),
+            height: 140,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(0.8),
-                ],
-              ),
+              color: Color(0xFF363636), // Dark grey background
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(14.5),
                 topRight: Radius.circular(14.5),
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                // Icon
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colors.newWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    widget.isNews ? Icons.newspaper : Icons.announcement,
-                    color: AppTheme.colors.newWhite,
-                    size: 20,
+                // Background Banner Image
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(14.5),
+                      topRight: Radius.circular(14.5),
+                    ),
+                    child: Image.asset(
+                      bannerImagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Fallback to gradient if image not found
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                primaryColor,
+                                primaryColor.withOpacity(0.8),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
-                SizedBox(width: 12),
-                Expanded(
+                
+                // Overlay for better text readability
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(14.5),
+                        topRight: Radius.circular(14.5),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Content
+                Padding(
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -115,16 +164,21 @@ class _NoticeListItemState extends State<NoticeListItem> {
                       if (heading.isNotEmpty && heading != "null" && heading != "-")
                         SizedBox(height: 8),
                       // Subject
-                      Text(
-                        subject.isNotEmpty ? subject : "No Subject",
-                        style: TextStyle(
-                          color: AppTheme.colors.newWhite,
-                          fontSize: 17,
-                          fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            subject.isNotEmpty ? subject : "No Subject",
+                            style: TextStyle(
+                              color: AppTheme.colors.newWhite,
+                              fontSize: 17,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

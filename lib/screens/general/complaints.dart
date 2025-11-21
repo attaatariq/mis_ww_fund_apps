@@ -222,7 +222,9 @@ class _ComplaintsState extends State<Complaints> {
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
       
-      uiUpdates.DismissProgresssDialog();
+      if (!isRefresh) {
+        uiUpdates.DismissProgresssDialog();
+      }
       
       if (responseCodeModel.status == true) {
         try {
@@ -313,13 +315,15 @@ class _ComplaintsState extends State<Complaints> {
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-        errorMessage = Strings.instance.somethingWentWrong;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = Strings.instance.somethingWentWrong;
+        });
+      }
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

@@ -539,26 +539,26 @@ class _LoginScreenState extends State<LoginScreen>
   bool _validateForm() {
     // Validate CNIC
     if (loginController.cnicController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.cnicMessage);
+      uiUpdates.ShowError(Strings.instance.cnicMessage);
       return false;
     }
 
     // Validate CNIC length
     if (loginController.cnicController.text.toString().length != 15) {
-      uiUpdates.ShowToast(Strings.instance.invalidCNICMessage);
+      uiUpdates.ShowError(Strings.instance.invalidCNICMessage);
       return false;
     }
 
     // Validate Password
     if (loginController.passwordController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.passwordMessage);
+      uiUpdates.ShowError(Strings.instance.passwordMessage);
       return false;
     }
 
     // Validate Password length (4-20 characters)
     String password = loginController.passwordController.text.trim();
     if (password.length < 4 || password.length > 20) {
-      uiUpdates.ShowToast(Strings.instance.invalidPasswordLengthMessage);
+      uiUpdates.ShowError(Strings.instance.invalidPasswordLengthMessage);
       return false;
     }
 
@@ -597,14 +597,14 @@ class _LoginScreenState extends State<LoginScreen>
             });
       } else {
         uiUpdates.DismissProgresssDialog();
-        uiUpdates.ShowToast(Strings.instance.internetNotConnected);
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
         setState(() {
           _isLoading = false;
         });
       }
     }).catchError((error) {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       setState(() {
         _isLoading = false;
       });
@@ -619,14 +619,14 @@ class _LoginScreenState extends State<LoginScreen>
         GetDeviceinfo();
       } else {
         uiUpdates.DismissProgresssDialog();
-        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         setState(() {
           _isLoading = false;
         });
       }
     }).catchError((error) {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       setState(() {
         _isLoading = false;
       });
@@ -640,14 +640,14 @@ class _LoginScreenState extends State<LoginScreen>
         GetPalform();
       } else {
         uiUpdates.DismissProgresssDialog();
-        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         setState(() {
           _isLoading = false;
         });
       }
     }).catchError((error) {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       setState(() {
         _isLoading = false;
       });
@@ -661,14 +661,14 @@ class _LoginScreenState extends State<LoginScreen>
         Validation();
       } else {
         uiUpdates.DismissProgresssDialog();
-        uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         setState(() {
           _isLoading = false;
         });
       }
     }).catchError((error) {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       setState(() {
         _isLoading = false;
       });

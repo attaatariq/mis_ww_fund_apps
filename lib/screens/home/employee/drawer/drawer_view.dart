@@ -479,32 +479,6 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
                             ),
                           ),
                         ],
-
-                        _buildSectionHeader("Settings"),
-
-                        _buildMenuItem(
-                          icon: Icons.person_outline,
-                          iconAsset: "archive/images/profile.png",
-                          title: "My Profile",
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => MyProfile()
-                            ));
-                          },
-                        ),
-
-                        _buildMenuItem(
-                          icon: Icons.lock_outline,
-                          iconAsset: "archive/images/key.png",
-                          title: "Change Password",
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => ChangePassword()
-                            ));
-                          },
-                        ),
                       ],
                     ),
             ),

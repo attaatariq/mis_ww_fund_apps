@@ -46,7 +46,7 @@ class LoginController extends GetxController{
           var body = jsonDecode(response);
           String code = body["Code"].toString();
           if (code == "1") {
-            uiUpdates.ShowToast(Strings.instance.loginSuccess);
+            uiUpdates.ShowSuccess(Strings.instance.loginSuccess);
             var dataObject = body["Data"];
             
             // Handle nested account structure - account data is nested under "account" key
@@ -127,11 +127,11 @@ class LoginController extends GetxController{
             if (onComplete != null) onComplete(true);
           } else {
             String errorMessage = body["Message"]?.toString() ?? Strings.instance.loginFailed;
-            uiUpdates.ShowToast(errorMessage);
+            uiUpdates.ShowError(errorMessage);
             if (onComplete != null) onComplete(false);
           }
         } catch (e) {
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
           if (onComplete != null) onComplete(false);
         }
       } else {
@@ -140,7 +140,7 @@ class LoginController extends GetxController{
       }
     } catch(e) {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
       if (onComplete != null) onComplete(false);
     }
   }

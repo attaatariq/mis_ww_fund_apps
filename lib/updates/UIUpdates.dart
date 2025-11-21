@@ -71,7 +71,7 @@ class UIUpdates{
     );
   }
 
-  void ShowError(String message, {Duration duration = const Duration(seconds: 4)})
+  void ShowError(String message, {Duration duration = const Duration(seconds: 5)})
   {
     _showColoredSnackBar(
       message: message,
@@ -81,7 +81,7 @@ class UIUpdates{
     );
   }
 
-  void ShowWarning(String message, {Duration duration = const Duration(seconds: 3)})
+  void ShowWarning(String message, {Duration duration = const Duration(seconds: 5)})
   {
     _showColoredSnackBar(
       message: message,
@@ -105,23 +105,31 @@ class UIUpdates{
     String message,
     Color backgroundColor,
     IconData icon,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 5),
   })
   {
     final snackBar = SnackBar(
       content: Row(
         children: [
-          Icon(icon, color: AppTheme.colors.newWhite, size: 20),
-          SizedBox(width: 12),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppTheme.colors.newWhite.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppTheme.colors.newWhite, size: 22),
+          ),
+          SizedBox(width: 14),
           Expanded(
             child: Text(
               message,
               style: TextStyle(
                 color: AppTheme.colors.newWhite,
-                fontSize: 14,
+                fontSize: 15,
                 fontFamily: "AppFont",
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 0.2,
+                height: 1.3,
               ),
             ),
           ),
@@ -131,11 +139,18 @@ class UIUpdates{
       duration: duration,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
       ),
       margin: EdgeInsets.all(16),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      elevation: 4,
+      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      elevation: 8,
+      action: SnackBarAction(
+        label: 'OK',
+        textColor: AppTheme.colors.newWhite,
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

@@ -36,7 +36,6 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
     CheckTokenExpiry();
-    GetTurnOverHistory();
   }
 
   @override
@@ -231,20 +230,24 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
       }
 
       if (compId.isEmpty || compId == "" || compId == "null") {
-        setState(() {
-          isLoading = false;
-          isError = true;
-          errorMessage = "Company ID not found. Please try again.";
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+            isError = true;
+            errorMessage = "Company ID not found. Please try again.";
+          });
+        }
         return;
       }
 
       if (empId.isEmpty || empId == "" || empId == "null") {
-        setState(() {
-          isLoading = false;
-          isError = true;
-          errorMessage = "Employee ID not found. Please try again.";
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+            isError = true;
+            errorMessage = "Employee ID not found. Please try again.";
+          });
+        }
         return;
       }
 
@@ -265,7 +268,7 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
       
-      uiUpdates.DismissProgresssDialog();
+      if (responseCodeModel.status == true) {
       
       if (responseCodeModel.status == true) {
         try {
@@ -318,31 +321,43 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
                 });
               }
 
-              setState(() {
-                isLoading = false;
-                isError = false;
-              });
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                  isError = false;
+                });
+              }
+              uiUpdates.DismissProgresssDialog();
             } else {
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                  isError = true;
+                  errorMessage = Strings.instance.notAvail;
+                });
+              }
+              uiUpdates.DismissProgresssDialog();
+            }
+          } else {
+            if (mounted) {
               setState(() {
                 isLoading = false;
                 isError = true;
                 errorMessage = Strings.instance.notAvail;
               });
             }
-          } else {
+            uiUpdates.DismissProgresssDialog();
+          }
+        } catch (e) {
+          if (mounted) {
             setState(() {
               isLoading = false;
               isError = true;
-              errorMessage = Strings.instance.notAvail;
+              errorMessage = Strings.instance.somethingWentWrong;
             });
           }
-        } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.somethingWentWrong;
-          });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.DismissProgresssDialog();
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -356,30 +371,38 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-        errorMessage = Strings.instance.somethingWentWrong;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = Strings.instance.somethingWentWrong;
+        });
+      }
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 

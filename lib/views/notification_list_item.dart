@@ -31,82 +31,94 @@ class _NotificationListItemState extends State<NotificationListItem> {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: AppTheme.colors.newWhite,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isRead
-              ? Colors.grey.withOpacity(0.2)
-              : AppTheme.colors.newPrimary.withOpacity(0.4),
-          width: isRead ? 1 : 1.5,
+              ? Colors.grey.withOpacity(0.15)
+              : AppTheme.colors.newPrimary.withOpacity(0.3),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isRead
-                ? Colors.black.withOpacity(0.06)
-                : AppTheme.colors.newPrimary.withOpacity(0.15),
-            blurRadius: isRead ? 8 : 12,
-            offset: Offset(0, isRead ? 2 : 4),
+                ? Colors.black.withOpacity(0.04)
+                : AppTheme.colors.newPrimary.withOpacity(0.08),
+            blurRadius: 4,
+            offset: Offset(0, 2),
             spreadRadius: 0,
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Section
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: isRead
-                  ? null
-                  : LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.colors.newPrimary,
-                        AppTheme.colors.newPrimary.withOpacity(0.8),
-                      ],
-                    ),
-              color: isRead ? AppTheme.colors.colorLightGray : null,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+      child: Padding(
+        padding: EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Unread Indicator Dot
+            if (!isRead)
+              Container(
+                margin: EdgeInsets.only(top: 4, right: 10),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.colors.newPrimary,
+                ),
+              ),
+            if (isRead) SizedBox(width: 2),
+            
+            // Notification Icon
+            Container(
+              padding: EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isRead
+                    ? AppTheme.colors.colorLightGray
+                    : AppTheme.colors.newPrimary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.notifications_outlined,
+                color: isRead
+                    ? AppTheme.colors.colorDarkGray
+                    : AppTheme.colors.newPrimary,
+                size: 16,
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Notification Icon
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isRead
-                        ? AppTheme.colors.colorDarkGray.withOpacity(0.1)
-                        : AppTheme.colors.newWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    color: isRead
-                        ? AppTheme.colors.colorDarkGray
-                        : AppTheme.colors.newWhite,
-                    size: 20,
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
+            SizedBox(width: 10),
+            
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Subject Row
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Expanded(
+                        child: Text(
+                          subject.isNotEmpty ? subject : "No Subject",
+                          style: TextStyle(
+                            color: AppTheme.colors.newBlack,
+                            fontSize: 14,
+                            fontFamily: "AppFont",
+                            fontWeight: isRead ? FontWeight.w500 : FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       // Unread Badge
                       if (!isRead)
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          margin: EdgeInsets.only(left: 6),
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppTheme.colors.newWhite.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
+                            color: AppTheme.colors.newPrimary,
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             "New",
@@ -118,147 +130,95 @@ class _NotificationListItemState extends State<NotificationListItem> {
                             ),
                           ),
                         ),
-                      if (!isRead) SizedBox(height: 6),
-                      // Subject
-                      Text(
-                        subject.isNotEmpty ? subject : "No Subject",
+                    ],
+                  ),
+                  
+                  // Message
+                  if (message.isNotEmpty && message != "null" && message != "-")
+                    Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Text(
+                        message,
                         style: TextStyle(
-                          color: isRead
-                              ? AppTheme.colors.newBlack
-                              : AppTheme.colors.newWhite,
-                          fontSize: 16,
+                          color: AppTheme.colors.colorDarkGray,
+                          fontSize: 12,
                           fontFamily: "AppFont",
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
+                          height: 1.4,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                ),
-                // Read/Unread Indicator
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isRead
-                        ? Colors.transparent
-                        : AppTheme.colors.newWhite,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Content Section
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Recipient Badge
-                if (recipient.isNotEmpty && recipient != "null" && recipient != "-")
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.people_outline,
-                        size: 14,
-                        color: AppTheme.colors.colorDarkGray,
-                      ),
-                      SizedBox(width: 6),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.colors.newPrimary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          recipient,
-                          style: TextStyle(
-                            color: AppTheme.colors.newPrimary,
-                            fontSize: 10,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                if (recipient.isNotEmpty && recipient != "null" && recipient != "-")
-                  SizedBox(height: 12),
-
-                // Message Label
-                Row(
-                  children: [
-                    Icon(
-                      Icons.message_outlined,
-                      size: 14,
-                      color: AppTheme.colors.colorDarkGray,
                     ),
-                    SizedBox(width: 6),
-                    Text(
-                      "Message",
-                      style: TextStyle(
-                        color: AppTheme.colors.colorDarkGray,
-                        fontSize: 11,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Message Content
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colors.colorLightGray,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    message.isNotEmpty ? message : "No message",
-                    style: TextStyle(
-                      color: AppTheme.colors.newBlack,
-                      fontSize: 13,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal,
-                      height: 1.6,
-                    ),
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
-
-                // Date
-                if (createdAt.isNotEmpty && createdAt != "null" && createdAt != "-")
+                  
+                  // Footer Row (Recipient & Date)
                   Padding(
-                    padding: EdgeInsets.only(top: 12),
+                    padding: EdgeInsets.only(top: 6),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 12,
-                          color: AppTheme.colors.colorDarkGray,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          constants.GetFormatedDate(createdAt),
-                          style: TextStyle(
-                            color: AppTheme.colors.colorDarkGray,
-                            fontSize: 11,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.normal,
+                        // Recipient Badge
+                        if (recipient.isNotEmpty && recipient != "null" && recipient != "-")
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.people_outline,
+                                  size: 10,
+                                  color: AppTheme.colors.newPrimary,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  recipient,
+                                  style: TextStyle(
+                                    color: AppTheme.colors.newPrimary,
+                                    fontSize: 9,
+                                    fontFamily: "AppFont",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        if (recipient.isEmpty || recipient == "null" || recipient == "-")
+                          SizedBox.shrink(),
+                        
+                        // Date
+                        if (createdAt.isNotEmpty && createdAt != "null" && createdAt != "-")
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                size: 10,
+                                color: AppTheme.colors.colorDarkGray,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                constants.GetFormatedDate(createdAt),
+                                style: TextStyle(
+                                  color: AppTheme.colors.colorDarkGray,
+                                  fontSize: 10,
+                                  fontFamily: "AppFont",
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

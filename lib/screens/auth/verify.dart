@@ -431,37 +431,37 @@ class _VerificationState extends State<Verification>
                 });
                 SignupUser();
               } else {
-                uiUpdates.ShowToast(Strings.instance.invalidNumberVerificationCode);
+                uiUpdates.ShowError(Strings.instance.invalidNumberVerificationCode);
                 setState(() {
                   _isLoading = false;
                 });
               }
             } else {
-              uiUpdates.ShowToast(Strings.instance.invalidEmailVerificationCode);
+              uiUpdates.ShowError(Strings.instance.invalidEmailVerificationCode);
               setState(() {
                 _isLoading = false;
               });
             }
           } else {
-            uiUpdates.ShowToast(Strings.instance.invalidNumberVerificationCode);
+            uiUpdates.ShowError(Strings.instance.invalidNumberVerificationCode);
             setState(() {
               _isLoading = false;
             });
           }
         } else {
-          uiUpdates.ShowToast(Strings.instance.missingNumberVerificationCode);
+          uiUpdates.ShowError(Strings.instance.missingNumberVerificationCode);
           setState(() {
             _isLoading = false;
           });
         }
       } else {
-        uiUpdates.ShowToast(Strings.instance.invalidEmailVerificationCode);
+        uiUpdates.ShowError(Strings.instance.invalidEmailVerificationCode);
         setState(() {
           _isLoading = false;
         });
       }
     } else {
-      uiUpdates.ShowToast(Strings.instance.missingEmailVerificationCode);
+      uiUpdates.ShowError(Strings.instance.missingEmailVerificationCode);
       setState(() {
         _isLoading = false;
       });
@@ -495,7 +495,7 @@ class _VerificationState extends State<Verification>
       String code = body["Code"].toString();
       String message = body["Message"].toString();
       if (code == "1") {
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowSuccess(message);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -504,10 +504,10 @@ class _VerificationState extends State<Verification>
           (route) => false,
         );
       } else {
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

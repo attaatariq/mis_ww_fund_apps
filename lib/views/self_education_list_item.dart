@@ -34,17 +34,19 @@ class _SelfEducationListItemState extends State<SelfEducationListItem> {
     if (level == null || level.isEmpty) return AppTheme.colors.newPrimary;
     
     String lowerLevel = level.toLowerCase();
-    if (lowerLevel.contains("matric") || lowerLevel.contains("primary") || lowerLevel.contains("middle")) {
-      return Color(0xFF4CAF50); // Green for basic education
-    } else if (lowerLevel.contains("intermediate") || lowerLevel.contains("fsc") || lowerLevel.contains("ics")) {
-      return Color(0xFF2196F3); // Blue for intermediate
-    } else if (lowerLevel.contains("bachelor") || lowerLevel.contains("bs") || lowerLevel.contains("ba")) {
-      return Color(0xFF9C27B0); // Purple for bachelor
-    } else if (lowerLevel.contains("master") || lowerLevel.contains("ms") || lowerLevel.contains("ma")) {
-      return Color(0xFFF57C00); // Orange for masters
-    } else if (lowerLevel.contains("doctorate") || lowerLevel.contains("phd")) {
-      return Color(0xFFD32F2F); // Red for doctorate
+    // Use primary green for Under Matric levels
+    if (lowerLevel.contains("matric") || lowerLevel.contains("primary") || lowerLevel.contains("middle") || 
+        lowerLevel.contains("playgroup") || lowerLevel.contains("nursery") || lowerLevel.contains("kindergarten")) {
+      return AppTheme.colors.newPrimary; // Green primary #2CC285
+    } 
+    // Use secondary color for Post Matric levels
+    else if (lowerLevel.contains("intermediate") || lowerLevel.contains("fsc") || lowerLevel.contains("ics") ||
+             lowerLevel.contains("bachelor") || lowerLevel.contains("bs") || lowerLevel.contains("ba") ||
+             lowerLevel.contains("master") || lowerLevel.contains("ms") || lowerLevel.contains("ma") ||
+             lowerLevel.contains("doctorate") || lowerLevel.contains("phd") || lowerLevel.contains("post doctoral")) {
+      return AppTheme.colors.colorAccent; // Secondary #363636
     }
+    // Default to primary green
     return AppTheme.colors.newPrimary;
   }
 

@@ -11,26 +11,29 @@ import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/dialogs/banks_dialog_model.dart';
 import 'package:wwf_apps/models/InstallmentModel.dart';
 import 'package:wwf_apps/models/ResponseCodeModel.dart';
-import 'package:wwf_apps/screens/home/employer/annexure2_create.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class PayInstallment extends StatefulWidget {
   InstallmentModel installmentModel;
+  String claimType; // e.g., "Estate (Housing & Flats) Claim"
+  String employeeName; // e.g., "Naeema Khan"
+  String dueDate; // e.g., "2025-11-05"
 
-  PayInstallment(this.installmentModel);
+  PayInstallment(this.installmentModel, {this.claimType = "Estate Claim", this.employeeName = "", this.dueDate = ""});
 
   @override
   _PayInstallmentState createState() => _PayInstallmentState();
 }
 
 TextEditingController remarksController= new TextEditingController();
-TextEditingController insChallanNoController= new TextEditingController();
+TextEditingController challanNumberController= new TextEditingController();
+TextEditingController paymentController= new TextEditingController();
 
 class _PayInstallmentState extends State<PayInstallment> {
   String selectedBankName= Strings.instance.selectBankName, ins_amount= "0", ins_payment= "0", ins_balance= "0";
-  String challanFilePath="", challanFileName="Select Challan", depositedDate= Strings.instance.depositedDate;
+  String challanFilePath="", challanFileName="NO FILE AVAILABLE", depositedDate= Strings.instance.depositedDate;
   Constants constants;
   UIUpdates uiUpdates;
 
@@ -40,65 +43,108 @@ class _PayInstallmentState extends State<PayInstallment> {
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
+    // Initialize values from installment model
+    ins_amount = widget.installmentModel.ins_amount ?? "0.00";
+    ins_payment = widget.installmentModel.ins_payment ?? "0.00";
+    ins_balance = widget.installmentModel.ins_balance ?? ins_amount;
+    paymentController.text = ins_amount; // Pre-fill payment with amount
+    remarksController.text = "Testing"; // Pre-fill description
+    if (widget.dueDate.isEmpty && widget.installmentModel.ins_duedate != null) {
+      widget.dueDate = widget.installmentModel.ins_duedate ?? "";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 70,
-              width: double.infinity,
-              color: AppTheme.colors.newPrimary,
-
-              child: Container(
-                margin: EdgeInsets.only(top: 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.arrow_back, color: AppTheme.colors.newWhite, size: 20,),
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text(widget.installmentModel.ins_number,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ],
+      backgroundColor: Color(0xFFF5F7FA),
+      body: Column(
+        children: [
+          // Header Section
+          _buildHeader(),
+          
+          // Form Section
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Amount Field
+                  _buildFormField(
+                    label: "Amount*",
+                    child: Text(
+                      "${double.parse(ins_amount).toStringAsFixed(2)}",
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: 20, right: 20, top: 15),
-                child: ListView(
-                  padding: EdgeInsets.all(0),
-                  children: [
-                    InkWell(
-                      onTap: (){
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Payment Field
+                  _buildFormField(
+                    label: "Payment*",
+                    child: TextField(
+                      controller: paymentController,
+                      cursorColor: AppTheme.colors.newPrimary,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.colors.newBlack,
+                        fontFamily: "AppFont",
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter payment amount",
+                        hintStyle: TextStyle(
+                          fontFamily: "AppFont",
+                          color: AppTheme.colors.colorDarkGray,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        // Calculate balance
+                        try {
+                          double amount = double.parse(ins_amount);
+                          double payment = value.isEmpty ? 0 : double.parse(value);
+                          double balance = amount - payment;
+                          setState(() {
+                            ins_balance = balance.toStringAsFixed(2);
+                          });
+                        } catch (e) {
+                          // Invalid input
+                        }
+                      },
+                    ),
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Balance Field
+                  _buildFormField(
+                    label: "Balance*",
+                    child: Text(
+                      "${double.parse(ins_balance).toStringAsFixed(2)}",
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Bank Name Field
+                  _buildFormField(
+                    label: "Bank Name*",
+                    child: InkWell(
+                      onTap: () {
                         OpenBankDialog(context).then((value) {
                           if(value != null){
                             setState(() {
@@ -107,398 +153,403 @@ class _PayInstallmentState extends State<PayInstallment> {
                           }
                         });
                       },
-                      child: Container(
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                        height: 35,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(selectedBankName,
-                                                textAlign: TextAlign.start,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: selectedBankName == Strings.instance.selectBankName ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                    fontSize: 14,
-                                                    fontFamily: "AppFont",
-                                                    fontWeight: FontWeight.normal
-                                                ),
-                                              ),
-                                            ),
-
-                                            Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
-                                          ],
-                                        )
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 15),
-                      height: 45,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                      height: 35,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text(widget.installmentModel.ins_amount +" PKR(Amount)",
-                                              textAlign: TextAlign.start,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  color: AppTheme.colors.newBlack,
-                                                  fontSize: 14,
-                                                  fontFamily: "AppFont",
-                                                  fontWeight: FontWeight.normal
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              height: 1,
-                              color: AppTheme.colors.colorDarkGray,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 15),
-                      height: 45,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                      height: 35,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text(widget.installmentModel.ins_amount+" PKR(Payment)",
-                                              textAlign: TextAlign.start,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  color: AppTheme.colors.newBlack,
-                                                  fontSize: 14,
-                                                  fontFamily: "AppFont",
-                                                  fontWeight: FontWeight.normal
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              height: 1,
-                              color: AppTheme.colors.colorDarkGray,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 15),
-                      height: 45,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                      height: 35,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text("0.00 PKR(Balance)",
-                                              textAlign: TextAlign.start,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  color: AppTheme.colors.newBlack,
-                                                  fontSize: 14,
-                                                  fontFamily: "AppFont",
-                                                  fontWeight: FontWeight.normal
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              height: 1,
-                              color: AppTheme.colors.colorDarkGray,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    InkWell(
-                      onTap: (){
-                        _selectDate(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 15),
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                        height: 35,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(depositedDate,
-                                                textAlign: TextAlign.start,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: depositedDate == Strings.instance.depositedDate ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                    fontSize: 14,
-                                                    fontFamily: "AppFont",
-                                                    fontWeight: FontWeight.normal
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      height: 45,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 35,
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: TextField(
-                                        controller: challanNumberController,
-                                        cursorColor: AppTheme.colors.newPrimary,
-                                        keyboardType: TextInputType.text,
-                                        maxLines: 1,
-                                        textInputAction: TextInputAction.done,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppTheme.colors.newBlack
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: "Challan No",
-                                          hintStyle: TextStyle(
-                                              fontFamily: "AppFont",
-                                              color: AppTheme.colors.colorDarkGray
-                                          ),
-                                          border: InputBorder.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              height: 1,
-                              color: AppTheme.colors.colorDarkGray,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.colors.colorDarkGray, width: 1),
-                      ),
-                      height: 100,
-                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Container(
-                              height: 100,
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: TextField(
-                                  controller: remarksController,
-                                  cursorColor: AppTheme.colors.newPrimary,
-                                  keyboardType: TextInputType.multiline,
-                                  textInputAction: TextInputAction.done,
-                                  maxLines: 5,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppTheme.colors.newBlack
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: "Remarks",
-                                    hintStyle: TextStyle(
-                                        fontFamily: "AppFont",
-                                        color: AppTheme.colors.colorDarkGray
-                                    ),
-                                    border: InputBorder.none,
-                                  ),
-                                ),
+                            child: Text(
+                              selectedBankName == Strings.instance.selectBankName 
+                                  ? "-- Select --" 
+                                  : selectedBankName,
+                              style: TextStyle(
+                                color: selectedBankName == Strings.instance.selectBankName 
+                                    ? AppTheme.colors.colorDarkGray 
+                                    : AppTheme.colors.newBlack,
+                                fontSize: 14,
+                                fontFamily: "AppFont",
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: AppTheme.colors.newPrimary,
+                            size: 20,
                           ),
                         ],
                       ),
                     ),
-
-                    InkWell(
-                      onTap: ()
-                      {
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Challan No Field
+                  _buildFormField(
+                    label: "Challan No*",
+                    child: TextField(
+                      controller: challanNumberController,
+                      cursorColor: AppTheme.colors.newPrimary,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.colors.newBlack,
+                        fontFamily: "AppFont",
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter challan number",
+                        hintStyle: TextStyle(
+                          fontFamily: "AppFont",
+                          color: AppTheme.colors.colorDarkGray,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Payment Date Field
+                  _buildFormField(
+                    label: "Payment Date*",
+                    child: InkWell(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            depositedDate == Strings.instance.depositedDate 
+                                ? "mm/dd/yyyy" 
+                                : _formatDate(depositedDate),
+                            style: TextStyle(
+                              color: depositedDate == Strings.instance.depositedDate 
+                                  ? AppTheme.colors.colorDarkGray 
+                                  : AppTheme.colors.newBlack,
+                              fontSize: 14,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          Icon(
+                            Icons.calendar_today,
+                            color: AppTheme.colors.newPrimary,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Description Field
+                  _buildFormField(
+                    label: "Description*",
+                    child: TextField(
+                      controller: remarksController,
+                      cursorColor: AppTheme.colors.newPrimary,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.colors.newBlack,
+                        fontFamily: "AppFont",
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter description",
+                        hintStyle: TextStyle(
+                          fontFamily: "AppFont",
+                          color: AppTheme.colors.colorDarkGray,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(height: 20),
+                  
+                  // Payment Challan Field
+                  _buildFormField(
+                    label: "Payment Challan*",
+                    child: InkWell(
+                      onTap: () {
                         OpenFilePicker();
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 30),
-                        height: 45,
+                        padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                            border: Border.all(color: AppTheme.colors.newBlack, width: 1,)
-                        ),
-                        child: Center(
-                          child: Text(challanFileName,
-                            style: TextStyle(
-                                color: AppTheme.colors.newBlack,
-                                fontSize: 12,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
+                          color: AppTheme.colors.colorLightGray,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                            width: 1,
                           ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.description,
+                              color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
+                              size: 20,
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                challanFileName,
+                                style: TextStyle(
+                                  color: challanFileName == "NO FILE AVAILABLE" 
+                                      ? AppTheme.colors.colorDarkGray.withOpacity(0.7)
+                                      : AppTheme.colors.newBlack,
+                                  fontSize: 14,
+                                  fontFamily: "AppFont",
+                                  fontWeight: challanFileName == "NO FILE AVAILABLE" 
+                                      ? FontWeight.normal 
+                                      : FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            if (challanFileName != "NO FILE AVAILABLE")
+                              Icon(
+                                Icons.check_circle,
+                                color: AppTheme.colors.newPrimary,
+                                size: 20,
+                              ),
+                          ],
                         ),
                       ),
                     ),
-
-                    InkWell(
-                      onTap: (){
-                        Validation();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 15, bottom: 60),
-                        height: 45,
-                        color: AppTheme.colors.newPrimary,
-                        child: Center(
-                          child: Text("Add",
-                            style: TextStyle(
-                                color: AppTheme.colors.newWhite,
-                                fontSize: 12,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.bold
-                            ),
+                  ),
+                  
+                  SizedBox(height: 40),
+                  
+                  // Action Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          backgroundColor: AppTheme.colors.colorLightGray,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: AppTheme.colors.colorDarkGray,
+                            fontSize: 14,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                      
+                      SizedBox(width: 12),
+                      
+                      // Pay Now Button
+                      ElevatedButton(
+                        onPressed: () {
+                          Validation();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          backgroundColor: AppTheme.colors.colorAccent, // #363636
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          "Pay Now",
+                          style: TextStyle(
+                            color: AppTheme.colors.newWhite,
+                            fontSize: 14,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  SizedBox(height: 20),
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildHeader() {
+    String installmentNumber = widget.installmentModel.ins_number ?? "1st Instalment";
+    String claimType = widget.claimType.isNotEmpty 
+        ? widget.claimType 
+        : "Estate (Housing & Flats) Claim";
+    String employeeName = widget.employeeName.isNotEmpty 
+        ? widget.employeeName 
+        : UserSessions.instance.getUserName;
+    String dueDate = widget.dueDate.isNotEmpty 
+        ? widget.dueDate 
+        : (widget.installmentModel.ins_duedate ?? "");
+    
+    String subtitle = "$installmentNumber | $claimType | Employee $employeeName";
+    if (dueDate.isNotEmpty) {
+      subtitle += " | Due Date $dueDate";
+    }
+    
+    return Container(
+      child: Column(
+        children: [
+          // Yellow Banner
+          Container(
+            height: 8,
+            width: double.infinity,
+            color: Color(0xFFFFC107), // Yellow
+          ),
+          
+          // Main Header with Background Image
+          Container(
+            height: 180,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Color(0xFF363636), // Dark grey
+            ),
+            child: Stack(
+              children: [
+                // Background Image
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: Image.asset(
+                      "archive/images/banners/transact.png",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(); // Hide if image not found
+                      },
+                    ),
+                  ),
+                ),
+                
+                // Content
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Close Button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.colors.newPrimary.withOpacity(0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  color: AppTheme.colors.newWhite,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        Spacer(),
+                        
+                        // Title
+                        Text(
+                          "Pay $installmentNumber",
+                          style: TextStyle(
+                            color: AppTheme.colors.newWhite,
+                            fontSize: 24,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        
+                        SizedBox(height: 8),
+                        
+                        // Subtitle
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: AppTheme.colors.newWhite.withOpacity(0.9),
+                            fontSize: 12,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.normal,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormField({String label, Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: AppTheme.colors.newBlack,
+            fontSize: 13,
+            fontFamily: "AppFont",
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.colors.newWhite,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppTheme.colors.colorDarkGray.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      if (dateStr.contains("-")) {
+        DateTime date = DateTime.parse(dateStr);
+        return DateFormat('MM/dd/yyyy').format(date);
+      }
+      return dateStr;
+    } catch (e) {
+      return dateStr;
+    }
   }
 
   Future<String> OpenBankDialog(BuildContext context) {
@@ -521,7 +572,7 @@ class _PayInstallmentState extends State<PayInstallment> {
         ].request();
         // Check if permission was granted
         if (statuses[Permission.storage] != PermissionStatus.granted) {
-          uiUpdates.ShowToast("Storage permission is required to select files");
+          uiUpdates.ShowError("Storage permission is required to select files");
           return;
         }
       }
@@ -539,15 +590,15 @@ class _PayInstallmentState extends State<PayInstallment> {
             challanFileName = file.name;
             challanFilePath = file.path;
           });
-          uiUpdates.ShowToast("File selected: ${file.name}");
+          uiUpdates.ShowSuccess("File selected: ${file.name}");
         } else {
-          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+          uiUpdates.ShowError("Failed to get file path. Please try again.");
         }
       } else {
         // User cancelled file picker - no need to show error
       }
     } catch (e) {
-      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
+      uiUpdates.ShowError("Error selecting file: ${e.toString()}");
     }
   }
 
@@ -603,25 +654,25 @@ class _PayInstallmentState extends State<PayInstallment> {
           if(challanFilePath.isNotEmpty){
             CheckConnectivity();
           }else{
-            uiUpdates.ShowToast(Strings.instance.uploadChallan);
+            uiUpdates.ShowError(Strings.instance.uploadChallan);
           }
         }else{
-          uiUpdates.ShowToast(Strings.instance.challanNoReq);
+          uiUpdates.ShowError(Strings.instance.challanNoReq);
         }
       }else{
-        uiUpdates.ShowToast(Strings.instance.depositedDate);
+        uiUpdates.ShowError(Strings.instance.depositedDate);
       }
     }else{
-      uiUpdates.ShowToast(Strings.instance.selectBankName);
+      uiUpdates.ShowError(Strings.instance.selectBankName);
     }
   }
 
   void CheckConnectivity() {
-    constants.CheckConnectivity(context).then((value) => {
+    constants.CheckConnectivity(context).then((value) {
       if(value){
-        AddInst()
+        AddInst();
       }else{
-        uiUpdates.ShowToast(Strings.instance.internetNotConnected)
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
       }
     });
   }
@@ -635,12 +686,17 @@ class _PayInstallmentState extends State<PayInstallment> {
     }else{
       remarks= "Remarks not available.";
     }
+    
+    String paymentAmount = paymentController.text.isNotEmpty 
+        ? paymentController.text 
+        : widget.installmentModel.ins_amount;
+    
     Map data = {
       "user_id": UserSessions.instance.getUserID,
       "ins_id": widget.installmentModel.ins_id,
       "ins_amount": widget.installmentModel.ins_amount,
-      "ins_payment": widget.installmentModel.ins_amount,
-      "ins_balance": "0.00",
+      "ins_payment": paymentAmount,
+      "ins_balance": ins_balance,
       "deposited_at": depositedDate,
       "ins_bank_name": selectedBankName,
       "ins_challan_no": challanNumberController.text.toString(),
@@ -655,13 +711,13 @@ class _PayInstallmentState extends State<PayInstallment> {
       var body = jsonDecode(response.body);
       String code = body["Code"].toString();
       if (code == "1") {
-        uiUpdates.ShowToast(Strings.instance.successAddIns);
+        uiUpdates.ShowSuccess(Strings.instance.successAddIns);
         Navigator.of(context).pop(true);
       } else {
-        uiUpdates.ShowToast(Strings.instance.failedAddIns);
+        uiUpdates.ShowError(Strings.instance.failedAddIns);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

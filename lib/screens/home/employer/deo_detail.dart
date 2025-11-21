@@ -473,7 +473,6 @@ class _DeoDetailState extends State<DeoDetail> {
 
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      uiUpdates.DismissProgresssDialog();
 
       if (responseCodeModel.status == true) {
         try {
@@ -497,45 +496,63 @@ class _DeoDetailState extends State<DeoDetail> {
                   email = deoDetail["user_email"]?.toString() ?? "";
                   designation = deoDetail["user_about"]?.toString() ?? "";
 
-                  setState(() {
-                    isLoading = false;
-                    hasDeo = true;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      isLoading = false;
+                      hasDeo = true;
+                    });
+                  }
+                  uiUpdates.DismissProgresssDialog();
                 } else {
                   // No DEO
+                  if (mounted) {
+                    setState(() {
+                      isLoading = false;
+                      hasDeo = false;
+                    });
+                  }
+                  uiUpdates.DismissProgresssDialog();
+                }
+              } else {
+                if (mounted) {
                   setState(() {
                     isLoading = false;
                     hasDeo = false;
                   });
                 }
-              } else {
+                uiUpdates.DismissProgresssDialog();
+              }
+            } else {
+              if (mounted) {
                 setState(() {
                   isLoading = false;
                   hasDeo = false;
                 });
               }
-            } else {
+              uiUpdates.DismissProgresssDialog();
+            }
+          } else {
+            String message = body["Message"]?.toString() ?? "";
+            if (message.isNotEmpty && message != "null") {
+              uiUpdates.ShowError(message);
+            }
+            if (mounted) {
               setState(() {
                 isLoading = false;
                 hasDeo = false;
               });
             }
-          } else {
-            String message = body["Message"]?.toString() ?? "";
-            if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
-            }
+            uiUpdates.DismissProgresssDialog();
+          }
+        } catch (e) {
+          if (mounted) {
             setState(() {
               isLoading = false;
               hasDeo = false;
             });
           }
-        } catch (e) {
-          setState(() {
-            isLoading = false;
-            hasDeo = false;
-          });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.DismissProgresssDialog();
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -549,27 +566,35 @@ class _DeoDetailState extends State<DeoDetail> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
 
-          setState(() {
-            isLoading = false;
-            hasDeo = false;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              hasDeo = false;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         } catch (e) {
-          setState(() {
-            isLoading = false;
-            hasDeo = false;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              hasDeo = false;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        hasDeo = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          hasDeo = false;
+        });
+      }
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

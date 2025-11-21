@@ -561,7 +561,6 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
       ).timeout(Duration(seconds: 30));
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodes(response.statusCode);
-      uiUpdates.DismissProgresssDialog();
       
       if (responseCodeModel.status == true) {
         try {
@@ -624,12 +623,14 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
                   isError = beneficiariesList.isEmpty;
                   errorMessage = beneficiariesList.isEmpty ? Strings.instance.notAvail : "";
                 });
+                uiUpdates.DismissProgresssDialog();
               } else {
                 setState(() {
                   isLoading = false;
                   isError = true;
                   errorMessage = Strings.instance.notAvail;
                 });
+                uiUpdates.DismissProgresssDialog();
               }
             } else {
               setState(() {
@@ -637,6 +638,7 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
                 isError = true;
                 errorMessage = Strings.instance.notAvail;
               });
+              uiUpdates.DismissProgresssDialog();
             }
           } else {
             setState(() {
@@ -644,15 +646,19 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
               isError = true;
               errorMessage = Strings.instance.failedToGetInfo;
             });
-            uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
+            uiUpdates.DismissProgresssDialog();
+            uiUpdates.ShowError(Strings.instance.failedToGetInfo);
           }
         } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.somethingWentWrong;
-          });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = Strings.instance.somethingWentWrong;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -666,29 +672,38 @@ class _BeneficiaryDetailState extends State<BeneficiaryDetail> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         } catch (e) {
-          setState(() {
-            isLoading = false;
-            isError = true;
-            errorMessage = Strings.instance.notAvail;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              isError = true;
+              errorMessage = Strings.instance.notAvail;
+            });
+          }
+          uiUpdates.DismissProgresssDialog();
         }
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-        errorMessage = Strings.instance.somethingWentWrong;
-      });
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+          errorMessage = Strings.instance.somethingWentWrong;
+        });
+      }
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

@@ -375,7 +375,7 @@ class _ForgotPasswordState extends State<ForgotPassword>
   void Validation() {
     // Validate Email is not empty
     if (emailController.text.trim().isEmpty) {
-      uiUpdates.ShowToast(Strings.instance.emailMessage);
+      uiUpdates.ShowError(Strings.instance.emailMessage);
       setState(() {
         _isLoading = false;
       });
@@ -384,7 +384,7 @@ class _ForgotPasswordState extends State<ForgotPassword>
 
     // Validate Email format
     if (!constants.IsValidEmail(emailController.text.trim())) {
-      uiUpdates.ShowToast(Strings.instance.invalidEmailMessage);
+      uiUpdates.ShowError(Strings.instance.invalidEmailMessage);
       setState(() {
         _isLoading = false;
       });
@@ -399,16 +399,16 @@ class _ForgotPasswordState extends State<ForgotPassword>
   }
 
   void CheckConnectivity() {
-    constants.CheckConnectivity(context).then((value) => {
-          if (value) {
-            ResetPassword()
-          } else {
-            uiUpdates.ShowToast(Strings.instance.internetNotConnected),
-            setState(() {
-              _isLoading = false;
-            })
-          }
+    constants.CheckConnectivity(context).then((value) {
+      if (value) {
+        ResetPassword();
+      } else {
+        uiUpdates.ShowError(Strings.instance.internetNotConnected);
+        setState(() {
+          _isLoading = false;
         });
+      }
+    });
   }
 
   ResetPassword() async {
@@ -431,20 +431,20 @@ class _ForgotPasswordState extends State<ForgotPassword>
         var body = jsonDecode(response.body);
         String code = body["Code"].toString();
         if (code == "1") {
-          uiUpdates.ShowToast(Strings.instance.resetPasswordSuccess);
+          uiUpdates.ShowSuccess(Strings.instance.resetPasswordSuccess);
           Navigator.pop(context);
         } else {
-          uiUpdates.ShowToast(Strings.instance.resetPasswordFailed);
+          uiUpdates.ShowError(Strings.instance.resetPasswordFailed);
         }
       } else {
         var body = jsonDecode(response.body);
         String message = body["Message"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     } else {
       var body = jsonDecode(response.body);
       String data = body["Data"].toString();
-      uiUpdates.ShowToast(data);
+      uiUpdates.ShowError(data);
     }
   }
 }
