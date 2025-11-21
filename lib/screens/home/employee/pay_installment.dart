@@ -16,6 +16,7 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:wwf_apps/utils/permission_handler.dart';
+import 'package:wwf_apps/themes/form_theme.dart';
 
 class PayInstallment extends StatefulWidget {
   InstallmentModel installmentModel;
@@ -79,358 +80,551 @@ class _PayInstallmentState extends State<PayInstallment> {
                   bottom: bottomPadding + 20
                 ),
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Amount Field
-                  _buildFormField(
-                    label: "Amount*",
-                    child: Text(
-                      "${double.parse(ins_amount).toStringAsFixed(2)}",
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 14,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Payment Field
-                  _buildFormField(
-                    label: "Payment*",
-                    child: TextField(
-                      controller: paymentController,
-                      cursorColor: AppTheme.colors.newPrimary,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.colors.newBlack,
-                        fontFamily: "AppFont",
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter payment amount",
-                        hintStyle: TextStyle(
-                          fontFamily: "AppFont",
-                          color: AppTheme.colors.colorDarkGray,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        // Calculate balance
-                        try {
-                          double amount = double.parse(ins_amount);
-                          double payment = value.isEmpty ? 0 : double.parse(value);
-                          double balance = amount - payment;
-                          setState(() {
-                            ins_balance = balance.toStringAsFixed(2);
-                          });
-                        } catch (e) {
-                          // Invalid input
-                        }
-                      },
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Balance Field
-                  _buildFormField(
-                    label: "Balance*",
-                    child: Text(
-                      "${double.parse(ins_balance).toStringAsFixed(2)}",
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 14,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Bank Name Field
-                  _buildFormField(
-                    label: "Bank Name*",
-                    child: InkWell(
-                      onTap: () {
-                        OpenBankDialog(context).then((value) {
-                          if(value != null){
-                            setState(() {
-                              selectedBankName = value;
-                            });
-                          }
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              selectedBankName == Strings.instance.selectBankName 
-                                  ? "-- Select --" 
-                                  : selectedBankName,
-                              style: TextStyle(
-                                color: selectedBankName == Strings.instance.selectBankName 
-                                    ? AppTheme.colors.colorDarkGray 
-                                    : AppTheme.colors.newBlack,
-                                fontSize: 14,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.normal,
+                  children: [
+                    // Main Form Card Container
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeOut,
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 30 * (1 - value)),
+                          child: Opacity(
+                            opacity: value,
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(FormTheme.borderRadiusL),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // Banner Section with Image
+                                  Container(
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(FormTheme.borderRadiusL),
+                                        topRight: Radius.circular(FormTheme.borderRadiusL),
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        // Banner Image Background
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(FormTheme.borderRadiusL),
+                                            topRight: Radius.circular(FormTheme.borderRadiusL),
+                                          ),
+                                          child: Image.asset(
+                                            "archive/images/banners/transact.png",
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              // Fallback gradient if image not found
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      AppTheme.colors.newPrimary,
+                                                      AppTheme.colors.newPrimary.withOpacity(0.8),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        // Dark Overlay for better text readability
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.black.withOpacity(0.3),
+                                                Colors.black.withOpacity(0.5),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(FormTheme.borderRadiusL),
+                                              topRight: Radius.circular(FormTheme.borderRadiusL),
+                                            ),
+                                          ),
+                                        ),
+                                        // Text Overlay
+                                        Positioned(
+                                          left: 24,
+                                          right: 24,
+                                          bottom: 20,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                "Pay Installment",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontFamily: "AppFont",
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 0.5,
+                                                  shadows: [
+                                                    Shadow(
+                                                      color: Colors.black.withOpacity(0.3),
+                                                      offset: Offset(0, 2),
+                                                      blurRadius: 4,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              if (widget.claimType.isNotEmpty)
+                                                Text(
+                                                  widget.claimType,
+                                                  style: TextStyle(
+                                                    color: Colors.white.withOpacity(0.9),
+                                                    fontSize: 14,
+                                                    fontFamily: "AppFont",
+                                                    fontWeight: FontWeight.normal,
+                                                    shadows: [
+                                                      Shadow(
+                                                        color: Colors.black.withOpacity(0.3),
+                                                        offset: Offset(0, 1),
+                                                        blurRadius: 3,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  
+                                  // Form Fields Section
+                                  Padding(
+                                    padding: EdgeInsets.all(FormTheme.spacingXXL),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        // Amount Field (Read-only)
+                                        _buildModernFormField(
+                                          label: "Amount*",
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 52,
+                                            padding: EdgeInsets.symmetric(horizontal: 16),
+                                            decoration: FormTheme.containerDecoration(),
+                                            alignment: Alignment.centerLeft,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.currency_rupee,
+                                                  color: FormTheme.primaryColor,
+                                                  size: 20,
+                                                ),
+                                                SizedBox(width: FormTheme.spacingS),
+                                                Text(
+                                                  "${double.parse(ins_amount).toStringAsFixed(2)}",
+                                                  style: FormTheme.inputTextStyle.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: FormTheme.primaryColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Payment Field
+                                        _buildModernFormField(
+                                          label: "Payment*",
+                                          child: TextFormField(
+                                            controller: paymentController,
+                                            cursorColor: FormTheme.primaryColor,
+                                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                            style: FormTheme.inputTextStyle,
+                                            decoration: FormTheme.inputDecoration(
+                                              hint: "Enter payment amount",
+                                              prefixIcon: Icons.payment,
+                                            ),
+                                            onChanged: (value) {
+                                              // Calculate balance
+                                              try {
+                                                double amount = double.parse(ins_amount);
+                                                double payment = value.isEmpty ? 0 : double.parse(value);
+                                                double balance = amount - payment;
+                                                setState(() {
+                                                  ins_balance = balance.toStringAsFixed(2);
+                                                });
+                                              } catch (e) {
+                                                // Invalid input
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Balance Field (Read-only)
+                                        _buildModernFormField(
+                                          label: "Balance*",
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 52,
+                                            padding: EdgeInsets.symmetric(horizontal: 16),
+                                            decoration: FormTheme.containerDecoration(),
+                                            alignment: Alignment.centerLeft,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.account_balance_wallet,
+                                                  color: FormTheme.secondaryColor,
+                                                  size: 20,
+                                                ),
+                                                SizedBox(width: FormTheme.spacingS),
+                                                Text(
+                                                  "${double.parse(ins_balance).toStringAsFixed(2)}",
+                                                  style: FormTheme.inputTextStyle.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: FormTheme.secondaryColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Bank Name Field
+                                        _buildModernFormField(
+                                          label: "Bank Name*",
+                                          child: InkWell(
+                                            onTap: () {
+                                              OpenBankDialog(context).then((value) {
+                                                if(value != null){
+                                                  setState(() {
+                                                    selectedBankName = value;
+                                                  });
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 52,
+                                              padding: EdgeInsets.symmetric(horizontal: 16),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.account_balance,
+                                                    color: selectedBankName == Strings.instance.selectBankName 
+                                                        ? FormTheme.hintColor 
+                                                        : FormTheme.primaryColor,
+                                                    size: 20,
+                                                  ),
+                                                  SizedBox(width: FormTheme.spacingM),
+                                                  Expanded(
+                                                    child: Text(
+                                                      selectedBankName == Strings.instance.selectBankName 
+                                                          ? "Select Bank" 
+                                                          : selectedBankName,
+                                                      style: TextStyle(
+                                                        color: selectedBankName == Strings.instance.selectBankName 
+                                                            ? FormTheme.hintColor 
+                                                            : FormTheme.secondaryColor,
+                                                        fontSize: 14,
+                                                        fontFamily: "AppFont",
+                                                        fontWeight: FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.keyboard_arrow_down_rounded,
+                                                    color: FormTheme.hintColor,
+                                                    size: 24,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Challan No Field
+                                        _buildModernFormField(
+                                          label: "Challan No*",
+                                          child: TextFormField(
+                                            controller: challanNumberController,
+                                            cursorColor: FormTheme.primaryColor,
+                                            keyboardType: TextInputType.text,
+                                            style: FormTheme.inputTextStyle,
+                                            decoration: FormTheme.inputDecoration(
+                                              hint: "Enter challan number",
+                                              prefixIcon: Icons.receipt,
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Payment Date Field
+                                        _buildModernFormField(
+                                          label: "Payment Date*",
+                                          child: InkWell(
+                                            onTap: () {
+                                              _selectDate(context);
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 52,
+                                              padding: EdgeInsets.symmetric(horizontal: 16),
+                                              decoration: FormTheme.containerDecoration(),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    color: depositedDate == Strings.instance.depositedDate 
+                                                        ? FormTheme.hintColor 
+                                                        : FormTheme.primaryColor,
+                                                    size: 20,
+                                                  ),
+                                                  SizedBox(width: FormTheme.spacingM),
+                                                  Expanded(
+                                                    child: Text(
+                                                      depositedDate == Strings.instance.depositedDate 
+                                                          ? "Select Date" 
+                                                          : _formatDate(depositedDate),
+                                                      style: TextStyle(
+                                                        color: depositedDate == Strings.instance.depositedDate 
+                                                            ? FormTheme.hintColor 
+                                                            : FormTheme.secondaryColor,
+                                                        fontSize: 14,
+                                                        fontFamily: "AppFont",
+                                                        fontWeight: FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Description Field
+                                        _buildModernFormField(
+                                          label: "Description*",
+                                          child: TextFormField(
+                                            controller: remarksController,
+                                            cursorColor: FormTheme.primaryColor,
+                                            keyboardType: TextInputType.multiline,
+                                            maxLines: 3,
+                                            style: FormTheme.inputTextStyle,
+                                            decoration: FormTheme.inputDecoration(
+                                              hint: "Enter description",
+                                              prefixIcon: Icons.description,
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Payment Challan Field
+                                        _buildModernFormField(
+                                          label: "Payment Challan*",
+                                          child: InkWell(
+                                            onTap: () {
+                                              OpenFilePicker();
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 52,
+                                              padding: EdgeInsets.symmetric(horizontal: 16),
+                                              decoration: BoxDecoration(
+                                                color: challanFileName != "NO FILE AVAILABLE" 
+                                                    ? FormTheme.primaryColor.withOpacity(0.05)
+                                                    : FormTheme.backgroundColor,
+                                                borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
+                                                border: Border.all(
+                                                  color: challanFileName != "NO FILE AVAILABLE" 
+                                                      ? FormTheme.primaryColor.withOpacity(0.3)
+                                                      : FormTheme.borderColor,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: FormTheme.primaryColor.withOpacity(0.1),
+                                                      borderRadius: BorderRadius.circular(FormTheme.borderRadiusS),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.attach_file,
+                                                      color: FormTheme.primaryColor,
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: FormTheme.spacingM),
+                                                  Expanded(
+                                                    child: Text(
+                                                      challanFileName == "NO FILE AVAILABLE" 
+                                                          ? "Select File" 
+                                                          : challanFileName,
+                                                      style: TextStyle(
+                                                        color: challanFileName == "NO FILE AVAILABLE" 
+                                                            ? FormTheme.hintColor 
+                                                            : FormTheme.secondaryColor,
+                                                        fontSize: 14,
+                                                        fontFamily: "AppFont",
+                                                        fontWeight: challanFileName == "NO FILE AVAILABLE" 
+                                                            ? FontWeight.normal 
+                                                            : FontWeight.w600,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  if (challanFileName != "NO FILE AVAILABLE")
+                                                    Icon(
+                                                      Icons.check_circle,
+                                                      color: FormTheme.primaryColor,
+                                                      size: 22,
+                                                    )
+                                                  else
+                                                    Icon(
+                                                      Icons.chevron_right,
+                                                      color: FormTheme.hintColor,
+                                                      size: 20,
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingXXXL),
+                                        
+                                        // Submit Button - Full Width
+                                        TweenAnimationBuilder<double>(
+                                          tween: Tween(begin: 0.0, end: 1.0),
+                                          duration: Duration(milliseconds: 600),
+                                          curve: Curves.easeOut,
+                                          builder: (context, value, child) {
+                                            return Transform.scale(
+                                              scale: 0.95 + (0.05 * value),
+                                              child: Opacity(
+                                                opacity: value,
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  height: 52,
+                                                  decoration: FormTheme.primaryButtonDecoration(),
+                                                  child: Material(
+                                                    color: Colors.transparent,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Validation();
+                                                      },
+                                                      borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
+                                                      child: Container(
+                                                        alignment: Alignment.center,
+                                                        child: Text(
+                                                          "Pay Now",
+                                                          style: FormTheme.buttonTextStyle,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        
+                                        SizedBox(height: FormTheme.spacingL),
+                                        
+                                        // Cancel Button - Full Width
+                                        Container(
+                                          width: double.infinity,
+                                          height: 52,
+                                          decoration: FormTheme.secondaryButtonDecoration(),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  "Cancel",
+                                                  style: TextStyle(
+                                                    color: FormTheme.primaryColor,
+                                                    fontSize: 15,
+                                                    fontFamily: "AppFont",
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppTheme.colors.newPrimary,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Challan No Field
-                  _buildFormField(
-                    label: "Challan No*",
-                    child: TextField(
-                      controller: challanNumberController,
-                      cursorColor: AppTheme.colors.newPrimary,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.colors.newBlack,
-                        fontFamily: "AppFont",
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter challan number",
-                        hintStyle: TextStyle(
-                          fontFamily: "AppFont",
-                          color: AppTheme.colors.colorDarkGray,
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Payment Date Field
-                  _buildFormField(
-                    label: "Payment Date*",
-                    child: InkWell(
-                      onTap: () {
-                        _selectDate(context);
+                        );
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            depositedDate == Strings.instance.depositedDate 
-                                ? "mm/dd/yyyy" 
-                                : _formatDate(depositedDate),
-                            style: TextStyle(
-                              color: depositedDate == Strings.instance.depositedDate 
-                                  ? AppTheme.colors.colorDarkGray 
-                                  : AppTheme.colors.newBlack,
-                              fontSize: 14,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          Icon(
-                            Icons.calendar_today,
-                            color: AppTheme.colors.newPrimary,
-                            size: 18,
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Description Field
-                  _buildFormField(
-                    label: "Description*",
-                    child: TextField(
-                      controller: remarksController,
-                      cursorColor: AppTheme.colors.newPrimary,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 3,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.colors.newBlack,
-                        fontFamily: "AppFont",
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter description",
-                        hintStyle: TextStyle(
-                          fontFamily: "AppFont",
-                          color: AppTheme.colors.colorDarkGray,
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Payment Challan Field
-                  _buildFormField(
-                    label: "Payment Challan*",
-                    child: InkWell(
-                      onTap: () {
-                        OpenFilePicker();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppTheme.colors.colorLightGray,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.description,
-                              color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
-                              size: 20,
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                challanFileName,
-                                style: TextStyle(
-                                  color: challanFileName == "NO FILE AVAILABLE" 
-                                      ? AppTheme.colors.colorDarkGray.withOpacity(0.7)
-                                      : AppTheme.colors.newBlack,
-                                  fontSize: 14,
-                                  fontFamily: "AppFont",
-                                  fontWeight: challanFileName == "NO FILE AVAILABLE" 
-                                      ? FontWeight.normal 
-                                      : FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            if (challanFileName != "NO FILE AVAILABLE")
-                              Icon(
-                                Icons.check_circle,
-                                color: AppTheme.colors.newPrimary,
-                                size: 20,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 40),
-                  
-                  // Action Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      // Cancel Button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          backgroundColor: AppTheme.colors.colorLightGray,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: AppTheme.colors.colorDarkGray,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      
-                      SizedBox(width: 12),
-                      
-                      // Pay Now Button
-                      ElevatedButton(
-                        onPressed: () {
-                          Validation();
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            AppTheme.colors.colorAccent, // #363636
-                          ),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          elevation: MaterialStateProperty.all<double>(0),
-                        ),
-                        child: Text(
-                          "Pay Now",
-                          style: TextStyle(
-                            color: AppTheme.colors.newWhite,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 20),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 
 
-  Widget _buildFormField({String label, Widget child}) {
+  Widget _buildModernFormField({String label, Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppTheme.colors.newBlack,
-            fontSize: 13,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w600,
+        Padding(
+          padding: EdgeInsets.only(bottom: FormTheme.spacingS),
+          child: Text(
+            label,
+            style: FormTheme.labelStyle,
           ),
         ),
-        SizedBox(height: 8),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          decoration: BoxDecoration(
-            color: AppTheme.colors.newWhite,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: AppTheme.colors.colorDarkGray.withOpacity(0.2),
-              width: 1,
-            ),
-          ),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: double.infinity,
           child: child,
         ),
       ],

@@ -276,7 +276,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         uiUpdates.ShowToast(Strings.instance.failedComplaint);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 

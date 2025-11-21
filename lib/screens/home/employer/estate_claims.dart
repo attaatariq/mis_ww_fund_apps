@@ -219,7 +219,7 @@ class _EstateClaimListState extends State<EstateClaimList> {
         }
       } else {
         if(responseCodeModel.message != null && responseCodeModel.message != "null") {
-          uiUpdates.ShowToast(responseCodeModel.message);
+          uiUpdates.ShowError(responseCodeModel.message);
         }
         setState(() {
           isError= true;

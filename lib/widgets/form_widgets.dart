@@ -94,13 +94,16 @@ class _FormTextFieldState extends State<FormTextField> {
               style: FormTheme.labelStyle,
             ),
           ),
-        Focus(
-          onFocusChange: (hasFocus) {
-            setState(() {
-              _isFocused = hasFocus;
-            });
-          },
-          child: TextField(
+        AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: Focus(
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: TextField(
             controller: widget.controller,
             obscureText: widget.showPasswordToggle ? _obscureText : widget.obscureText,
             keyboardType: widget.keyboardType,
@@ -125,25 +128,31 @@ class _FormTextFieldState extends State<FormTextField> {
               isEnabled: widget.enabled,
             ),
           ),
+          ),
+        ),
         ),
         if (hasError)
-          Padding(
-            padding: EdgeInsets.only(top: FormTheme.spacingS, left: FormTheme.spacingXS),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 14,
-                  color: FormTheme.errorColor,
-                ),
-                SizedBox(width: FormTheme.spacingXS),
-                Expanded(
-                  child: Text(
-                    widget.errorText,
-                    style: FormTheme.errorTextStyle,
+          AnimatedSize(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            child: Padding(
+              padding: EdgeInsets.only(top: FormTheme.spacingS, left: FormTheme.spacingXS),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 14,
+                    color: FormTheme.errorColor,
                   ),
-                ),
-              ],
+                  SizedBox(width: FormTheme.spacingXS),
+                  Expanded(
+                    child: Text(
+                      widget.errorText,
+                      style: FormTheme.errorTextStyle,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         SizedBox(height: FormTheme.spacingM),
@@ -288,19 +297,23 @@ class FormSelectableField extends StatelessWidget {
               style: FormTheme.labelStyle,
             ),
           ),
-        InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: prefixIcon != null ? 12 : 16,
-              vertical: 16,
-            ),
-            decoration: FormTheme.containerDecoration(
-              hasError: hasError,
-              isEnabled: enabled,
-            ),
-            child: Row(
+        AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: double.infinity,
+          child: InkWell(
+            onTap: enabled ? onTap : null,
+            borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: prefixIcon != null ? 12 : 16,
+                vertical: 16,
+              ),
+              decoration: FormTheme.containerDecoration(
+                hasError: hasError,
+                isEnabled: enabled,
+              ),
+              child: Row(
               children: [
                 if (prefixIcon != null) ...[
                   Icon(
@@ -767,15 +780,20 @@ class FormFilePickerButton extends StatelessWidget {
               style: FormTheme.labelStyle,
             ),
           ),
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
-          child: Container(
-            padding: EdgeInsets.all(FormTheme.spacingL),
-            decoration: FormTheme.containerDecoration(
-              hasError: hasError,
-            ),
-            child: Row(
+        AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: double.infinity,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(FormTheme.borderRadiusM),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(FormTheme.spacingL),
+              decoration: FormTheme.containerDecoration(
+                hasError: hasError,
+              ),
+              child: Row(
               children: [
                 Container(
                   padding: EdgeInsets.all(FormTheme.spacingS),

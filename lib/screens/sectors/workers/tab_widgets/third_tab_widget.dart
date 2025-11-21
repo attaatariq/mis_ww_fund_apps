@@ -709,7 +709,7 @@ class _WorkerThirdTabState extends State<WorkerThirdTab> {
           uiUpdates.ShowToast(Strings.instance.employeeAddFailed);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();

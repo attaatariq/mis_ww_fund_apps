@@ -900,7 +900,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 
@@ -1043,7 +1043,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         uiUpdates.ShowToast(Strings.instance.turnOverSaveFail);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 
@@ -1070,7 +1070,7 @@ class _EmployeeTurnOverState extends State<EmployeeTurnOver> {
         uiUpdates.ShowToast(Strings.instance.turnOverSaveFail);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
   Future<String> OpenCompanyTypeDialog(BuildContext context) {

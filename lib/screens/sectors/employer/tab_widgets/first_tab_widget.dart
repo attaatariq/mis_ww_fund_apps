@@ -1176,7 +1176,7 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
           uiUpdates.ShowToast(Strings.instance.loginFailed);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();

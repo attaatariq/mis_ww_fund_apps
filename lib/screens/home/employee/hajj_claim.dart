@@ -230,7 +230,7 @@ class _HajjClaimState extends State<HajjClaim> {
         }
       } else {
         if(responseCodeModel.message != null && responseCodeModel.message != "null") {
-          uiUpdates.ShowToast(responseCodeModel.message);
+          uiUpdates.ShowError(responseCodeModel.message);
         }
         setState(() {
           isError= true;

@@ -2368,12 +2368,12 @@ class _EducationalClaimDetailState extends State<EducationalClaimDetail> {
             constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle,
                 Strings.instance.expireSessionMessage);
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           } else {
-            uiUpdates.ShowToast(responseCodeModel.message);
+            uiUpdates.ShowError(responseCodeModel.message);
           }
         } catch (e) {
-          uiUpdates.ShowToast(responseCodeModel.message);
+          uiUpdates.ShowError(responseCodeModel.message);
         }
         
         setState(() {

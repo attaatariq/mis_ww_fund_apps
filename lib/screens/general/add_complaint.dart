@@ -215,7 +215,7 @@ class _AddComplaintState extends State<AddComplaint> {
         uiUpdates.ShowToast(Strings.instance.failedComplaint);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 

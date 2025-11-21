@@ -190,14 +190,14 @@ class _ChildrenListState extends State<ChildrenList> {
             }
           } else {
             String message = body["Message"]?.toString() ?? Strings.instance.failedToGetInfo;
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
             setState(() {
               isError = true;
               errorMessage = message;
             });
           }
         } catch (e) {
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
           setState(() {
             isError = true;
             errorMessage = Strings.instance.somethingWentWrong;
@@ -215,9 +215,9 @@ class _ChildrenListState extends State<ChildrenList> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           } else {
-            uiUpdates.ShowToast(responseCodeModel.message);
+            uiUpdates.ShowError(responseCodeModel.message);
           }
           
           setState(() {
@@ -225,7 +225,7 @@ class _ChildrenListState extends State<ChildrenList> {
             errorMessage = message.isNotEmpty ? message : Strings.instance.notAvail;
           });
         } catch (e) {
-          uiUpdates.ShowToast(responseCodeModel.message);
+            uiUpdates.ShowError(responseCodeModel.message);
           setState(() {
             isError = true;
             errorMessage = Strings.instance.notAvail;

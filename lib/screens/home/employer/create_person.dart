@@ -476,7 +476,7 @@ class _AddContactPersonState extends State<AddContactPerson> {
         uiUpdates.ShowToast(message);
       }
     }else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

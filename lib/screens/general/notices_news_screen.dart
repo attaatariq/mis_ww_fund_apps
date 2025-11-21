@@ -398,7 +398,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
           setState(() {
@@ -517,7 +517,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
           setState(() {

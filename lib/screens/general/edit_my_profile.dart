@@ -330,7 +330,7 @@ class _EditProfileState extends State<EditProfile> {
         uiUpdates.ShowToast(Strings.instance.failedComplaint);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 

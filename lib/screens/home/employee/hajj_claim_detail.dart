@@ -401,11 +401,11 @@ class _HajjClaimsDetailState extends State<HajjClaimsDetail> {
       } else {
         var body = jsonDecode(response.body);
         String message = body["Data"].toString();
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowSuccess(message);
       }
     } else {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

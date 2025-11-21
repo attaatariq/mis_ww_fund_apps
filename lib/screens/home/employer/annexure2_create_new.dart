@@ -2226,7 +2226,7 @@ class _Annex3ANewState extends State<Annex3ANew> {
         uiUpdates.ShowToast(Strings.instance.failedToGetInfo);
       }
     } else {
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 }

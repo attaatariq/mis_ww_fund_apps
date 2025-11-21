@@ -268,7 +268,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null" && message != "NULL") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
               setState(() {
                 isError = true;
                 errorMessage = message;
@@ -288,10 +288,10 @@ class _EducationClaimListState extends State<EducationClaimList> {
             errorMessage = "Failed to parse response: ${e.toString()}";
             isLoading = false;
           });
-          uiUpdates.ShowToast("Failed to load educational claims. Please try again.");
+          uiUpdates.ShowError("Failed to load educational claims. Please try again.");
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
         setState(() {
           isError = true;
           errorMessage = responseCodeModel.message;
@@ -403,7 +403,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
           } else {
             String message = body["Message"]?.toString() ?? "";
             if(message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             } else {
               // Navigate anyway with default values
               String defaultValue = "0";
@@ -417,13 +417,13 @@ class _EducationClaimListState extends State<EducationClaimList> {
             }
           }
         } catch (e) {
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     } catch (e) {
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     } finally {
       uiUpdates.DismissProgresssDialog();
     }

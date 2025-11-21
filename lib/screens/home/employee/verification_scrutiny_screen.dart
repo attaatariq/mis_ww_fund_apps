@@ -622,7 +622,7 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
             });
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
           }
         } catch (e) {
@@ -643,7 +643,7 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
 
           setState(() {
@@ -742,7 +742,7 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
             uiUpdates.DismissProgresssDialog();
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
           }
         } catch (e) {

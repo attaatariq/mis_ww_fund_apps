@@ -197,7 +197,7 @@ class _DeathClaimListState extends State<DeathClaimList> {
           if(message == constants.expireToken){
             constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
           }else if(message.isNotEmpty && message != "null"){
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           } else {
             setState(() {
               isError= true;

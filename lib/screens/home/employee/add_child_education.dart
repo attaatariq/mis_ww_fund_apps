@@ -1485,7 +1485,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
           uiUpdates.ShowSuccess(Strings.instance.selfEducationMessage);
           Navigator.pop(context);
         } else {
-          uiUpdates.ShowToast(Strings.instance.failedSelfEducation);
+          uiUpdates.ShowError(Strings.instance.failedSelfEducation);
         }
       } else {
         var body = jsonDecode(resp.body);
@@ -1493,7 +1493,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
         uiUpdates.ShowError(message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 }

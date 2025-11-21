@@ -204,7 +204,7 @@ class _NotificationsAndAlertsState extends State<NotificationsAndAlerts> {
       }
     } else {
       if(responseCodeModel.message!="null") {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     }
   }

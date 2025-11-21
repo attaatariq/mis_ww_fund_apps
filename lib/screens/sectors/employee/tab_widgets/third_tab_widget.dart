@@ -739,7 +739,7 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
           uiUpdates.ShowToast(Strings.instance.employeeAddFailed);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
       }
     }catch(e){
       uiUpdates.DismissProgresssDialog();
@@ -779,7 +779,7 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
       if(message == constants.expireToken){
         constants.OpenLogoutDialog(context, Strings.instance.expireSessionTitle, Strings.instance.expireSessionMessage);
       }else{
-        uiUpdates.ShowToast(message);
+        uiUpdates.ShowError(message);
       }
     }
   }

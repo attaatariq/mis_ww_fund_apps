@@ -1011,7 +1011,7 @@ class _EmployeeHomeState extends State<EmployeeHome> {
       }
     } else {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 
@@ -1296,11 +1296,11 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         var body = jsonDecode(resp.body);
         if(!(body["Message"].toString().contains('Your request has same device ID'))){
           String message = body["Message"].toString();
-          uiUpdates.ShowToast(message);
+          uiUpdates.ShowError(message);
         }
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 

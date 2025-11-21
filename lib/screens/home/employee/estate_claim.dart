@@ -326,7 +326,7 @@ class _EstateClaimState extends State<EstateClaim> {
         }
       } else {
         if(responseCodeModel.message != null && responseCodeModel.message != "null") {
-          uiUpdates.ShowToast(responseCodeModel.message);
+          uiUpdates.ShowError(responseCodeModel.message);
         }
         setState(() {
           hasEstateData = false;

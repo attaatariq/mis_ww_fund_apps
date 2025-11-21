@@ -291,7 +291,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
           setState(() {

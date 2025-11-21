@@ -1143,7 +1143,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
         uiUpdates.ShowError(message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 }

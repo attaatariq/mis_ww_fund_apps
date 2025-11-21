@@ -2238,7 +2238,7 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
         uiUpdates.ShowError(responseCodeModel.message);
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 

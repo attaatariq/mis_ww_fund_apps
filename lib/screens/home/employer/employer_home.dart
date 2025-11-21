@@ -1335,7 +1335,7 @@ class _EmployerHomeState extends State<EmployerHome> {
       }
     } else {
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(responseCodeModel.message);
+      uiUpdates.ShowError(responseCodeModel.message);
     }
   }
 
@@ -1376,11 +1376,11 @@ class _EmployerHomeState extends State<EmployerHome> {
         var body = jsonDecode(resp.body);
         if(!(body["Message"].toString().contains('Your request has same device ID'))){
           String message = body["Message"].toString();
-          uiUpdates.ShowToast(message);
+          uiUpdates.ShowError(message);
         }
       }
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }
   }
 

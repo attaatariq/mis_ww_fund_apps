@@ -250,7 +250,7 @@ class _EducationClaimListState extends State<EducationClaimList> {
           uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
         }
       } else {
-        uiUpdates.ShowToast(responseCodeModel.message);
+        uiUpdates.ShowError(responseCodeModel.message);
         setState(() {
           isError = true;
           errorMessage = responseCodeModel.message;
