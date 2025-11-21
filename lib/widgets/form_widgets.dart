@@ -104,32 +104,31 @@ class _FormTextFieldState extends State<FormTextField> {
               });
             },
             child: TextField(
-            controller: widget.controller,
-            obscureText: widget.showPasswordToggle ? _obscureText : widget.obscureText,
-            keyboardType: widget.keyboardType,
-            enabled: widget.enabled,
-            maxLines: widget.maxLines,
-            maxLength: widget.maxLength,
-            onChanged: widget.onChanged,
-            onSubmitted: widget.onSubmitted,
-            focusNode: widget.focusNode,
-            textInputAction: widget.textInputAction,
-            inputFormatters: widget.inputFormatters,
-            readOnly: widget.readOnly,
-            onTap: widget.onTap,
-            style: FormTheme.inputTextStyle,
-            decoration: FormTheme.inputDecoration(
-              hint: widget.hint,
-              label: widget.label,
-              prefixIcon: widget.prefixIcon,
-              suffixIcon: suffix,
-              hasError: hasError,
-              isFocused: _isFocused,
-              isEnabled: widget.enabled,
+              controller: widget.controller,
+              obscureText: widget.showPasswordToggle ? _obscureText : widget.obscureText,
+              keyboardType: widget.keyboardType,
+              enabled: widget.enabled,
+              maxLines: widget.maxLines,
+              maxLength: widget.maxLength,
+              onChanged: widget.onChanged,
+              onSubmitted: widget.onSubmitted,
+              focusNode: widget.focusNode,
+              textInputAction: widget.textInputAction,
+              inputFormatters: widget.inputFormatters,
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              style: FormTheme.inputTextStyle,
+              decoration: FormTheme.inputDecoration(
+                hint: widget.hint,
+                label: widget.label,
+                prefixIcon: widget.prefixIcon,
+                suffixIcon: suffix,
+                hasError: hasError,
+                isFocused: _isFocused,
+                isEnabled: widget.enabled,
+              ),
             ),
           ),
-          ),
-        ),
         ),
         if (hasError)
           AnimatedSize(
@@ -314,36 +313,37 @@ class FormSelectableField extends StatelessWidget {
                 isEnabled: enabled,
               ),
               child: Row(
-              children: [
-                if (prefixIcon != null) ...[
-                  Icon(
-                    prefixIcon,
-                    color: hasError
-                        ? FormTheme.errorColor
-                        : FormTheme.hintColor,
-                    size: 20,
-                  ),
-                  SizedBox(width: FormTheme.spacingM),
-                ],
-                Expanded(
-                  child: Text(
-                    hasValue ? value : (hint ?? 'Select'),
-                    style: TextStyle(
-                      color: hasValue
-                          ? FormTheme.secondaryColor
+                children: [
+                  if (prefixIcon != null) ...[
+                    Icon(
+                      prefixIcon,
+                      color: hasError
+                          ? FormTheme.errorColor
                           : FormTheme.hintColor,
-                      fontSize: 14,
-                      fontFamily: "AppFont",
-                      fontWeight: FontWeight.normal,
+                      size: 20,
+                    ),
+                    SizedBox(width: FormTheme.spacingM),
+                  ],
+                  Expanded(
+                    child: Text(
+                      hasValue ? value : (hint ?? 'Select'),
+                      style: TextStyle(
+                        color: hasValue
+                            ? FormTheme.secondaryColor
+                            : FormTheme.hintColor,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: FormTheme.hintColor,
-                  size: 24,
-                ),
-              ],
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: FormTheme.hintColor,
+                    size: 24,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -794,46 +794,47 @@ class FormFilePickerButton extends StatelessWidget {
                 hasError: hasError,
               ),
               child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(FormTheme.spacingS),
-                  decoration: BoxDecoration(
-                    color: FormTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(FormTheme.borderRadiusS),
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(FormTheme.spacingS),
+                    decoration: BoxDecoration(
+                      color: FormTheme.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(FormTheme.borderRadiusS),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: FormTheme.primaryColor,
+                      size: 20,
+                    ),
                   ),
-                  child: Icon(
-                    icon,
-                    color: FormTheme.primaryColor,
+                  SizedBox(width: FormTheme.spacingM),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          hasFile ? fileName : hint,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: hasFile
+                                ? FormTheme.secondaryColor
+                                : FormTheme.hintColor,
+                            fontSize: 14,
+                            fontFamily: "AppFont",
+                            fontWeight: hasFile ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: FormTheme.hintColor,
                     size: 20,
                   ),
-                ),
-                SizedBox(width: FormTheme.spacingM),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        hasFile ? fileName : hint,
-                        style: TextStyle(
-                          color: hasFile
-                              ? FormTheme.secondaryColor
-                              : FormTheme.hintColor,
-                          fontSize: 14,
-                          fontFamily: "AppFont",
-                          fontWeight: hasFile ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: FormTheme.hintColor,
-                  size: 20,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
