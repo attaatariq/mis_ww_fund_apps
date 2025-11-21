@@ -62,11 +62,16 @@ class _SelfEducationListState extends State<SelfEducationList> {
             isError ? Expanded(
               child: EmptyStates.noEducation(),
             ) : Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  selfEducationModelList.clear();
+                  await Future.delayed(Duration(milliseconds: 500));
+                  CheckTokenExpiry();
+                },
+                color: AppTheme.colors.newPrimary,
                 child: ListView.builder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.symmetric(vertical: 8),
                   itemBuilder: (_, int index) =>
                       SelfEducationListItem(selfEducationModelList[index]),
                   itemCount: this.selfEducationModelList.length,
