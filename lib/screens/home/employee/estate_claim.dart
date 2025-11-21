@@ -57,9 +57,7 @@ class _EstateClaimState extends State<EstateClaim> {
       backgroundColor: Color(0xFFF5F7FA),
       body: Column(
         children: [
-          StandardHeader(
-            title: "Estate Claim",
-          ),
+          _buildBannerHeader(),
 
           Expanded(
             child: isError
@@ -967,6 +965,124 @@ class _EstateClaimState extends State<EstateClaim> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBannerHeader() {
+    return Container(
+      child: Column(
+        children: [
+          // Yellow Banner
+          Container(
+            height: 8,
+            width: double.infinity,
+            color: Color(0xFFFFC107), // Yellow
+          ),
+          
+          // Main Header with Background Image
+          Container(
+            height: 180,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Color(0xFF363636), // Dark grey
+            ),
+            child: Stack(
+              children: [
+                // Background Banner Image
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.4,
+                    child: Image.asset(
+                      "archive/images/banners/flats.jpg",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(); // Hide if image not found
+                      },
+                    ),
+                  ),
+                ),
+                
+                // Overlay for better text readability
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.5),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Content
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Back Button
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: AppTheme.colors.newWhite.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: AppTheme.colors.newWhite,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        
+                        Spacer(),
+                        
+                        // Title
+                        Text(
+                          "Estate Claim",
+                          style: TextStyle(
+                            color: AppTheme.colors.newWhite,
+                            fontSize: 24,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        
+                        SizedBox(height: 8),
+                        
+                        // Subtitle
+                        if (hasEstateData && claim_scheme != "-" && claim_scheme.isNotEmpty)
+                          Text(
+                            scheme_name != "-" ? scheme_name : "Housing & Flats",
+                            style: TextStyle(
+                              color: AppTheme.colors.newWhite.withOpacity(0.9),
+                              fontSize: 12,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
