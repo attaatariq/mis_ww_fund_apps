@@ -86,40 +86,60 @@ class AppPermissionHandler {
         if (sdkVersion >= 33) {
           // Android 13+ - check photos permission
           var status = await Permission.photos.status;
-          if (status.isDenied || status.isPermanentlyDenied) {
-            status = await Permission.photos.request();
-            if (status != PermissionStatus.granted) {
-              if (status.isPermanentlyDenied && context != null) {
+          if (!status.isGranted) {
+            // Request permission if not granted
+            if (status.isDenied || status.isLimited || status.isRestricted) {
+              status = await Permission.photos.request();
+            }
+            
+            if (status.isPermanentlyDenied) {
+              if (context != null) {
                 _showPermissionDeniedDialog(context, "Photos");
               }
               return false;
             }
+            
+            if (!status.isGranted) {
+              return false;
+            }
           }
-          return status == PermissionStatus.granted;
+          return true;
         } else {
           // Android 12 and below - check storage permission
           var status = await Permission.storage.status;
-          if (status.isDenied || status.isPermanentlyDenied) {
-            status = await Permission.storage.request();
-            if (status != PermissionStatus.granted) {
-              if (status.isPermanentlyDenied && context != null) {
+          if (!status.isGranted) {
+            // Request permission if not granted
+            if (status.isDenied || status.isLimited || status.isRestricted) {
+              status = await Permission.storage.request();
+            }
+            
+            if (status.isPermanentlyDenied) {
+              if (context != null) {
                 _showPermissionDeniedDialog(context, "Storage");
               }
               return false;
             }
+            
+            if (!status.isGranted) {
+              return false;
+            }
           }
-          return status == PermissionStatus.granted;
+          return true;
         }
       } else if (Platform.isIOS) {
         // iOS - check photos permission
         var status = await Permission.photos.status;
-        if (status.isDenied || status.isPermanentlyDenied) {
-          status = await Permission.photos.request();
-          if (status != PermissionStatus.granted) {
+        if (!status.isGranted) {
+          // Request permission if not granted
+          if (status.isDenied || status.isLimited || status.isRestricted) {
+            status = await Permission.photos.request();
+          }
+          
+          if (!status.isGranted) {
             return false;
           }
         }
-        return status == PermissionStatus.granted;
+        return true;
       }
 
       return true;

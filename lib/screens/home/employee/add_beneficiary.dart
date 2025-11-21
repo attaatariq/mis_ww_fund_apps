@@ -68,19 +68,22 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            StandardHeader(
-              title: "Add Beneficiary",
-            ),
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          child: Column(
+            children: [
+              StandardHeader(
+                title: "Add Beneficiary",
+              ),
 
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(FormTheme.spacingXL),
-                decoration: BoxDecoration(
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(FormTheme.spacingXL),
+                  decoration: BoxDecoration(
                   color: FormTheme.backgroundColor,
                 ),
                 child: SingleChildScrollView(
@@ -738,7 +741,10 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
                           Validation();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 15, bottom: 60),
+                          margin: EdgeInsets.only(
+                            top: 15, 
+                            bottom: 20 + MediaQuery.of(context).padding.bottom
+                          ),
                           height: 45,
                           color: AppTheme.colors.newPrimary,
                           child: Center(
@@ -760,6 +766,7 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
             )
           ],
         ),
+      ),
       ),
     );
   }

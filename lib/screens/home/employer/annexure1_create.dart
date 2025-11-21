@@ -91,20 +91,24 @@ class _AnnexAState extends State<AnnexA> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppTheme.colors.appBlackColors,
-      body: Container(
-        child: Column(
-          children: [
-            StandardHeader(
-              title: "Add Annex-III",
-            ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          child: Column(
+            children: [
+              StandardHeader(
+                title: "Add Annex-III",
+              ),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: 30, right: 30),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: bottomPadding + 20),
+                    child: Column(
+                      children: [
                       ///year
                       InkWell(
                         onTap: () {
@@ -1968,7 +1972,7 @@ class _AnnexAState extends State<AnnexA> {
                           Validation();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 15, bottom: 60),
+                          margin: EdgeInsets.only(top: 15),
                           height: 45,
                           color: AppTheme.colors.newPrimary,
                           child: Center(
@@ -1990,6 +1994,7 @@ class _AnnexAState extends State<AnnexA> {
             )
           ],
         ),
+      ),
       ),
     );
   }

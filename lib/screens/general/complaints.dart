@@ -270,7 +270,7 @@ class _ComplaintsState extends State<Complaints> {
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
             setState(() {
               isLoading = false;
@@ -284,7 +284,7 @@ class _ComplaintsState extends State<Complaints> {
             isError = true;
             errorMessage = Strings.instance.somethingWentWrong;
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -298,7 +298,7 @@ class _ComplaintsState extends State<Complaints> {
               Strings.instance.expireSessionMessage,
             );
           } else if (message.isNotEmpty && message != "null") {
-            uiUpdates.ShowToast(message);
+            uiUpdates.ShowError(message);
           }
           
           setState(() {

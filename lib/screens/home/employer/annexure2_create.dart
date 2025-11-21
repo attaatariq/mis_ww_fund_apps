@@ -71,21 +71,25 @@ class _Annex3AState extends State<Annex3A> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            StandardHeader(
-              title: "Add Annex-III-A",
-            ),
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          child: Column(
+            children: [
+              StandardHeader(
+                title: "Add Annex-III-A",
+              ),
 
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: 30, right: 30),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: bottomPadding + 20),
+                    child: Column(
+                      children: [
                       InkWell(
                         onTap: (){
                           OpenYearDialog(context).then((value) {
@@ -1342,7 +1346,7 @@ class _Annex3AState extends State<Annex3A> {
                           Validation();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 15, bottom: 60),
+                          margin: EdgeInsets.only(top: 15),
                           height: 45,
                           color: AppTheme.colors.newPrimary,
                           child: Center(
@@ -1364,6 +1368,7 @@ class _Annex3AState extends State<Annex3A> {
             )
           ],
         ),
+      ),
       ),
     );
   }

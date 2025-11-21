@@ -614,12 +614,12 @@ class _AddDeoState extends State<AddDeo> {
     } else {
       var body = jsonDecode(resp.body);
       String message = body["Message"].toString();
-      uiUpdates.ShowToast(message);
+      uiUpdates.ShowError(message);
     }
     try {
 
     }catch(e){
-      uiUpdates.ShowToast(e);
+      uiUpdates.ShowError(e.toString());
     }finally{
       uiUpdates.DismissProgresssDialog();
     }

@@ -94,21 +94,25 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
   
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            StandardHeader(
-              title: "Fee Claim",
-            ),
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          child: Column(
+            children: [
+              StandardHeader(
+                title: "Fee Claim",
+              ),
 
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30, bottom: 60),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: 30, right: 30, top: 15),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: bottomPadding + 20),
+                    child: Column(
+                      children: [
                       InkWell(
                         onTap: (){
                           ClaimTypeModeDialog(context).then((value) => {
@@ -1859,6 +1863,7 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
             )
           ],
         ),
+      ),
       ),
     );
   }

@@ -370,7 +370,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
             setState(() {
               isLoadingNotices = false;
@@ -384,7 +384,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
             isErrorNotices = true;
             errorMessageNotices = Strings.instance.somethingWentWrong;
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -421,7 +421,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
         errorMessageNotices = Strings.instance.somethingWentWrong;
       });
       uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 
@@ -489,7 +489,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
             setState(() {
               isLoadingNews = false;
@@ -503,7 +503,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
             isErrorNews = true;
             errorMessageNews = Strings.instance.somethingWentWrong;
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -539,7 +539,7 @@ class _NoticesNewsScreenState extends State<NoticesNewsScreen> with SingleTicker
         isErrorNews = true;
         errorMessageNews = Strings.instance.somethingWentWrong;
       });
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

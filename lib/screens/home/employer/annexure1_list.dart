@@ -263,7 +263,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
           } else {
             String message = body["Message"]?.toString() ?? "";
             if (message.isNotEmpty && message != "null") {
-              uiUpdates.ShowToast(message);
+              uiUpdates.ShowError(message);
             }
             setState(() {
               isLoading = false;
@@ -277,7 +277,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
             isError = true;
             errorMessage = Strings.instance.somethingWentWrong;
           });
-          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+          uiUpdates.ShowError(Strings.instance.somethingWentWrong);
         }
       } else {
         try {
@@ -315,7 +315,7 @@ class _InterstDistributionListState extends State<InterstDistributionList> {
           errorMessage = Strings.instance.somethingWentWrong;
         });
       }
-      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+      uiUpdates.ShowError(Strings.instance.somethingWentWrong);
     }
   }
 }

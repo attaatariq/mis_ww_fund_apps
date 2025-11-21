@@ -92,19 +92,23 @@ class _AddChildEducationState extends State<AddChildEducation> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppTheme.colors.newWhite,
-      body: Container(
-        child: Column(
-          children: [
-            StandardHeader(
-              title: "Add Child Education",
-            ),
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+          child: Column(
+            children: [
+              StandardHeader(
+                title: "Add Child Education",
+              ),
 
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 15),
-                child: SingleChildScrollView(
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: 30, right: 30, top: 15),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: bottomPadding + 20),
                     child: Column(
                       children: [
                         InkWell(
@@ -1081,7 +1085,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
                             Validation();
                           },
                           child: Container(
-                            margin: EdgeInsets.only(top: 15, bottom: 60),
+                            margin: EdgeInsets.only(top: 15),
                             height: 45,
                             color: AppTheme.colors.newPrimary,
                             child: Center(
@@ -1103,6 +1107,7 @@ class _AddChildEducationState extends State<AddChildEducation> {
             )
           ],
         ),
+      ),
       ),
     );
   }

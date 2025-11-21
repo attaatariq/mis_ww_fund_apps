@@ -58,19 +58,27 @@ class _PayInstallmentState extends State<PayInstallment> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: Color(0xFFF5F7FA),
-      body: Column(
-        children: [
-          StandardHeader(
-            title: "Pay Installment",
-          ),
-          
-          // Form Section
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(20),
-              child: Column(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            StandardHeader(
+              title: "Pay Installment",
+            ),
+            
+            // Form Section
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: bottomPadding + 20
+                ),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Amount Field
@@ -393,6 +401,7 @@ class _PayInstallmentState extends State<PayInstallment> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
