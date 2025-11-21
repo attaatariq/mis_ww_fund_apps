@@ -951,26 +951,41 @@ class _EmployerFirstTabState extends State<EmployerFirstTab> {
   }
 
   void OpenFilePicker() async{
-    var status = await Permission.storage.status;
-    if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.storage,
-      ].request();
-    }
-    FilePickerResult result = await FilePicker.platform.pickFiles(
-        allowMultiple: false,
-        type: FileType.custom,
-        allowedExtensions: ["pdf", "png", "jpeg", "jpg"]
-    );
+    try {
+      var status = await Permission.storage.status;
+      if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.storage,
+        ].request();
+        // Check if permission was granted
+        if (statuses[Permission.storage] != PermissionStatus.granted) {
+          uiUpdates.ShowToast("Storage permission is required to select files");
+          return;
+        }
+      }
+      
+      FilePickerResult result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ["pdf", "png", "jpeg", "jpg"]
+      );
 
-    if(result != null) {
-      PlatformFile file = result.files.first;
-      setState(() {
-        logoFileName= file.name;
-        logoFilePath= file.path;
-      });
-    } else {
-      uiUpdates.ShowToast("Failed To Get File, Try Again");
+      if(result != null && result.files.isNotEmpty) {
+        PlatformFile file = result.files.first;
+        if (file.path != null && file.path.isNotEmpty) {
+          setState(() {
+            logoFileName= file.name;
+            logoFilePath= file.path;
+          });
+          uiUpdates.ShowToast("File selected: ${file.name}");
+        } else {
+          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+        }
+      } else {
+        // User cancelled file picker - no need to show error
+      }
+    } catch (e) {
+      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
     }
   }
 
