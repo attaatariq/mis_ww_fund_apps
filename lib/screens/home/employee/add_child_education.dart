@@ -21,6 +21,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
+import 'package:wwf_apps/utils/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
 class AddChildEducation extends StatefulWidget {
@@ -1189,16 +1190,11 @@ class _AddChildEducationState extends State<AddChildEducation> {
 
   void OpenFilePicker(int position) async{
     try {
-      var status = await Permission.storage.status;
-      if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
-        Map<Permission, PermissionStatus> statuses = await [
-          Permission.storage,
-        ].request();
-        // Check if permission was granted
-        if (statuses[Permission.storage] != PermissionStatus.granted) {
-          uiUpdates.ShowToast("Storage permission is required to select files");
-          return;
-        }
+      // Check and request storage permission using centralized handler
+      bool hasPermission = await ensureStoragePermission(context);
+      if (!hasPermission) {
+        uiUpdates.ShowError("Storage permission is required to select files. Please grant permission in app settings.");
+        return;
       }
       
       FilePickerResult result = await FilePicker.platform.pickFiles(
@@ -1225,15 +1221,15 @@ class _AddChildEducationState extends State<AddChildEducation> {
               resultCardFilePath = file.path;
             }
           });
-          uiUpdates.ShowToast("File selected: ${file.name}");
+          uiUpdates.ShowSuccess("File selected: ${file.name}");
         } else {
-          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+          uiUpdates.ShowError("Failed to get file path. Please try again.");
         }
       } else {
         // User cancelled file picker - no need to show error
       }
     } catch (e) {
-      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
+      uiUpdates.ShowError("Error selecting file: ${e.toString()}");
     }
   }
 

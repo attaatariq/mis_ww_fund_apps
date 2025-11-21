@@ -14,6 +14,7 @@ import 'package:wwf_apps/screens/general/splash_screen.dart';
 import 'package:wwf_apps/screens/home/employee/employee_home.dart';
 import 'package:wwf_apps/screens/home/employer/employer_home.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/utils/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
@@ -114,6 +115,16 @@ class LoginController extends GetxController{
 
             // Reset feedback dialog flag on login (so it shows once per login)
             UserSessions.instance.setFeedbackDialogShown(false);
+            
+            // Request necessary permissions after successful login
+            if (context != null) {
+              AppPermissionHandler.requestAllPermissions(context).then((granted) {
+                if (!granted) {
+                  // Permissions not granted, but continue anyway
+                  // User can grant them later when needed
+                }
+              });
+            }
             
             // Show welcome toast message
             Future.delayed(const Duration(milliseconds: 500), () {

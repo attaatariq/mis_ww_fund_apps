@@ -35,7 +35,7 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
     super.initState();
     constants= new Constants();
     uiUpdates= new UIUpdates(context);
-    CheckTokenExpiry();
+    GetTurnOverHistory();
   }
 
   @override
@@ -267,8 +267,6 @@ class _TurnOverHistoryState extends State<TurnOverHistory> {
       
       ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
           response.statusCode, response);
-      
-      if (responseCodeModel.status == true) {
       
       if (responseCodeModel.status == true) {
         try {

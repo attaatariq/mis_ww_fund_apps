@@ -14,6 +14,7 @@ import 'package:wwf_apps/screens/sectors/workers/WorkerForm.dart';
 import 'package:wwf_apps/screens/home/employee/employee_home.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:wwf_apps/utils/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/sessions/UserSessions.dart';
 
@@ -499,16 +500,11 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
 
   void OpenFilePicker(int from) async{
     try {
-      var status = await Permission.storage.status;
-      if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
-        Map<Permission, PermissionStatus> statuses = await [
-          Permission.storage,
-        ].request();
-        // Check if permission was granted
-        if (statuses[Permission.storage] != PermissionStatus.granted) {
-          uiUpdates.ShowToast("Storage permission is required to select files");
-          return;
-        }
+      // Check and request storage permission using centralized handler
+      bool hasPermission = await ensureStoragePermission(context);
+      if (!hasPermission) {
+        uiUpdates.ShowError("Storage permission is required to select files. Please grant permission in app settings.");
+        return;
       }
       
       FilePickerResult result = await FilePicker.platform.pickFiles(
@@ -521,15 +517,15 @@ class _EmployeeThirdTabState extends State<EmployeeThirdTab> {
         PlatformFile file = result.files.first;
         if (file.path != null && file.path.isNotEmpty) {
           SetRelatedFileData(file, from);
-          uiUpdates.ShowToast("File selected: ${file.name}");
+          uiUpdates.ShowSuccess("File selected: ${file.name}");
         } else {
-          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+          uiUpdates.ShowError("Failed to get file path. Please try again.");
         }
       } else {
         // User cancelled file picker - no need to show error
       }
     } catch (e) {
-      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
+      uiUpdates.ShowError("Error selecting file: ${e.toString()}");
     }
   }
 

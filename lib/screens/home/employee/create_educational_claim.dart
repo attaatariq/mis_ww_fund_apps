@@ -13,6 +13,7 @@ import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
+import 'package:wwf_apps/utils/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/network/api_service.dart';
 
@@ -1972,15 +1973,15 @@ class _CreateFeeClaimState extends State<CreateFeeClaim> {
               feeVoucherPath = file.path;
             }
           });
-          uiUpdates.ShowToast("File selected: ${file.name}");
+          uiUpdates.ShowSuccess("File selected: ${file.name}");
         } else {
-          uiUpdates.ShowToast("Failed to get file path. Please try again.");
+          uiUpdates.ShowError("Failed to get file path. Please try again.");
         }
       } else {
         // User cancelled file picker - no need to show error
       }
     } catch (e) {
-      uiUpdates.ShowToast("Error selecting file: ${e.toString()}");
+      uiUpdates.ShowError("Error selecting file: ${e.toString()}");
     }
   }
 

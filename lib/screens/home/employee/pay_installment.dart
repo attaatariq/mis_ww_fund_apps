@@ -15,6 +15,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
+import 'package:wwf_apps/utils/permission_handler.dart';
 
 class PayInstallment extends StatefulWidget {
   InstallmentModel installmentModel;
@@ -359,13 +360,19 @@ class _PayInstallmentState extends State<PayInstallment> {
                         onPressed: () {
                           Validation();
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          backgroundColor: AppTheme.colors.colorAccent, // #363636
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
-                          elevation: 0,
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            AppTheme.colors.colorAccent, // #363636
+                          ),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          elevation: MaterialStateProperty.all<double>(0),
                         ),
                         child: Text(
                           "Pay Now",
@@ -446,16 +453,11 @@ class _PayInstallmentState extends State<PayInstallment> {
 
   void OpenFilePicker() async{
     try {
-      var status = await Permission.storage.status;
-      if (status.isDenied || status.isPermanentlyDenied || status.isLimited || status.isRestricted) {
-        Map<Permission, PermissionStatus> statuses = await [
-          Permission.storage,
-        ].request();
-        // Check if permission was granted
-        if (statuses[Permission.storage] != PermissionStatus.granted) {
-          uiUpdates.ShowError("Storage permission is required to select files");
-          return;
-        }
+      // Check and request storage permission using centralized handler
+      bool hasPermission = await ensureStoragePermission(context);
+      if (!hasPermission) {
+        uiUpdates.ShowError("Storage permission is required to select files. Please grant permission in app settings.");
+        return;
       }
       
       FilePickerResult result = await FilePicker.platform.pickFiles(

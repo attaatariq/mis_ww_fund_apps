@@ -1,6 +1,6 @@
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
-import 'package:wwf_apps/updates/UIUpdates.dart';
+import 'package:flutter/material.dart';
+import 'package:device_info/device_info.dart';
 import 'dart:io';
 
 /// Centralized Permission Handler
@@ -10,6 +10,25 @@ class AppPermissionHandler {
   factory AppPermissionHandler() => _instance;
   AppPermissionHandler._internal();
 
+  static int _androidSdkVersion = -1;
+
+  /// Get Android SDK version
+  static Future<int> _getAndroidSdkVersion() async {
+    if (_androidSdkVersion != -1) return _androidSdkVersion;
+    
+    try {
+      if (Platform.isAndroid) {
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        _androidSdkVersion = androidInfo.version.sdkInt;
+        return _androidSdkVersion;
+      }
+    } catch (e) {
+      print("Error getting Android version: $e");
+    }
+    return 0;
+  }
+
   /// Request all necessary permissions for the app
   /// Should be called on login or app start
   static Future<bool> requestAllPermissions(BuildContext context) async {
@@ -18,10 +37,8 @@ class AppPermissionHandler {
 
       // Storage permissions - handle Android 13+ (API 33+) differently
       if (Platform.isAndroid) {
-        // For Android 13+ (API 33+), use photos/videos permissions
-        // For older versions, use storage permission
-        final androidInfo = await _getAndroidVersion();
-        if (androidInfo >= 33) {
+        final sdkVersion = await _getAndroidSdkVersion();
+        if (sdkVersion >= 33) {
           // Android 13+ - use granular media permissions
           permissionsToRequest.addAll([
             Permission.photos,
@@ -64,15 +81,15 @@ class AppPermissionHandler {
   static Future<bool> checkAndRequestStoragePermission(BuildContext context) async {
     try {
       if (Platform.isAndroid) {
-        final androidVersion = await _getAndroidVersion();
+        final sdkVersion = await _getAndroidSdkVersion();
         
-        if (androidVersion >= 33) {
+        if (sdkVersion >= 33) {
           // Android 13+ - check photos permission
           var status = await Permission.photos.status;
           if (status.isDenied || status.isPermanentlyDenied) {
             status = await Permission.photos.request();
             if (status != PermissionStatus.granted) {
-              if (status.isPermanentlyDenied) {
+              if (status.isPermanentlyDenied && context != null) {
                 _showPermissionDeniedDialog(context, "Photos");
               }
               return false;
@@ -85,7 +102,7 @@ class AppPermissionHandler {
           if (status.isDenied || status.isPermanentlyDenied) {
             status = await Permission.storage.request();
             if (status != PermissionStatus.granted) {
-              if (status.isPermanentlyDenied) {
+              if (status.isPermanentlyDenied && context != null) {
                 _showPermissionDeniedDialog(context, "Storage");
               }
               return false;
@@ -116,8 +133,8 @@ class AppPermissionHandler {
   static Future<bool> hasStoragePermission() async {
     try {
       if (Platform.isAndroid) {
-        final androidVersion = await _getAndroidVersion();
-        if (androidVersion >= 33) {
+        final sdkVersion = await _getAndroidSdkVersion();
+        if (sdkVersion >= 33) {
           return await Permission.photos.isGranted;
         } else {
           return await Permission.storage.isGranted;
@@ -169,19 +186,6 @@ class AppPermissionHandler {
     }
   }
 
-  /// Get Android version
-  static Future<int> _getAndroidVersion() async {
-    try {
-      if (Platform.isAndroid) {
-        // Use device_info_plus if available, otherwise default to checking storage permission
-        // For now, we'll check both photos and storage permissions
-        return 33; // Assume Android 13+ for safety, will check both permissions
-      }
-      return 0;
-    } catch (e) {
-      return 0;
-    }
-  }
 
   /// Show dialog when permission is permanently denied
   static void _showPermissionDeniedDialog(BuildContext context, String permissionName) {
@@ -212,15 +216,16 @@ class AppPermissionHandler {
     );
   }
 
-  /// Open app settings
-  static Future<void> openAppSettings() async {
-    await openAppSettings();
-  }
 }
 
 /// Helper function to check and request storage permission for file picking
 /// Use this in all file picker methods
 Future<bool> ensureStoragePermission(BuildContext context) async {
   return await AppPermissionHandler.checkAndRequestStoragePermission(context);
+}
+
+/// Helper function to check storage permission without requesting
+Future<bool> hasStoragePermission() async {
+  return await AppPermissionHandler.hasStoragePermission();
 }
 
