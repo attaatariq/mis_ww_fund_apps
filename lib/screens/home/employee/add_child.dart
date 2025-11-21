@@ -516,12 +516,13 @@ class _AddChildState extends State<AddChild> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ),
               ),
             )
           ],
         ),
+      ),
       ),
     );
   }
