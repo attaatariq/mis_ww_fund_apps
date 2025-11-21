@@ -132,7 +132,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       "How would you rate your experience with the app?",
                       style: TextStyle(
                         color: AppTheme.colors.newBlack,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontFamily: "AppFont",
                         fontWeight: FontWeight.bold,
                       ),
@@ -229,7 +229,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                         ),
                         decoration: InputDecoration(
                           hintMaxLines: 4,
-                          hintText: "Have feedback? Your feedback help us to improve. We'd love to hear it, but please don't share sensitive information. Have question? Try complain section or support.",
+                          hintText: "Have feedback? Your feedback help us to improve. We'd love to hear it, but please don't share sensitive information.",
                           hintStyle: TextStyle(
                             fontFamily: "AppFont",
                             color: AppTheme.colors.colorDarkGray,
