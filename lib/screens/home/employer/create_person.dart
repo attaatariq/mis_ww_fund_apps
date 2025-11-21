@@ -503,7 +503,7 @@ class _AddContactPersonState extends State<AddContactPerson> {
       if(code == "1")
       {
         uiUpdates.ShowToast(message);
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }else{
         uiUpdates.ShowToast(message);
       }

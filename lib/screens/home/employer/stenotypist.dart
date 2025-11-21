@@ -638,7 +638,7 @@ class _AddDeoState extends State<AddDeo> {
       String code = body["Code"].toString();
       if (code == "1") {
         uiUpdates.ShowToast(Strings.instance.deoAddMessage);
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } else {
         uiUpdates.ShowToast(Strings.instance.deoAddFailed);
       }

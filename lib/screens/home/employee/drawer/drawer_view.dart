@@ -26,7 +26,9 @@ import 'package:wwf_apps/screens/home/employee/marriage_calim_list.dart';
 import 'package:wwf_apps/screens/home/employee/marriage_claim.dart';
 import 'package:wwf_apps/screens/home/employee/education_claim_list.dart';
 import 'package:wwf_apps/screens/home/employee/self_education_list.dart';
+import 'package:wwf_apps/screens/home/employee/verification_scrutiny_screen.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/utils/verification_helper.dart';
 
 class EmployeeDrawerView extends StatefulWidget {
   @override
@@ -35,12 +37,24 @@ class EmployeeDrawerView extends StatefulWidget {
 
 class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
   Constants constants;
+  bool isScrutinized = true; // Default to true, will be checked
+  bool isCheckingVerification = true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    constants= new Constants();
+    constants = new Constants();
+    _checkVerificationStatus();
+  }
+
+  void _checkVerificationStatus() async {
+    bool scrutinized = await VerificationHelper.checkIfScrutinized();
+    if (mounted) {
+      setState(() {
+        isScrutinized = scrutinized;
+        isCheckingVerification = false;
+      });
+    }
   }
 
   @override
@@ -156,10 +170,14 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
           Expanded(
             child: Container(
               margin: EdgeInsets.only(bottom: 50),
-              child: ListView(
-                padding: EdgeInsets.all(0),
-                children: [
-                  _buildSectionHeader("Claims"),
+              child: isCheckingVerification
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView(
+                      padding: EdgeInsets.all(0),
+                      children: [
+                        // Only show other menu items if scrutinized
+                        if (isScrutinized) ...[
+                          _buildSectionHeader("Claims"),
 
                   _buildMenuItem(
                     icon: Icons.school,
@@ -346,43 +364,137 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
                     },
                   ),
 
-                  _buildSectionHeader("Preferences"),
+                          _buildSectionHeader("Preferences"),
 
-                  _buildMenuItem(
-                    icon: Icons.report_problem_outlined,
-                    iconAsset: "archive/images/complaint.png",
-                    title: "Complaints",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Complaints()
-                      ));
-                    },
-                  ),
+                          _buildMenuItem(
+                            icon: Icons.report_problem_outlined,
+                            iconAsset: "archive/images/complaint.png",
+                            title: "Complaints",
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => Complaints()
+                              ));
+                            },
+                          ),
 
-                  _buildMenuItem(
-                    icon: Icons.feedback_outlined,
-                    iconAsset: "archive/images/feedback.png",
-                    title: "Send Feedback",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      showFeedbackDialog(context);
-                    },
-                  ),
+                          _buildMenuItem(
+                            icon: Icons.feedback_outlined,
+                            iconAsset: "archive/images/feedback.png",
+                            title: "Send Feedback",
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              showFeedbackDialog(context);
+                            },
+                          ),
 
-                  _buildMenuItem(
-                    icon: Icons.help_outline,
-                    iconAsset: "archive/images/faqs.png",
-                    title: "FAQs",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FAQs()
-                      ));
-                    },
-                  ),
-                ],
-              ),
+                          _buildMenuItem(
+                            icon: Icons.help_outline,
+                            iconAsset: "archive/images/faqs.png",
+                            title: "FAQs",
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => FAQs()
+                              ));
+                            },
+                          ),
+                        ] else ...[
+                          // Show verification message if not scrutinized
+                          Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Container(
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFF9800).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Color(0xFFFF9800).withOpacity(0.3),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.verified_user,
+                                    size: 48,
+                                    color: Color(0xFFFF9800),
+                                  ),
+                                  SizedBox(height: 12),
+                                  Text(
+                                    "Account Verification Required",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: AppTheme.colors.newBlack,
+                                      fontSize: 16,
+                                      fontFamily: "AppFont",
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Your account is under verification. Please complete the verification process to access all features.",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: AppTheme.colors.colorDarkGray,
+                                      fontSize: 12,
+                                      fontFamily: "AppFont",
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VerificationScrutinyScreen(),
+                                        ),
+                                      );
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(Color(0xFFFF9800)),
+                                      foregroundColor: MaterialStateProperty.all(AppTheme.colors.newWhite),
+                                      padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      )),
+                                    ),
+                                    child: Text("View Verification Status"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+
+                        _buildSectionHeader("Settings"),
+
+                        _buildMenuItem(
+                          icon: Icons.person_outline,
+                          iconAsset: "archive/images/profile.png",
+                          title: "My Profile",
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => MyProfile()
+                            ));
+                          },
+                        ),
+
+                        _buildMenuItem(
+                          icon: Icons.lock_outline,
+                          iconAsset: "archive/images/key.png",
+                          title: "Change Password",
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => ChangePassword()
+                            ));
+                          },
+                        ),
+                      ],
+                    ),
             ),
           )
         ],

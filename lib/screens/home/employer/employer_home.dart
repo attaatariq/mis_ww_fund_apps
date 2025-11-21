@@ -16,6 +16,8 @@ import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/models/ClaimStageModel.dart';
 import 'package:wwf_apps/dialogs/feedback_dialog.dart';
+import 'package:wwf_apps/utils/password_validator.dart';
+import 'package:wwf_apps/widgets/password_warning_banner.dart';
 import 'package:http/http.dart' as http;
 
 import 'drawer/drawer_view.dart';
@@ -30,6 +32,8 @@ class _EmployerHomeState extends State<EmployerHome> {
   Constants constants;
   UIUpdates uiUpdates;
   bool _feedbackDialogShownThisSession = false;
+  bool _isPasswordWeak = false;
+  bool _passwordCheckDone = false;
   String companyName="Unknown", companyAddress="Unknown", companyLogo="null";
   String totalEmployee="0", totalDisable="0", totalAvailingBenefits="0", totalClaim="0", totalReimbursed="0", totalInprogress="0", totalAmountReimbursed="0",
       annexureAAmount="0", annexure3AAmount="0", totalAnnexesAmount="0", estateClaimCount="0", estateClaimAmount="0", hajjClaims="0", hajjClaimAmount="0",
@@ -46,8 +50,67 @@ class _EmployerHomeState extends State<EmployerHome> {
     constants.CheckForNewUpdate(context);
     GetDashBoardData();
     GetTokenAndSave();
+    _checkPasswordStrength();
     // Show feedback dialog once after login
     _checkAndShowFeedbackDialog();
+  }
+
+  void _checkPasswordStrength() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account is Map) {
+            bool isWeak = PasswordValidator.isPasswordWeakFromAccount(account);
+            if (mounted) {
+              setState(() {
+                _isPasswordWeak = isWeak;
+                _passwordCheckDone = true;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                _passwordCheckDone = true;
+              });
+            }
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _passwordCheckDone = true;
+            });
+          }
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _passwordCheckDone = true;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _passwordCheckDone = true;
+        });
+      }
+    }
   }
 
   void _checkAndShowFeedbackDialog() {
@@ -255,6 +318,16 @@ class _EmployerHomeState extends State<EmployerHome> {
                 ),
               ),
             ),
+
+            // Password Warning Banner
+            if (_passwordCheckDone && _isPasswordWeak)
+              PasswordWarningBanner(
+                onDismiss: () {
+                  setState(() {
+                    _isPasswordWeak = false;
+                  });
+                },
+              ),
 
             Expanded(
               child: SingleChildScrollView(

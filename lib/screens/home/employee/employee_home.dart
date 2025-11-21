@@ -11,11 +11,15 @@ import 'package:wwf_apps/screens/home/employee/InformationSelection.dart';
 import 'package:wwf_apps/screens/home/employee/death_claim.dart';
 import 'package:wwf_apps/screens/home/employee/drawer/drawer_view.dart';
 import 'package:wwf_apps/screens/home/employee/marriage_claim.dart';
+import 'package:wwf_apps/screens/home/employee/verification_scrutiny_screen.dart';
 import 'package:wwf_apps/dialogs/feedback_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
+import 'package:wwf_apps/utils/proof_stages_helper.dart';
+import 'package:wwf_apps/utils/password_validator.dart';
+import 'package:wwf_apps/widgets/password_warning_banner.dart';
 
 class EmployeeHome extends StatefulWidget {
   @override
@@ -26,6 +30,8 @@ class _EmployeeHomeState extends State<EmployeeHome> {
   Constants constants;
   UIUpdates uiUpdates;
   bool _feedbackDialogShownThisSession = false;
+  bool _isPasswordWeak = false;
+  bool _passwordCheckDone = false;
   String totalClaim= "0", reimbursed_claims= "0", inprogress_claims= "0", benefits_amount= "0",
       notice_1= "Not Available", notice_2= "Not Available", estate_claim_delivered= "0", hajj_claim_delivered= "0",
       total_death_amount= "0", death_amount_delivered = "0", death_amount_inprogress= "0", total_marriage_amount= "0",
@@ -240,6 +246,16 @@ class _EmployeeHomeState extends State<EmployeeHome> {
                 ),
               ),
             ),
+
+            // Password Warning Banner
+            if (_passwordCheckDone && _isPasswordWeak)
+              PasswordWarningBanner(
+                onDismiss: () {
+                  setState(() {
+                    _isPasswordWeak = false;
+                  });
+                },
+              ),
 
             Expanded(
               child: SingleChildScrollView(
@@ -1008,13 +1024,221 @@ class _EmployeeHomeState extends State<EmployeeHome> {
         ///check new updated version
         constants.CheckForNewUpdate(context);
         GetTokenAndSave();
+        
+        // Check verification status first (only for employees, not employers)
+        _checkVerificationStatus();
+      }
+    });
+  }
+
+  void _checkVerificationStatus() async {
+    // Only check for employees (user_sector == "8" && user_role == "9" for workers)
+    // or WWF employees (user_sector == "7" && user_role == "6")
+    String userSector = UserSessions.instance.getUserSector;
+    String userRole = UserSessions.instance.getUserRole;
+    
+    // Skip verification check for employers
+    if (userSector == "8" && (userRole == "7" || userRole == "8")) {
+      // This is an employer, skip verification check
+      if(constants.CheckDataNullSafety(UserSessions.instance.getRefID)) {
+        GetDashBoardData();
+      }
+      _checkAndShowFeedbackDialog();
+      return;
+    }
+
+    // Load proof_stages first
+    await _loadProofStagesIfNeeded();
+
+    try {
+      String userId = UserSessions.instance.getUserID;
+      String empId = UserSessions.instance.getEmployeeID;
+
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        empId = await _fetchEmployeeID();
+      }
+
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        // If no emp_id, allow access (might be WWF employee)
         if(constants.CheckDataNullSafety(UserSessions.instance.getRefID)) {
           GetDashBoardData();
         }
-        // Show feedback dialog once after login
         _checkAndShowFeedbackDialog();
+        return;
       }
-    });
+
+      // API endpoint: /companies/is_verified/{user_id}/{emp_id}
+      var url = constants.getApiBaseURL() +
+                constants.companies +
+                "is_verified/" +
+                userId + "/" +
+                empId;
+
+      var response = await http.get(
+        Uri.parse(url),
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        dynamic codeValue = body["Code"];
+        String code = codeValue != null ? codeValue.toString() : "0";
+
+        if (code == "1" || codeValue == 1) {
+          var messageData = body["Message"];
+          if (messageData != null && messageData is Map) {
+            String empCheck = messageData["emp_check"]?.toString() ?? "";
+            
+            // If not scrutinized, redirect to verification screen
+            if (empCheck != "Scrutinized" && empCheck.isNotEmpty) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VerificationScrutinyScreen(),
+                ),
+              );
+              return;
+            }
+          }
+        }
+      }
+
+      // If scrutinized or verification check failed, proceed normally
+      if(constants.CheckDataNullSafety(UserSessions.instance.getRefID)) {
+        GetDashBoardData();
+      }
+      _checkPasswordStrength();
+      _checkAndShowFeedbackDialog();
+    } catch (e) {
+      // On error, allow access (fail open)
+      if(constants.CheckDataNullSafety(UserSessions.instance.getRefID)) {
+        GetDashBoardData();
+      }
+      _checkPasswordStrength();
+      _checkAndShowFeedbackDialog();
+    }
+  }
+
+  void _checkPasswordStrength() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account is Map) {
+            bool isWeak = PasswordValidator.isPasswordWeakFromAccount(account);
+            if (mounted) {
+              setState(() {
+                _isPasswordWeak = isWeak;
+                _passwordCheckDone = true;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                _passwordCheckDone = true;
+              });
+            }
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _passwordCheckDone = true;
+            });
+          }
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _passwordCheckDone = true;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _passwordCheckDone = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadProofStagesIfNeeded() async {
+    if (!ProofStagesData.instance.hasStages()) {
+      try {
+        List<String> tagsList = [constants.accountInfo];
+        Map data = {
+          "user_id": UserSessions.instance.getUserID,
+          "api_tags": jsonEncode(tagsList).toString(),
+        };
+        var url = constants.getApiBaseURL() + constants.authentication + "information";
+        var response = await http.post(
+          Uri.parse(url),
+          body: data,
+          headers: APIService.getDefaultHeaders(),
+        ).timeout(Duration(seconds: 15));
+
+        if (response.statusCode == 200) {
+          var body = jsonDecode(response.body);
+          String code = body["Code"]?.toString() ?? "0";
+          if (code == "1" || body["Code"] == 1) {
+            var dataObj = body["Data"];
+            ProofStagesData.loadFromInformationResponse(dataObj);
+          }
+        }
+      } catch (e) {
+        // Silently fail
+      }
+    }
+  }
+
+  Future<String> _fetchEmployeeID() async {
+    try {
+      List<String> tagsList = [constants.accountInfo];
+      Map data = {
+        "user_id": UserSessions.instance.getUserID,
+        "api_tags": jsonEncode(tagsList).toString(),
+      };
+      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var response = await http.post(
+        Uri.parse(url),
+        body: data,
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        String code = body["Code"]?.toString() ?? "0";
+        if (code == "1" || body["Code"] == 1) {
+          var dataObj = body["Data"];
+          var account = dataObj["account"];
+          if (account != null && account["emp_id"] != null) {
+            String empId = account["emp_id"].toString();
+            if (empId.isNotEmpty && empId != "null") {
+              UserSessions.instance.setEmployeeID(empId);
+              return empId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    return "";
   }
 
   void _checkAndShowFeedbackDialog() {
