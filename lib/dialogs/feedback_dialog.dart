@@ -129,7 +129,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   children: [
                     // Question
                     Text(
-                      "How was your experience with MIS?",
+                      "How would you rate your experience with the app?",
                       style: TextStyle(
                         color: AppTheme.colors.newBlack,
                         fontSize: 16,
@@ -140,7 +140,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
                     SizedBox(height: 16),
 
-                    // Rating Buttons
+                    // Rating Buttons - Attached with 0 border radius
                     Row(
                       children: [
                         Expanded(
@@ -149,33 +149,38 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                             "Excellent",
                             AppTheme.colors.colorExelent,
                             "archive/images/smile_ex.png",
+                            isFirst: true,
+                            isLast: false,
                           ),
                         ),
-                        SizedBox(width: 8),
                         Expanded(
                           child: _buildRatingButton(
                             2,
                             "Good",
                             AppTheme.colors.colorGood,
                             "archive/images/smile.png",
+                            isFirst: false,
+                            isLast: false,
                           ),
                         ),
-                        SizedBox(width: 8),
                         Expanded(
                           child: _buildRatingButton(
                             3,
                             "Bad",
                             AppTheme.colors.colorBad,
                             "archive/images/sad.png",
+                            isFirst: false,
+                            isLast: false,
                           ),
                         ),
-                        SizedBox(width: 8),
                         Expanded(
                           child: _buildRatingButton(
                             4,
                             "Poor",
                             AppTheme.colors.colorPoor,
                             "archive/images/poor.png",
+                            isFirst: false,
+                            isLast: true,
                           ),
                         ),
                       ],
@@ -185,7 +190,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
                     // Description Question
                     Text(
-                      "How you will describe it?",
+                      "How would you describe your experience briefly?",
                       style: TextStyle(
                         color: AppTheme.colors.newBlack,
                         fontSize: 16,
@@ -223,8 +228,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                           fontFamily: "AppFont",
                         ),
                         decoration: InputDecoration(
-                          hintMaxLines: 3,
-                          hintText: "Have feedback? Your feedback help us to improve. We'd love to hear it.",
+                          hintMaxLines: 4,
+                          hintText: "Have feedback? Your feedback help us to improve. We'd love to hear it, but please don't share sensitive information. Have question? Try complain section or support.",
                           hintStyle: TextStyle(
                             fontFamily: "AppFont",
                             color: AppTheme.colors.colorDarkGray,
@@ -275,6 +280,26 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                         ),
                       ),
                     ),
+
+                    SizedBox(height: 12),
+
+                    // Continue without feedback link
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Center(
+                        child: Text(
+                          "Continue without providing feedback",
+                          style: TextStyle(
+                            color: AppTheme.colors.colorDarkGray.withOpacity(0.6),
+                            fontSize: 12,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -285,7 +310,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     );
   }
 
-  Widget _buildRatingButton(int position, String label, Color color, String iconPath) {
+  Widget _buildRatingButton(int position, String label, Color color, String iconPath, {bool isFirst = false, bool isLast = false}) {
     bool isSelected = selectedPosition == position;
     return InkWell(
       onTap: () {
@@ -295,12 +320,37 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         height: 90,
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.colors.newBlack : color,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? AppTheme.colors.newPrimary
-                : color.withOpacity(0.5),
-            width: isSelected ? 2 : 1,
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? Radius.circular(0) : Radius.circular(0),
+            topRight: isLast ? Radius.circular(0) : Radius.circular(0),
+            bottomLeft: isFirst ? Radius.circular(0) : Radius.circular(0),
+            bottomRight: isLast ? Radius.circular(0) : Radius.circular(0),
+          ),
+          border: Border(
+            left: BorderSide(
+              color: isSelected
+                  ? AppTheme.colors.newPrimary
+                  : color.withOpacity(0.5),
+              width: isSelected ? 2 : 1,
+            ),
+            right: BorderSide(
+              color: isSelected
+                  ? AppTheme.colors.newPrimary
+                  : color.withOpacity(0.5),
+              width: isSelected ? 2 : 1,
+            ),
+            top: BorderSide(
+              color: isSelected
+                  ? AppTheme.colors.newPrimary
+                  : color.withOpacity(0.5),
+              width: isSelected ? 2 : 1,
+            ),
+            bottom: BorderSide(
+              color: isSelected
+                  ? AppTheme.colors.newPrimary
+                  : color.withOpacity(0.5),
+              width: isSelected ? 2 : 1,
+            ),
           ),
           boxShadow: isSelected
               ? [

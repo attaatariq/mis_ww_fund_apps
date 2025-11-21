@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wwf_apps/colors/app_colors.dart';
 import 'package:wwf_apps/constants/Constants.dart';
 import 'package:wwf_apps/screens/general/edit_my_profile.dart';
+import 'package:wwf_apps/screens/home/employee/verification_scrutiny_screen.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
@@ -66,6 +67,11 @@ class _MyProfileState extends State<MyProfile> {
                 children: [
                   // Profile Header Card
                   _buildProfileHeaderCard(userName, userImage, userEmail, userCNIC, isValidImage),
+
+                  SizedBox(height: 16),
+
+                  // Verification Status Card
+                  _buildVerificationStatusCard(),
 
                   SizedBox(height: 16),
 
@@ -541,6 +547,101 @@ class _MyProfileState extends State<MyProfile> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildVerificationStatusCard() {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF4CAF50).withOpacity(0.1),
+            Color(0xFF2196F3).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.colors.newPrimary.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.colors.newPrimary.withOpacity(0.15),
+            blurRadius: 12,
+            offset: Offset(0, 6),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VerificationScrutinyScreen(),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.colors.newPrimary.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.verified_user,
+                    color: AppTheme.colors.newPrimary,
+                    size: 28,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Account Verification",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 16,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        "View your verification status and progress",
+                        style: TextStyle(
+                          color: AppTheme.colors.colorDarkGray,
+                          fontSize: 12,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppTheme.colors.newPrimary,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

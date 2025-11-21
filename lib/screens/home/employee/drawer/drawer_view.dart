@@ -353,6 +353,18 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
                   ),
 
                   _buildMenuItem(
+                    icon: Icons.verified_user,
+                    iconAsset: null,
+                    title: "Account Verification",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => VerificationScrutinyScreen()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
                     icon: Icons.lock_outline,
                     iconAsset: "archive/images/key.png",
                     title: "Change Password",

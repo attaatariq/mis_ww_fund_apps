@@ -10,6 +10,7 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/utils/proof_stages_helper.dart';
+import 'package:wwf_apps/utils/verification_helper.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
 import 'package:http/http.dart' as http;
 import '../../../Strings/Strings.dart';
@@ -28,21 +29,35 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
   bool isLoading = true;
   VerificationStatusModel verificationStatus;
   ProofStageModel currentStage;
+  bool isScrutinized = false;
+  bool isCheckingVerification = true;
 
   @override
   void initState() {
     super.initState();
     constants = new Constants();
     uiUpdates = new UIUpdates(context);
+    _checkIfScrutinized();
     CheckTokenExpiry();
+  }
+
+  void _checkIfScrutinized() async {
+    bool scrutinized = await VerificationHelper.checkIfScrutinized();
+    if (mounted) {
+      setState(() {
+        isScrutinized = scrutinized;
+        isCheckingVerification = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Prevent back navigation - user must stay on this screen
-        return false;
+        // Allow back navigation if user is scrutinized (accessing from drawer/profile)
+        // Prevent back navigation if not scrutinized (forced redirect)
+        return isScrutinized;
       },
       child: Scaffold(
         backgroundColor: Color(0xFFF5F7FA),
@@ -50,9 +65,9 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
           children: [
             StandardHeader(
               title: "Account Verification",
-              showBackButton: false,
-              actionIcon: Icons.power_settings_new,
-              onActionPressed: () {
+              showBackButton: isScrutinized, // Show back button if scrutinized
+              actionIcon: isScrutinized ? null : Icons.power_settings_new, // Show logout only if not scrutinized
+              onActionPressed: isScrutinized ? null : () {
                 _showLogoutDialog();
               },
             ),
