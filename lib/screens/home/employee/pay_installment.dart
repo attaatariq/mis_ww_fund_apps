@@ -125,10 +125,11 @@ class _PayInstallmentState extends State<PayInstallment> {
                                             topLeft: Radius.circular(FormTheme.borderRadiusL),
                                             topRight: Radius.circular(FormTheme.borderRadiusL),
                                           ),
-                                          child: Image.asset(
-                                            "archive/images/banners/transact.png",
+                                          child: FadeInImage(
+                                            image: NetworkImage(constants.getImageBaseURL() + "resources/upload/banners/payment.png"),
+                                            placeholder: AssetImage("archive/images/no_image.jpg"),
                                             fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) {
+                                            imageErrorBuilder: (context, error, stackTrace) {
                                               // Fallback gradient if image not found
                                               return Container(
                                                 decoration: BoxDecoration(

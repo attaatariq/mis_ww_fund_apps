@@ -27,17 +27,17 @@ class _NoticeListItemState extends State<NoticeListItem> {
     
     // For News items, always use news.jpg
     if (widget.isNews) {
-      return "archive/images/banners/news.jpg";
+      return constants.getImageBaseURL() + "resources/upload/banners/news.jpg";
     }
     
     // For Notices, use alert_heading converted to lowercase + .jpg
     if (heading.isNotEmpty && heading != "null" && heading != "-") {
       String lowerHeading = heading.toLowerCase().trim();
-      return "archive/images/banners/$lowerHeading.jpg";
+      return constants.getImageBaseURL() + "resources/upload/banners/$lowerHeading.jpg";
     }
     
     // Default fallback
-    return "archive/images/banners/announcement.jpg";
+    return constants.getImageBaseURL() + "resources/upload/banners/announcement.jpg";
   }
 
   @override
@@ -95,10 +95,11 @@ class _NoticeListItemState extends State<NoticeListItem> {
                       topLeft: Radius.circular(14.5),
                       topRight: Radius.circular(14.5),
                     ),
-                    child: Image.asset(
-                      bannerImagePath,
+                    child: FadeInImage(
+                      image: NetworkImage(bannerImagePath),
+                      placeholder: AssetImage("archive/images/no_image.jpg"),
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
+                      imageErrorBuilder: (context, error, stackTrace) {
                         // Fallback to gradient if image not found
                         return Container(
                           decoration: BoxDecoration(
