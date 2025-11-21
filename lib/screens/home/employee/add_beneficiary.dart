@@ -25,6 +25,8 @@ import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
+import 'package:wwf_apps/widgets/form_widgets.dart';
+import 'package:wwf_apps/themes/form_theme.dart';
 import 'package:http/http.dart' as http;
 
 class AddBeneficiary extends StatefulWidget {
@@ -76,389 +78,92 @@ class _AddBeneficiaryState extends State<AddBeneficiary> {
 
             Expanded(
               child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30, top: 15),
+                padding: EdgeInsets.all(FormTheme.spacingXL),
+                decoration: BoxDecoration(
+                  color: FormTheme.backgroundColor,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Container(
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 35,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: TextField(
-                                          controller: bNameController,
-                                          cursorColor: AppTheme.colors.newPrimary,
-                                          keyboardType: TextInputType.text,
-                                          maxLines: 1,
-                                          textInputAction: TextInputAction.next,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppTheme.colors.newBlack
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "Beneficiary Name",
-                                            hintStyle: TextStyle(
-                                                fontFamily: "AppFont",
-                                                color: AppTheme.colors.colorDarkGray
-                                            ),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
-                          ],
-                        ),
+                      FormTextField(
+                        label: "Beneficiary Name",
+                        hint: "Enter beneficiary name",
+                        controller: bNameController,
+                        prefixIcon: Icons.person,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
                       ),
 
-                      InkWell(
-                        onTap: (){
-                          OpenIdentityTypeDialog(context).then((value) => {
-                            if(value != null){
+                      FormSelectableField(
+                        label: "Identity Type",
+                        value: selectedIdentity,
+                        hint: Strings.instance.selectedIdentity,
+                        prefixIcon: Icons.badge,
+                        onTap: () {
+                          OpenIdentityTypeDialog(context).then((value) {
+                            if(value != null) {
                               setState(() {
                                 selectedIdentity = value;
-                              })
+                              });
                             }
                           });
                         },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          height: 35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(selectedIdentity,
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      color: selectedIdentity == Strings.instance.selectedIdentity ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                      fontSize: 14,
-                                                      fontFamily: "AppFont",
-                                                      fontWeight: FontWeight.normal
-                                                  ),
-                                                ),
-                                              ),
-
-                                              Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                       ),
 
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 35,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: TextField(
-                                          controller: bCnicController,
-                                          inputFormatters: [cnicMask],
-                                          cursorColor: AppTheme.colors.newPrimary,
-                                          keyboardType: TextInputType.number,
-                                          maxLines: 1,
-                                          textInputAction: TextInputAction.next,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppTheme.colors.newBlack
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "CNIC",
-                                            hintStyle: TextStyle(
-                                                fontFamily: "AppFont",
-                                                color: AppTheme.colors.colorDarkGray
-                                            ),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
-                          ],
-                        ),
+                      FormTextField(
+                        label: "CNIC",
+                        hint: "Enter CNIC number",
+                        controller: bCnicController,
+                        prefixIcon: Icons.credit_card,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [cnicMask],
+                        textInputAction: TextInputAction.next,
                       ),
 
-                      InkWell(
-                        onTap: (){
+                      FormSelectableField(
+                        label: "CNIC Issue Date",
+                        value: selectedCNICIssueDate,
+                        hint: Strings.instance.selectedCnicIssueDate,
+                        prefixIcon: Icons.calendar_today,
+                        onTap: () {
                           _selectDate(context, 1);
                         },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          height: 35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(selectedCNICIssueDate,
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      color: selectedCNICIssueDate == Strings.instance.selectedCnicIssueDate ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                      fontSize: 14,
-                                                      fontFamily: "AppFont",
-                                                      fontWeight: FontWeight.normal
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                       ),
 
-                      InkWell(
-                        onTap: (){
+                      FormSelectableField(
+                        label: "CNIC Expiry Date",
+                        value: selectedCNICExpiryDate,
+                        hint: Strings.instance.selectedCnicExpiryDate,
+                        prefixIcon: Icons.calendar_today,
+                        onTap: () {
                           _selectDate(context, 2);
                         },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          height: 35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(selectedCNICExpiryDate,
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      color: selectedCNICExpiryDate == Strings.instance.selectedCnicExpiryDate ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                      fontSize: 14,
-                                                      fontFamily: "AppFont",
-                                                      fontWeight: FontWeight.normal
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                       ),
 
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 35,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: TextField(
-                                          controller: bGuardiaNameController,
-                                          cursorColor: AppTheme.colors.newPrimary,
-                                          keyboardType: TextInputType.text,
-                                          maxLines: 1,
-                                          textInputAction: TextInputAction.next,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppTheme.colors.newBlack
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: "Guardian Name",
-                                            hintStyle: TextStyle(
-                                                fontFamily: "AppFont",
-                                                color: AppTheme.colors.colorDarkGray
-                                            ),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 1,
-                                color: AppTheme.colors.colorDarkGray,
-                              ),
-                            )
-                          ],
-                        ),
+                      FormTextField(
+                        label: "Guardian Name",
+                        hint: "Enter guardian name",
+                        controller: bGuardiaNameController,
+                        prefixIcon: Icons.person_outline,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
                       ),
 
-                      InkWell(
-                        onTap: (){
-                          OpenBeneficiaryRelationModeDialog(context).then((value) => {
-                            if(value != null){
+                      FormSelectableField(
+                        label: "Beneficiary Relation",
+                        value: selectedBeneficiaryRelation,
+                        hint: Strings.instance.beneficiaryRelation,
+                        prefixIcon: Icons.people,
+                        onTap: () {
+                          OpenBeneficiaryRelationModeDialog(context).then((value) {
+                            if(value != null) {
                               setState(() {
                                 selectedBeneficiaryRelation = value;
-                              })
+                              });
                             }
                           });
                         },
-                        child: Container(
-                          margin: EdgeInsets.only(top: 15),
-                          height: 45,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                          height: 35,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(selectedBeneficiaryRelation,
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      color: selectedBeneficiaryRelation == Strings.instance.beneficiaryRelation ? AppTheme.colors.colorDarkGray : AppTheme.colors.newBlack,
-                                                      fontSize: 14,
-                                                      fontFamily: "AppFont",
-                                                      fontWeight: FontWeight.normal
-                                                  ),
-                                                ),
-                                              ),
-
-                                              Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.colors.newPrimary, size: 18,)
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 1,
-                                  color: AppTheme.colors.colorDarkGray,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                       ),
 
                       Container(
