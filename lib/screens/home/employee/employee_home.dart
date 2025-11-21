@@ -29,7 +29,6 @@ class EmployeeHome extends StatefulWidget {
 class _EmployeeHomeState extends State<EmployeeHome> {
   Constants constants;
   UIUpdates uiUpdates;
-  bool _feedbackDialogShownThisSession = false;
   bool _isPasswordWeak = false;
   bool _passwordCheckDone = false;
   String totalClaim= "0", reimbursed_claims= "0", inprogress_claims= "0", benefits_amount= "0",
@@ -1242,13 +1241,19 @@ class _EmployeeHomeState extends State<EmployeeHome> {
   }
 
   void _checkAndShowFeedbackDialog() {
-    // Show feedback dialog once per login session
-    if (!_feedbackDialogShownThisSession) {
+    // Show feedback dialog once per login (using SharedPreferences)
+    bool feedbackShown = UserSessions.instance.getFeedbackDialogShown;
+    if (!feedbackShown) {
       // Wait a bit for the screen to load, then show dialog
       Future.delayed(const Duration(milliseconds: 2000), () {
-        if (mounted && !_feedbackDialogShownThisSession) {
-          _feedbackDialogShownThisSession = true;
-          showFeedbackDialog(context);
+        if (mounted) {
+          bool stillNotShown = UserSessions.instance.getFeedbackDialogShown;
+          if (!stillNotShown) {
+            UserSessions.instance.setFeedbackDialogShown(true);
+            showFeedbackDialog(context).then((result) {
+              // Dialog closed - result indicates if feedback was submitted
+            });
+          }
         }
       });
     }

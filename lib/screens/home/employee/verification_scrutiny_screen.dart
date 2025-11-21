@@ -57,23 +57,23 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
               },
             ),
             Expanded(
-              child: isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : RefreshIndicator(
-                      onRefresh: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        await Future.delayed(Duration(milliseconds: 500));
-                        // Reload proof stages and check verification status
-                        await _loadProofStages();
-                        await _loadEmployeeInfo();
-                        GetVerificationStatus();
-                      },
-                      color: AppTheme.colors.newPrimary,
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  // Reload proof stages and check verification status
+                  await _loadProofStages();
+                  await _loadEmployeeInfo();
+                  await _refreshVerificationStatus();
+                },
+                color: AppTheme.colors.newPrimary,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(20),
+                  child: isLoading
+                      ? Container(
+                          height: MediaQuery.of(context).size.height - 200,
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Main Heading
@@ -191,8 +191,8 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
                               _buildVerificationSummary(),
                           ],
                         ),
-                      ),
-                    ),
+                ),
+              ),
             ),
           ],
         ),
@@ -534,18 +534,18 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
     }
   }
 
-  void GetVerificationStatus() async {
+  Future<void> _refreshVerificationStatus() async {
     try {
-      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
-      
-      // First, load proof_stages from information API if not loaded
-      await _loadProofStages();
+      // Load proof_stages from information API if not loaded (only for stage definitions)
+      if (!ProofStagesData.instance.hasStages()) {
+        await _loadProofStages();
+      }
       
       String userId = UserSessions.instance.getUserID;
       String empId = UserSessions.instance.getEmployeeID;
 
       if (empId.isEmpty || empId == "" || empId == "null") {
-        // Try to fetch from information API
+        // Try to fetch from information API only if needed
         empId = await _fetchEmployeeID();
       }
 
@@ -553,12 +553,11 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
         setState(() {
           isLoading = false;
         });
-        uiUpdates.DismissProgresssDialog();
         uiUpdates.ShowToast("Employee ID not found. Please try again.");
         return;
       }
 
-      // API endpoint: /companies/is_verified/{user_id}/{emp_id}
+      // API endpoint: /companies/is_verified/{user_id}/{emp_id} - THIS IS THE MAIN API FOR emp_check
       var url = constants.getApiBaseURL() +
                 constants.companies +
                 "is_verified/" +
@@ -584,11 +583,130 @@ class _VerificationScrutinyScreenState extends State<VerificationScrutinyScreen>
             if (messageData != null && messageData is Map) {
               verificationStatus = VerificationStatusModel.fromJson(messageData);
               
-              // Also fetch emp_medium and created_at from information API
+              // Get emp_check from companies/is_verified API response
+              String empCheck = verificationStatus.emp_check;
+              
+              // Only fetch emp_medium and created_at from information API if needed (for display)
               await _loadEmployeeInfo();
               
-              // Get current stage based on emp_check
+              // Get current stage based on emp_check from companies/is_verified API
+              currentStage = ProofStagesData.instance.getStageForStatus(empCheck);
+
+              setState(() {
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                isLoading = false;
+              });
+              uiUpdates.ShowToast("Verification data not available.");
+            }
+          } else {
+            setState(() {
+              isLoading = false;
+            });
+            String message = body["Message"]?.toString() ?? "";
+            if (message.isNotEmpty && message != "null") {
+              uiUpdates.ShowToast(message);
+            }
+          }
+        } catch (e) {
+          setState(() {
+            isLoading = false;
+          });
+          uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+        }
+      } else {
+        try {
+          var body = jsonDecode(response.body);
+          String message = body["Message"]?.toString() ?? "";
+
+          if (message == constants.expireToken) {
+            constants.OpenLogoutDialog(
+              context,
+              Strings.instance.expireSessionTitle,
+              Strings.instance.expireSessionMessage,
+            );
+          } else if (message.isNotEmpty && message != "null") {
+            uiUpdates.ShowToast(message);
+          }
+
+          setState(() {
+            isLoading = false;
+          });
+        } catch (e) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      uiUpdates.ShowToast(Strings.instance.somethingWentWrong);
+    }
+  }
+
+  void GetVerificationStatus() async {
+    try {
+      uiUpdates.ShowProgressDialog(Strings.instance.pleaseWait);
+      
+      // Load proof_stages from information API if not loaded (only for stage definitions)
+      if (!ProofStagesData.instance.hasStages()) {
+        await _loadProofStages();
+      }
+      
+      String userId = UserSessions.instance.getUserID;
+      String empId = UserSessions.instance.getEmployeeID;
+
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        // Try to fetch from information API only if needed
+        empId = await _fetchEmployeeID();
+      }
+
+      if (empId.isEmpty || empId == "" || empId == "null") {
+        setState(() {
+          isLoading = false;
+        });
+        uiUpdates.DismissProgresssDialog();
+        uiUpdates.ShowToast("Employee ID not found. Please try again.");
+        return;
+      }
+
+      // API endpoint: /companies/is_verified/{user_id}/{emp_id} - THIS IS THE MAIN API FOR emp_check
+      var url = constants.getApiBaseURL() +
+                constants.companies +
+                "is_verified/" +
+                userId + "/" +
+                empId;
+
+      var response = await http.get(
+        Uri.parse(url),
+        headers: APIService.getDefaultHeaders(),
+      ).timeout(Duration(seconds: 30));
+
+      ResponseCodeModel responseCodeModel = constants.CheckResponseCodesNew(
+          response.statusCode, response);
+
+      if (responseCodeModel.status == true) {
+        try {
+          var body = jsonDecode(response.body);
+          dynamic codeValue = body["Code"];
+          String code = codeValue != null ? codeValue.toString() : "0";
+
+          if (code == "1" || codeValue == 1) {
+            var messageData = body["Message"];
+            if (messageData != null && messageData is Map) {
+              verificationStatus = VerificationStatusModel.fromJson(messageData);
+              
+              // Get emp_check from companies/is_verified API response
               String empCheck = verificationStatus.emp_check;
+              
+              // Only fetch emp_medium and created_at from information API if needed (for display)
+              await _loadEmployeeInfo();
+              
+              // Get current stage based on emp_check from companies/is_verified API
               currentStage = ProofStagesData.instance.getStageForStatus(empCheck);
 
               setState(() {

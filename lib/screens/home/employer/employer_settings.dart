@@ -533,14 +533,14 @@ class _EmployerSettingsState extends State<EmployerSettings> {
                 if (address.isNotEmpty && address != "null") SizedBox(height: 12),
 
                 // Location (City, District, Province)
-                String location = _buildLocationString(city, district, province);
-                if (location.isNotEmpty)
+                if (_buildLocationString(city, district, province).isNotEmpty) ...[
                   _buildInfoRow(
                     Icons.map_outlined,
                     "Location",
-                    location,
+                    _buildLocationString(city, district, province),
                   ),
-                if (location.isNotEmpty) SizedBox(height: 12),
+                  SizedBox(height: 12),
+                ],
 
                 if (type.isNotEmpty && type != "null")
                   _buildInfoRow(

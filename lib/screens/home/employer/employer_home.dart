@@ -31,7 +31,6 @@ class _EmployerHomeState extends State<EmployerHome> {
 
   Constants constants;
   UIUpdates uiUpdates;
-  bool _feedbackDialogShownThisSession = false;
   bool _isPasswordWeak = false;
   bool _passwordCheckDone = false;
   String companyName="Unknown", companyAddress="Unknown", companyLogo="null";
@@ -114,13 +113,19 @@ class _EmployerHomeState extends State<EmployerHome> {
   }
 
   void _checkAndShowFeedbackDialog() {
-    // Show feedback dialog once per login session
-    if (!_feedbackDialogShownThisSession) {
+    // Show feedback dialog once per login (using SharedPreferences)
+    bool feedbackShown = UserSessions.instance.getFeedbackDialogShown;
+    if (!feedbackShown) {
       // Wait a bit for the screen to load, then show dialog
       Future.delayed(const Duration(milliseconds: 2000), () {
-        if (mounted && !_feedbackDialogShownThisSession) {
-          _feedbackDialogShownThisSession = true;
-          showFeedbackDialog(context);
+        if (mounted) {
+          bool stillNotShown = UserSessions.instance.getFeedbackDialogShown;
+          if (!stillNotShown) {
+            UserSessions.instance.setFeedbackDialogShown(true);
+            showFeedbackDialog(context).then((result) {
+              // Dialog closed - result indicates if feedback was submitted
+            });
+          }
         }
       });
     }

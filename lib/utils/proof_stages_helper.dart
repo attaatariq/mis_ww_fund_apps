@@ -42,6 +42,11 @@ class ProofStagesData {
       }
     }
 
+    // Special handling: "Pending" should map to "pending" stage
+    if (trimmedKey == "Pending" && stages.containsKey("pending")) {
+      return stages["pending"];
+    }
+
     // Return default if not found
     return ProofStageModel(
       heading: "Status: $trimmedKey",

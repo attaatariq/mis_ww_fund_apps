@@ -112,6 +112,16 @@ class LoginController extends GetxController{
                 emp_id
             );
 
+            // Reset feedback dialog flag on login (so it shows once per login)
+            UserSessions.instance.setFeedbackDialogShown(false);
+            
+            // Show welcome toast message
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (context != null) {
+                uiUpdates.ShowSuccess("Welcome Back! Welcome On Dashboard, ${user_name}.");
+              }
+            });
+
             passwordController.clear();
             SetScreen(user_sector, user_role, user_account, context, user_backing);
             if (onComplete != null) onComplete(true);
