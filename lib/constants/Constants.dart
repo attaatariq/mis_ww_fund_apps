@@ -29,12 +29,9 @@ import 'package:wwf_apps/sessions/UserSessions.dart';
 
 class Constants {
   // APIs base urls
-  // String ApiBaseURL = "https://mis.wwf.gov.pk/xerox/api/";
-  // String ImageBaseURL = "https://mis.wwf.gov.pk/xerox/";
+  String ApiBaseURL = "https://mis.wwf.gov.pk/xerox/api/";
+  String ImageBaseURL = "https://mis.wwf.gov.pk/xerox/";
 
-  String ApiBaseURL = "https://1fbc7941f8ea.ngrok-free.app/mis_ww_fund/api/";
-  String ImageBaseURL = "https://1fbc7941f8ea.ngrok-free.app/mis_ww_fund/";
-  
   String ConnectionMessage = "Internet Not Connected, Try Again";
   String ErrorOccurMessage = "Error Occur, Try Again";
   String ExceptionOccurMessage = "Exception Occur, Try Again";

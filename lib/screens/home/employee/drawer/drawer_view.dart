@@ -491,29 +491,21 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
   // Helper widget for section headers
   Widget _buildSectionHeader(String title) {
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 3,
-            height: 16,
-            decoration: BoxDecoration(
-              color: AppTheme.colors.newPrimary,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          SizedBox(width: 10),
-          Text(
-            title,
-            style: TextStyle(
-              color: AppTheme.colors.newPrimary,
-              fontSize: 14,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
+      margin: EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newPrimary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(
+          color: AppTheme.colors.newPrimary.withOpacity(0.8),
+          fontSize: 11,
+          fontFamily: "AppFont",
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -525,67 +517,71 @@ class _EmployeeDrawerViewState extends State<EmployeeDrawerView> {
     String title,
     VoidCallback onTap,
   }) {
-    return Column(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppTheme.colors.newPrimary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: iconAsset != null
-                          ? Image.asset(
-                              iconAsset,
-                              height: 18,
-                              width: 18,
-                              color: AppTheme.colors.newPrimary,
-                            )
-                          : Icon(
-                              icon,
-                              color: AppTheme.colors.newPrimary,
-                              size: 18,
-                            ),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.15),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          splashColor: AppTheme.colors.newPrimary.withOpacity(0.08),
+          highlightColor: AppTheme.colors.newPrimary.withOpacity(0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppTheme.colors.newPrimary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: iconAsset != null
+                        ? Image.asset(
+                            iconAsset,
+                            height: 16,
+                            width: 16,
+                            color: AppTheme.colors.newPrimary,
+                          )
+                        : Icon(
+                            icon,
+                            color: AppTheme.colors.newPrimary,
+                            size: 16,
+                          ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack.withOpacity(0.85),
+                      fontSize: 13,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.1,
                     ),
                   ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 12,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: AppTheme.colors.colorDarkGray,
-                    size: 18,
-                  ),
-                ],
-              ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                  size: 16,
+                ),
+              ],
             ),
           ),
         ),
-        Container(
-          height: 1,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          color: AppTheme.colors.colorLightGray.withOpacity(0.5),
-        ),
-      ],
+      ),
     );
   }
 }

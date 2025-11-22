@@ -108,8 +108,8 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                     SizedBox(height: 16),
                     Text(
                       UserSessions.instance.getUserName,
-                      maxLines: 2,
                       textAlign: TextAlign.center,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppTheme.colors.newWhite,
@@ -157,24 +157,12 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
               child: ListView(
                 padding: EdgeInsets.all(0),
                 children: [
-                  _buildSectionHeader("Management"),
+                  _buildSectionHeader("Team"),
 
                   _buildMenuItem(
-                    icon: Icons.person_outline,
-                    iconAsset: "archive/images/stenotypist.png",
-                    title: "Data Entry Operator",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => DeoDetail()
-                      ));
-                    },
-                  ),
-
-                  _buildMenuItem(
-                    icon: Icons.contact_phone_outlined,
-                    iconAsset: "archive/images/person.png",
-                    title: "Contact Person",
+                    icon: Icons.people_outline,
+                    iconAsset: "archive/images/employee.png",
+                    title: "Employees",
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
@@ -184,8 +172,8 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                   ),
 
                   _buildMenuItem(
-                    icon: Icons.people_outlined,
-                    iconAsset: "archive/images/person.png",
+                    icon: Icons.construction_outlined,
+                    iconAsset: "archive/images/worker.png",
                     title: "Workers",
                     onTap: () {
                       Navigator.of(context).pop();
@@ -196,37 +184,25 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                   ),
 
                   _buildMenuItem(
+                    icon: Icons.person_add_outlined,
+                    iconAsset: "archive/images/deo.png",
+                    title: "DEO",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => DeoDetail()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
                     icon: Icons.verified_user_outlined,
-                    iconAsset: "archive/images/verified.png",
-                    title: "Workers Verification",
+                    iconAsset: "archive/images/verification.png",
+                    title: "Verifications",
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => EmployeeVerification()
-                      ));
-                    },
-                  ),
-
-                  _buildMenuItem(
-                    icon: Icons.notifications_outlined,
-                    iconAsset: "archive/images/bell.png",
-                    title: "Notifications",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => NotificationsScreen()
-                      ));
-                    },
-                  ),
-
-                  _buildMenuItem(
-                    icon: Icons.announcement_outlined,
-                    iconAsset: "archive/images/bell.png",
-                    title: "Notices & News",
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => NoticesNewsScreen()
                       ));
                     },
                   ),
@@ -246,7 +222,7 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                   ),
 
                   _buildMenuItem(
-                    icon: Icons.help_outline,
+                    icon: Icons.favorite_border,
                     iconAsset: "archive/images/death.png",
                     title: "Death Claim",
                     onTap: () {
@@ -358,6 +334,30 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                   ),
 
                   _buildMenuItem(
+                    icon: Icons.notifications_outlined,
+                    iconAsset: "archive/images/bell.png",
+                    title: "Notifications",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => NotificationsScreen()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.article_outlined,
+                    iconAsset: "archive/images/notice.png",
+                    title: "Notices & News",
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => NoticesNewsScreen()
+                      ));
+                    },
+                  ),
+
+                  _buildMenuItem(
                     icon: Icons.help_outline,
                     iconAsset: "archive/images/faqs.png",
                     title: "FAQs",
@@ -371,110 +371,104 @@ class _EmployerDrawerViewState extends State<EmployerDrawerView> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  // Helper widget for section headers
   Widget _buildSectionHeader(String title) {
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 3,
-            height: 16,
-            decoration: BoxDecoration(
-              color: AppTheme.colors.newPrimary,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          SizedBox(width: 10),
-          Text(
-            title,
-            style: TextStyle(
-              color: AppTheme.colors.newPrimary,
-              fontSize: 14,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
+      margin: EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppTheme.colors.newPrimary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(
+          color: AppTheme.colors.newPrimary.withOpacity(0.8),
+          fontSize: 11,
+          fontFamily: "AppFont",
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
 
-  // Helper widget for menu items
   Widget _buildMenuItem({
     IconData icon,
     String iconAsset,
     String title,
     VoidCallback onTap,
   }) {
-    return Column(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppTheme.colors.newPrimary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: iconAsset != null
-                          ? Image.asset(
-                              iconAsset,
-                              height: 18,
-                              width: 18,
-                              color: AppTheme.colors.newPrimary,
-                            )
-                          : Icon(
-                              icon,
-                              color: AppTheme.colors.newPrimary,
-                              size: 18,
-                            ),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.15),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          splashColor: AppTheme.colors.newPrimary.withOpacity(0.08),
+          highlightColor: AppTheme.colors.newPrimary.withOpacity(0.05),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppTheme.colors.newPrimary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: iconAsset != null
+                        ? Image.asset(
+                            iconAsset,
+                            height: 16,
+                            width: 16,
+                            color: AppTheme.colors.newPrimary,
+                          )
+                        : Icon(
+                            icon,
+                            color: AppTheme.colors.newPrimary,
+                            size: 16,
+                          ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack.withOpacity(0.85),
+                      fontSize: 13,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.1,
                     ),
                   ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: AppTheme.colors.newBlack,
-                        fontSize: 12,
-                        fontFamily: "AppFont",
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: AppTheme.colors.colorDarkGray,
-                    size: 18,
-                  ),
-                ],
-              ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: AppTheme.colors.colorDarkGray.withOpacity(0.3),
+                  size: 16,
+                ),
+              ],
             ),
           ),
         ),
-        Container(
-          height: 1,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          color: AppTheme.colors.colorLightGray.withOpacity(0.5),
-        ),
-      ],
+      ),
     );
   }
 }

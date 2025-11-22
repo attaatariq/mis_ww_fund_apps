@@ -11,6 +11,15 @@ import 'package:wwf_apps/models/ResponseCodeModel.dart';
 import 'package:wwf_apps/screens/home/employer/create_person.dart';
 import 'package:wwf_apps/screens/home/employer/stenotypist.dart';
 import 'package:wwf_apps/screens/home/employer/contribution.dart';
+import 'package:wwf_apps/screens/home/employer/add_worker.dart';
+import 'package:wwf_apps/screens/home/employer/annexure1_create.dart';
+import 'package:wwf_apps/screens/home/employer/annexure2_create_new.dart';
+import 'package:wwf_apps/screens/home/employer/employer_settings.dart';
+import 'package:wwf_apps/screens/home/employer/education_claims.dart';
+import 'package:wwf_apps/screens/home/employer/marriage_claims.dart';
+import 'package:wwf_apps/screens/home/employer/death_claim_list.dart';
+import 'package:wwf_apps/screens/home/employer/estate_claims.dart';
+import 'package:wwf_apps/screens/home/employer/hajj_claims.dart';
 import 'package:wwf_apps/network/api_service.dart';
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
@@ -28,30 +37,1924 @@ class EmployerHome extends StatefulWidget {
 }
 
 class _EmployerHomeState extends State<EmployerHome> {
-
   Constants constants;
   UIUpdates uiUpdates;
   bool _isPasswordWeak = false;
   bool _passwordCheckDone = false;
-  String companyName="Unknown", companyAddress="Unknown", companyLogo="null";
-  String totalEmployee="0", totalDisable="0", totalAvailingBenefits="0", totalClaim="0", totalReimbursed="0", totalInprogress="0", totalAmountReimbursed="0",
-      annexureAAmount="0", annexure3AAmount="0", totalAnnexesAmount="0", estateClaimCount="0", estateClaimAmount="0", hajjClaims="0", hajjClaimAmount="0",
-      deathClaimsTotalAmount="0", deathClaimsDeliveredAmount="0", deathClaimsInprogressAmount="0", marriageClaimsTotalAmount="0", marriageClaimDeliveredAmount="0",
-      marriageClaimsInprogressAmount="0", totalEducationClaims="0", educationClaimsTotalAmount="0", feeClaims="0", schoolBasics="0", feeClaimAmount="0", schoolBasicsAmount="0",
-      transportClaimsAmount="0", residenceClaimAmount="0", note1="Not Available", note2= "Not Available", complaints="0", feedback="0";
+  String companyName = "Unknown",
+      companyAddress = "Unknown",
+      companyLogo = "null";
+  String totalEmployee = "0",
+      totalDisable = "0",
+      totalAvailingBenefits = "0",
+      totalClaim = "0",
+      totalReimbursed = "0",
+      totalInprogress = "0",
+      totalAmountReimbursed = "0",
+      annexureAAmount = "0",
+      annexure3AAmount = "0",
+      totalAnnexesAmount = "0",
+      estateClaimCount = "0",
+      estateClaimAmount = "0",
+      hajjClaims = "0",
+      hajjClaimAmount = "0",
+      deathClaimsTotalAmount = "0",
+      deathClaimsDeliveredAmount = "0",
+      deathClaimsInprogressAmount = "0",
+      marriageClaimsTotalAmount = "0",
+      marriageClaimDeliveredAmount = "0",
+      marriageClaimsInprogressAmount = "0",
+      totalEducationClaims = "0",
+      educationClaimsTotalAmount = "0",
+      feeClaims = "0",
+      schoolBasics = "0",
+      feeClaimAmount = "0",
+      schoolBasicsAmount = "0",
+      transportClaimsAmount = "0",
+      residenceClaimAmount = "0",
+      note1 = "Not Available",
+      note2 = "Not Available",
+      complaints = "0",
+      feedback = "0";
 
   @override
   void initState() {
     super.initState();
-    constants= new Constants();
-    uiUpdates= new UIUpdates(context);
-    ///check new updated version
+    constants = new Constants();
+    uiUpdates = new UIUpdates(context);
     constants.CheckForNewUpdate(context);
     GetDashBoardData();
     GetTokenAndSave();
     _checkPasswordStrength();
-    // Show feedback dialog once after login
     _checkAndShowFeedbackDialog();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFF8F9FA),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: AppTheme.colors.newBlack),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Dashboard",
+              style: TextStyle(
+                color: AppTheme.colors.newBlack,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+              ),
+            ),
+            Text(
+              companyName != "Unknown" ? companyName : "Company Dashboard",
+              style: TextStyle(
+                color: AppTheme.colors.colorDarkGray,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 12),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  constants.LogoutUser(context);
+                },
+                borderRadius: BorderRadius.circular(14),
+                splashColor: Color(0xFFEF4444).withOpacity(0.2),
+                highlightColor: Color(0xFFEF4444).withOpacity(0.1),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFEF4444),
+                        Color(0xFFDC2626),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFEF4444).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.power_settings_new_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      drawer: Container(
+        width: MediaQuery.of(context).size.width * 0.78,
+        child: Drawer(child: EmployerDrawerView()),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Password Warning Banner
+            if (_passwordCheckDone && _isPasswordWeak)
+              PasswordWarningBanner(
+                onDismiss: () {
+                  setState(() {
+                    _isPasswordWeak = false;
+                  });
+                },
+              ),
+
+            // Main Content
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Company Info Card
+                  _buildCompanyCard(),
+
+                  SizedBox(height: 20),
+
+                  // Quick Actions
+                  Text(
+                    "Quick Actions",
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack.withOpacity(0.6),
+                      fontSize: 14,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  _buildQuickActions(),
+
+                  SizedBox(height: 24),
+
+                  // Reimbursed Amount (Full Width)
+                  _buildReimbursedCard(),
+
+                  SizedBox(height: 24),
+
+                  // Contribution Summary
+                  Text(
+                    "Contribution Summary",
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 16,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  _buildContributionCard(),
+
+                  SizedBox(height: 24),
+
+                  // Benefits Breakdown
+                  Text(
+                    "Benefits Breakdown",
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 16,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  _buildBenefitsBreakdown(),
+
+                  SizedBox(height: 24),
+
+                  // Education Claims
+                  _buildEducationSection(),
+
+                  SizedBox(height: 24),
+
+                  // Notice Board
+                  Text(
+                    "Notice Board",
+                    style: TextStyle(
+                      color: AppTheme.colors.newBlack,
+                      fontSize: 16,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  _buildNoticeBoard(),
+
+                  SizedBox(height: 24),
+
+                  // Activity Summary
+                  _buildActivitySummary(),
+
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompanyCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.colors.newPrimary,
+            AppTheme.colors.newPrimary.withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.colors.newPrimary.withOpacity(0.3),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: companyLogo != "null" &&
+                          companyLogo != "" &&
+                          companyLogo != "NULL" &&
+                          companyLogo != "N/A" &&
+                          companyLogo != "-" &&
+                          companyLogo != "Unknown"
+                      ? FadeInImage(
+                          image: NetworkImage(
+                              constants.getImageBaseURL() + companyLogo),
+                          placeholder: AssetImage("archive/images/no_image.jpg"),
+                          fit: BoxFit.cover,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "archive/images/no_image.jpg",
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          "archive/images/no_image.jpg",
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      companyName != "Unknown" ? companyName : "Company Name",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.white.withOpacity(0.8),
+                          size: 14,
+                        ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            companyAddress != "Unknown"
+                                ? companyAddress
+                                : "Address Not Available",
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 12,
+                              fontFamily: "AppFont",
+                              fontWeight: FontWeight.normal,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildCompanyStatColumn(
+                    "Employees",
+                    totalEmployee,
+                    Icons.people_outline,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.2),
+                ),
+                Expanded(
+                  child: _buildCompanyStatColumn(
+                    "Total Claims",
+                    totalClaim,
+                    Icons.assignment_outlined,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.2),
+                ),
+                Expanded(
+                  child: _buildCompanyStatColumn(
+                    "Completed",
+                    totalReimbursed,
+                    Icons.check_circle_outline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanyStatColumn(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          color: Colors.white.withOpacity(0.8),
+          size: 20,
+        ),
+        SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontFamily: "AppFont",
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 10,
+            fontFamily: "AppFont",
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildActionButton(
+            "Worker",
+            Icons.person_add_outlined,
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddWorker()),
+              );
+            },
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: _buildActionButton(
+            "Contribute",
+            Icons.account_balance_wallet_outlined,
+            () {
+              _showContributionDialog();
+            },
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: _buildActionButton(
+            "Claims",
+            Icons.receipt_outlined,
+            () {
+              _showClaimsListDialog();
+            },
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: _buildActionButton(
+            "Settings",
+            Icons.settings_outlined,
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EmployerSettings()),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showContributionDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 12, bottom: 20),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Color(0xFFE5E7EB),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "Select Contribution Type",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 20,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _buildContributionTypeButton(
+                    "WPF Contribution Sheet",
+                    Icons.description_outlined,
+                    Color(0xFF3B82F6),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnnexA(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  _buildContributionTypeButton(
+                    "Interest Contribution Sheet",
+                    Icons.account_balance_wallet_outlined,
+                    Color(0xFF10B981),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Annex3ANew(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContributionTypeButton(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 28,
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 16,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppTheme.colors.colorDarkGray,
+                size: 18,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showClaimsListDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 12, bottom: 20),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Color(0xFFE5E7EB),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "Select Claim Type",
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack,
+                  fontSize: 20,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _buildClaimTypeButton(
+                    "Educational Claims",
+                    Icons.school,
+                    Color(0xFF10B981),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EducationClaimList(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  _buildClaimTypeButton(
+                    "Marriage Claims",
+                    Icons.favorite,
+                    Color(0xFFEC4899),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MarriageClaimList(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  _buildClaimTypeButton(
+                    "Death Claims",
+                    Icons.favorite_border,
+                    Color(0xFFEF4444),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeathClaimList(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  _buildClaimTypeButton(
+                    "Estate Claims",
+                    Icons.home_work,
+                    Color(0xFF6366F1),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EstateClaimList(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  _buildClaimTypeButton(
+                    "Hajj Claims",
+                    Icons.mosque,
+                    Color(0xFF8B5CF6),
+                    () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HajjClaimList(),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClaimTypeButton(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 28,
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 16,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppTheme.colors.colorDarkGray,
+                size: 18,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String label, IconData icon, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppTheme.colors.newPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: AppTheme.colors.newPrimary,
+                  size: 24,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppTheme.colors.newBlack.withOpacity(0.7),
+                  fontSize: 10,
+                  fontFamily: "AppFont",
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReimbursedCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Color(0xFF10B981).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              Icons.monetization_on_outlined,
+              color: Color(0xFF10B981),
+              size: 28,
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Reimbursed Amount",
+                  style: TextStyle(
+                    color: AppTheme.colors.colorDarkGray,
+                    fontSize: 12,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  totalAmountReimbursed == "0" || totalAmountReimbursed.isEmpty
+                      ? "Rs. 0"
+                      : "Rs. ${constants.ConvertMappedNumber(totalAmountReimbursed)}",
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 24,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricCard(
+      String title, String value, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+          ),
+          SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 12,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            value == "0" || value.isEmpty
+                ? (title.contains("Reimb") ? "Rs. 0" : "0")
+                : (title.contains("Reimb")
+                    ? "Rs. ${constants.ConvertMappedNumber(value)}"
+                    : value),
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 20,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContributionCard() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Color(0xFF3B82F6).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.savings_outlined,
+                  color: Color(0xFF3B82F6),
+                  size: 24,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Total Contribution",
+                      style: TextStyle(
+                        color: AppTheme.colors.colorDarkGray,
+                        fontSize: 12,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      totalAnnexesAmount == "0" || totalAnnexesAmount.isEmpty
+                          ? "Rs. 0"
+                          : "Rs. ${constants.ConvertMappedNumber(totalAnnexesAmount)}",
+                      style: TextStyle(
+                        color: Color(0xFF3B82F6),
+                        fontSize: 24,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color(0xFFE5E7EB),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Annexure-III",
+                        style: TextStyle(
+                          color: AppTheme.colors.colorDarkGray,
+                          fontSize: 11,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        annexureAAmount == "0" || annexureAAmount.isEmpty
+                            ? "Rs. 0"
+                            : "Rs. ${constants.ConvertMappedNumber(annexureAAmount)}",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 14,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color(0xFFE5E7EB),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Annexure-III (A)",
+                        style: TextStyle(
+                          color: AppTheme.colors.colorDarkGray,
+                          fontSize: 11,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        annexure3AAmount == "0" || annexure3AAmount.isEmpty
+                            ? "Rs. 0"
+                            : "Rs. ${constants.ConvertMappedNumber(annexure3AAmount)}",
+                        style: TextStyle(
+                          color: AppTheme.colors.newBlack,
+                          fontSize: 14,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClaimsOverview() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _buildClaimItem(
+                  "Estate",
+                  estateClaimAmount,
+                  Icons.home_work,
+                  Color(0xFF6366F1),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: _buildClaimItem(
+                  "Hajj",
+                  hajjClaimAmount,
+                  Icons.mosque,
+                  Color(0xFF8B5CF6),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClaimItem(
+      String title, String amount, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 24,
+          ),
+          SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 12,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            amount == "0" || amount.isEmpty
+                ? "Rs. 0"
+                : "Rs. ${constants.ConvertMappedNumber(amount)}",
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 16,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBenefitsBreakdown() {
+    return Column(
+      children: [
+        _buildBenefitRow(
+          "Death Claim",
+          deathClaimsTotalAmount,
+          deathClaimsDeliveredAmount,
+          deathClaimsInprogressAmount,
+          Color(0xFFEF4444),
+        ),
+        SizedBox(height: 12),
+        _buildBenefitRow(
+          "Marriage Claim",
+          marriageClaimsTotalAmount,
+          marriageClaimDeliveredAmount,
+          marriageClaimsInprogressAmount,
+          Color(0xFFEC4899),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBenefitRow(String title, String total, String delivered,
+      String inProgress, Color color) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  title.contains("Death") ? Icons.favorite : Icons.favorite_border,
+                  color: color,
+                  size: 20,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      total == "0" || total.isEmpty
+                          ? "Rs. 0"
+                          : "Rs. ${constants.ConvertMappedNumber(total)}",
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 18,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Delivered",
+                      style: TextStyle(
+                        color: AppTheme.colors.colorDarkGray,
+                        fontSize: 11,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      delivered == "0" || delivered.isEmpty
+                          ? "Rs. 0"
+                          : "Rs. ${constants.ConvertMappedNumber(delivered)}",
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "In Progress",
+                      style: TextStyle(
+                        color: AppTheme.colors.colorDarkGray,
+                        fontSize: 11,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      inProgress == "0" || inProgress.isEmpty
+                          ? "Rs. 0"
+                          : "Rs. ${constants.ConvertMappedNumber(inProgress)}",
+                      style: TextStyle(
+                        color: AppTheme.colors.newBlack,
+                        fontSize: 14,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEducationSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Education Claims
+        Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Education Claims",
+                          style: TextStyle(
+                            color: AppTheme.colors.newBlack,
+                            fontSize: 16,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          educationClaimsTotalAmount == "0" ||
+                                  educationClaimsTotalAmount.isEmpty
+                              ? "Rs. 0"
+                              : "Rs. ${constants.ConvertMappedNumber(educationClaimsTotalAmount)}",
+                          style: TextStyle(
+                            color: Color(0xFF10B981),
+                            fontSize: 20,
+                            fontFamily: "AppFont",
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF10B981).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "${totalEducationClaims} claims",
+                      style: TextStyle(
+                        color: Color(0xFF10B981),
+                        fontSize: 12,
+                        fontFamily: "AppFont",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 2.2,
+                children: [
+                  _buildEducationCard("Fee", feeClaimAmount, Icons.receipt),
+                  _buildEducationCard("Basics", schoolBasicsAmount, Icons.book),
+                  _buildEducationCard(
+                      "Transport", transportClaimsAmount, Icons.directions_bus),
+                  _buildEducationCard("Residence", residenceClaimAmount, Icons.home),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 12),
+        // Estate and Hajj Claims
+        Row(
+          children: [
+            Expanded(
+              child: _buildEstateHajjCard(
+                "Estate",
+                estateClaimAmount,
+                Icons.home_work,
+                Color(0xFF6366F1),
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: _buildEstateHajjCard(
+                "Hajj",
+                hajjClaimAmount,
+                Icons.mosque,
+                Color(0xFF8B5CF6),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEstateHajjCard(
+      String title, String amount, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 22,
+            ),
+          ),
+          SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: AppTheme.colors.colorDarkGray,
+              fontSize: 12,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            amount == "0" || amount.isEmpty
+                ? "Rs. 0"
+                : "Rs. ${constants.ConvertMappedNumber(amount)}",
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 16,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEducationCard(String title, String amount, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Color(0xFFE5E7EB),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Color(0xFF10B981),
+            size: 18,
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: AppTheme.colors.colorDarkGray,
+                    fontSize: 11,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  amount == "0" || amount.isEmpty
+                      ? "Rs. 0"
+                      : "Rs. ${constants.ConvertMappedNumber(amount)}",
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 12,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoticeBoard() {
+    return Column(
+      children: [
+        _buildNoticeItem(note1),
+        SizedBox(height: 12),
+        _buildNoticeItem(note2),
+      ],
+    );
+  }
+
+  Widget _buildNoticeItem(String notice) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Color(0xFFE5E7EB),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: Color(0xFFFEF3C7),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.notifications_active,
+              color: Color(0xFFF59E0B),
+              size: 18,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              notice,
+              style: TextStyle(
+                color: AppTheme.colors.newBlack,
+                fontSize: 13,
+                fontFamily: "AppFont",
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivitySummary() {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Activity",
+            style: TextStyle(
+              color: AppTheme.colors.newBlack,
+              fontSize: 14,
+              fontFamily: "AppFont",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActivityItem(
+                  "Complaints",
+                  complaints,
+                  Icons.report_problem_outlined,
+                  Color(0xFFEF4444),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: _buildActivityItem(
+                  "Feedback",
+                  feedback,
+                  Icons.feedback_outlined,
+                  Color(0xFF3B82F6),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityItem(
+      String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: AppTheme.colors.newBlack,
+                    fontSize: 20,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: AppTheme.colors.colorDarkGray,
+                    fontSize: 11,
+                    fontFamily: "AppFont",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // API and helper methods (existing logic)
+  String _safeParseValue(dynamic value, {String defaultValue = "0"}) {
+    if (value == null) return defaultValue;
+    String strValue = value.toString().trim();
+    if (strValue.isEmpty ||
+        strValue.toLowerCase() == "null" ||
+        strValue == "N/A" ||
+        strValue == "undefined") {
+      return defaultValue;
+    }
+    return strValue;
+  }
+
+  String _formatCount(dynamic value) {
+    String parsed = _safeParseValue(value, defaultValue: "0");
+    try {
+      int count = int.parse(parsed);
+      return count.toString();
+    } catch (e) {
+      return "0";
+    }
+  }
+
+  String _formatAmount(dynamic value) {
+    String parsed = _safeParseValue(value, defaultValue: "0");
+    try {
+      double amount = double.parse(parsed);
+      if (amount == 0) return "0";
+      return parsed;
+    } catch (e) {
+      return "0";
+    }
+  }
+
+  String _formatNotice(dynamic value) {
+    if (value == null) return "Not Available";
+    String strValue = value.toString().trim();
+    if (strValue.isEmpty ||
+        strValue.toLowerCase() == "null" ||
+        strValue == "N/A" ||
+        strValue == "undefined" ||
+        strValue == "NULL") {
+      return "Not Available";
+    }
+    return strValue;
+  }
+
+  String _formatCompanyInfo(dynamic value, {String defaultValue = "Unknown"}) {
+    if (value == null) return defaultValue;
+    String strValue = value.toString().trim();
+    if (strValue.isEmpty ||
+        strValue.toLowerCase() == "null" ||
+        strValue == "N/A" ||
+        strValue == "undefined" ||
+        strValue == "NULL") {
+      return defaultValue;
+    }
+    return strValue;
+  }
+
+  GetDashBoardData() async {
+    var url = constants.getApiBaseURL() +
+        constants.homescreen +
+        "/" +
+        constants.homeCompanies +
+        "/" +
+        UserSessions.instance.getUserID +
+        "/" +
+        UserSessions.instance.getRefID;
+    var response =
+        await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
+    ResponseCodeModel responseCodeModel =
+        constants.CheckResponseCodesNew(response.statusCode, response);
+    uiUpdates.DismissProgresssDialog();
+    if (responseCodeModel.status == true) {
+      var body = jsonDecode(response.body);
+      String code = body["Code"].toString();
+      if (code == "1") {
+        var data = body["Data"];
+        var noteObject = data["notice"] ?? {};
+        var countObject = data["counts"] ?? {};
+        var amountObject = data["amount"] ?? {};
+        var feedsObject = data["feeds"] ?? {};
+        var information = data["extra"] != null && data["extra"]["company"] != null
+            ? data["extra"]["company"]
+            : {};
+
+        // Parse company information with null safety
+        companyName = _formatCompanyInfo(information["comp_name"],
+            defaultValue: "Unknown");
+        companyAddress = _formatCompanyInfo(information["comp_address"],
+            defaultValue: "Unknown");
+        companyLogo =
+            _formatCompanyInfo(information["comp_logo"], defaultValue: "null");
+
+        // Parse counts with null safety
+        totalEmployee = _formatCount(countObject["workers"]);
+        totalDisable = _formatCount(countObject["special"]);
+        totalAvailingBenefits = _formatCount(countObject["availing"]);
+        totalClaim = _formatCount(countObject["overall"]);
+        totalReimbursed = _formatCount(countObject["completed"]);
+        totalInprogress = _formatCount(countObject["pending"]);
+        estateClaimCount = _formatCount(countObject["estate"]);
+        hajjClaims = _formatCount(countObject["hajj"]);
+        totalEducationClaims = _formatCount(countObject["education"]);
+        feeClaims = _formatCount(countObject["edu_fee"]);
+
+        // Parse amounts with null safety
+        totalAmountReimbursed = _formatAmount(amountObject["benefits"]);
+        annexureAAmount = _formatAmount(amountObject["annexure_1"]);
+        annexure3AAmount = _formatAmount(amountObject["annexure_2"]);
+        totalAnnexesAmount = _formatAmount(amountObject["contribution"]);
+        estateClaimAmount = _formatAmount(amountObject["estate"]);
+        hajjClaimAmount = _formatAmount(amountObject["hajj"]);
+        deathClaimsTotalAmount = _formatAmount(amountObject["death"]);
+        deathClaimsDeliveredAmount = _formatAmount(amountObject["dth_done"]);
+        deathClaimsInprogressAmount =
+            _formatAmount(amountObject["dth_remaining"]);
+        marriageClaimsTotalAmount = _formatAmount(amountObject["merriage"]);
+        marriageClaimDeliveredAmount = _formatAmount(amountObject["mrg_done"]);
+        marriageClaimsInprogressAmount =
+            _formatAmount(amountObject["mrg_remaining"]);
+        educationClaimsTotalAmount = _formatAmount(amountObject["education"]);
+        feeClaimAmount = _formatAmount(amountObject["edu_fee"]);
+        schoolBasicsAmount = _formatAmount(amountObject["school_basics"]);
+        transportClaimsAmount = _formatAmount(amountObject["transport"]);
+
+        // Parse notices with null safety
+        note1 = _formatNotice(noteObject["notice_1"]);
+        note2 = _formatNotice(noteObject["notice_2"]);
+
+        // Parse feeds with null safety
+        complaints = _formatCount(feedsObject["complaints"]);
+        feedback = _formatCount(feedsObject["feedbacks"]);
+
+        // Load claim stages from dashboard data if available
+        if (data["claim_stages"] != null) {
+          ClaimStagesData.loadFromInformationResponse(data);
+        }
+
+        // Set defaults for missing data
+        schoolBasics = "0";
+        residenceClaimAmount = "0";
+
+        setState(() {});
+      }
+    } else {
+      uiUpdates.DismissProgresssDialog();
+      uiUpdates.ShowError(responseCodeModel.message);
+    }
   }
 
   void _checkPasswordStrength() async {
@@ -61,7 +1964,8 @@ class _EmployerHomeState extends State<EmployerHome> {
         "user_id": UserSessions.instance.getUserID,
         "api_tags": jsonEncode(tagsList).toString(),
       };
-      var url = constants.getApiBaseURL() + constants.authentication + "information";
+      var url =
+          constants.getApiBaseURL() + constants.authentication + "information";
       var response = await http.post(
         Uri.parse(url),
         body: data,
@@ -113,17 +2017,15 @@ class _EmployerHomeState extends State<EmployerHome> {
   }
 
   void _checkAndShowFeedbackDialog() {
-    // Show feedback dialog once per login (using SharedPreferences)
     bool feedbackShown = UserSessions.instance.getFeedbackDialogShown;
     if (!feedbackShown) {
-      // Wait a bit for the screen to load, then show dialog
       Future.delayed(const Duration(milliseconds: 2000), () {
         if (mounted) {
           bool stillNotShown = UserSessions.instance.getFeedbackDialogShown;
           if (!stillNotShown) {
             UserSessions.instance.setFeedbackDialogShown(true);
             showFeedbackDialog(context).then((result) {
-              // Dialog closed - result indicates if feedback was submitted
+              // Dialog closed
             });
           }
         }
@@ -131,1232 +2033,23 @@ class _EmployerHomeState extends State<EmployerHome> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppTheme.colors.newPrimary,
-        brightness: Brightness.dark,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            color: AppTheme.colors.newPrimary,
-          ),
-        ),
-        title: Text("Dashboard",
-            style: TextStyle(
-                color: AppTheme.colors.newWhite,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                letterSpacing: 0.5
-            )),
-
-        iconTheme: IconThemeData(color: AppTheme.colors.newWhite),
-
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: (){
-                  constants.LogoutUser(context);
-                },
-                borderRadius: BorderRadius.circular(6),
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppTheme.colors.newWhite.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: AppTheme.colors.newWhite.withOpacity(0.3),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.power_settings_new,
-                    color: AppTheme.colors.newWhite,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-
-      drawer: Container(
-          width: MediaQuery.of(context).size.width * 0.78,
-        child: Drawer(
-            child: EmployerDrawerView()
-        ),
-      ),
-
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppTheme.colors.newPrimary,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.colors.newPrimary.withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppTheme.colors.newWhite.withOpacity(0.2),
-                          border: Border.all(
-                            color: AppTheme.colors.newWhite.withOpacity(0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: companyLogo != "null" && 
-                                 companyLogo != "" && 
-                                 companyLogo != "NULL" && 
-                                 companyLogo != "N/A" && 
-                                 companyLogo != "-" &&
-                                 companyLogo != "Unknown"
-                            ? FadeInImage(
-                                image: NetworkImage(constants.getImageBaseURL() + companyLogo),
-                                placeholder: AssetImage("archive/images/no_image.jpg"),
-                                fit: BoxFit.cover,
-                                imageErrorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
-                                    "archive/images/no_image.jpg",
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              )
-                            : Image.asset(
-                                "archive/images/no_image.jpg",
-                                fit: BoxFit.cover,
-                              ),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: AppTheme.colors.newWhite,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          companyName != "Unknown" ? companyName : "Company Name",
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: AppTheme.colors.newPrimary,
-                            fontSize: 14,
-                            fontFamily: "AppFont",
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 12,
-                            color: AppTheme.colors.newWhite.withOpacity(0.9),
-                          ),
-                          SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              companyAddress != "Unknown" ? companyAddress : "Address Not Available",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                fontSize: 11,
-                                fontFamily: "AppFont",
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Password Warning Banner
-            if (_passwordCheckDone && _isPasswordWeak)
-              PasswordWarningBanner(
-                onDismiss: () {
-                  setState(() {
-                    _isPasswordWeak = false;
-                  });
-                },
-              ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppTheme.colors.newPrimary,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.colors.newPrimary.withOpacity(0.3),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Center(
-                                      child: Image.asset(
-                                        "archive/images/user.png",
-                                        height: 24,
-                                        width: 24,
-                                        color: AppTheme.colors.newWhite,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "Total Employees",
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                      fontSize: 12,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    totalEmployee,
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newWhite,
-                                      fontSize: 28,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Container(
-                                    padding: EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        _buildEmployeeStatItem(
-                                          label: "Disabled",
-                                          value: totalDisable,
-                                        ),
-                                        SizedBox(height: 12),
-                                        Container(
-                                          height: 1,
-                                          color: AppTheme.colors.newWhite.withOpacity(0.3),
-                                        ),
-                                        SizedBox(height: 12),
-                                        _buildEmployeeStatItem(
-                                          label: "Availing Benefits",
-                                          value: totalAvailingBenefits,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppTheme.colors.newPrimary,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.colors.newPrimary.withOpacity(0.3),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Center(
-                                      child: Image.asset(
-                                        "archive/images/money.png",
-                                        height: 24,
-                                        width: 24,
-                                        color: AppTheme.colors.newWhite,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "Total Claims",
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                      fontSize: 12,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    totalClaim,
-                                    style: TextStyle(
-                                      color: AppTheme.colors.newWhite,
-                                      fontSize: 28,
-                                      fontFamily: "AppFont",
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Container(
-                                    padding: EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.colors.newWhite.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        _buildEmployeeStatItem(
-                                          label: "Reimbursed",
-                                          value: totalReimbursed,
-                                        ),
-                                        SizedBox(height: 12),
-                                        Container(
-                                          height: 1,
-                                          color: AppTheme.colors.newWhite.withOpacity(0.3),
-                                        ),
-                                        SizedBox(height: 12),
-                                        _buildEmployeeStatItem(
-                                          label: "In Progress",
-                                          value: totalInprogress,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.newWhite,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.account_balance_wallet,
-                                color: AppTheme.colors.newPrimary,
-                                size: 24,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "Reimbursed Amount",
-                                style: TextStyle(
-                                  color: AppTheme.colors.colorDarkGray,
-                                  fontSize: 14,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            totalAmountReimbursed == "0" || totalAmountReimbursed.isEmpty
-                                ? "0 PKR"
-                                : constants.ConvertMappedNumber(totalAmountReimbursed) + " PKR",
-                            style: TextStyle(
-                              color: AppTheme.colors.newBlack,
-                              fontSize: 28,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD10,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "archive/images/contibute.png",
-                                height: 28,
-                                width: 28,
-                                color: AppTheme.colors.newWhite,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "Total Contribution",
-                                style: TextStyle(
-                                  color: AppTheme.colors.newWhite,
-                                  fontSize: 15,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            totalAnnexesAmount == "0" || totalAnnexesAmount.isEmpty
-                                ? "0 PKR"
-                                : constants.ConvertMappedNumber(totalAnnexesAmount) + " PKR",
-                            style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 24,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colors.colorD11,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        annexureAAmount == "0" || annexureAAmount.isEmpty
-                                            ? "0 PKR"
-                                            : constants.ConvertMappedNumber(annexureAAmount) + " PKR",
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newWhite,
-                                          fontSize: 13,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      SizedBox(height: 6),
-                                      Text(
-                                        "Annexure-III",
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                          fontSize: 11,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colors.colorD11,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        annexure3AAmount == "0" || annexure3AAmount.isEmpty
-                                            ? "0 PKR"
-                                            : constants.ConvertMappedNumber(annexure3AAmount) + " PKR",
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newWhite,
-                                          fontSize: 13,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      SizedBox(height: 6),
-                                      Text(
-                                        "Annexure-III (A)",
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newWhite.withOpacity(0.9),
-                                          fontSize: 11,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD20,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            decoration: BoxDecoration(
-                              color: AppTheme.colors.colorD10,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.notifications_active,
-                                  color: AppTheme.colors.newWhite,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Notice Board",
-                                  style: TextStyle(
-                                    color: AppTheme.colors.newWhite,
-                                    fontSize: 15,
-                                    fontFamily: "AppFont",
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Column(
-                              children: [
-                                _buildNoticeItem(note1),
-                                SizedBox(height: 20),
-                                _buildNoticeItem(note2),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD13,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.colors.colorD13.withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _buildClaimCard(
-                              title: "Estate Claim",
-                              subtitle: "Delivered",
-                              amount: estateClaimAmount,
-                              icon: Icons.home_work,
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 70,
-                            margin: EdgeInsets.symmetric(horizontal: 16),
-                            color: AppTheme.colors.newWhite.withOpacity(0.3),
-                          ),
-                          Expanded(
-                            child: _buildClaimCard(
-                              title: "Hajj Claim",
-                              subtitle: "Delivered",
-                              amount: hajjClaimAmount,
-                              icon: Icons.mosque,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD14,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.colors.colorD14.withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: AppTheme.colors.newWhite.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                "archive/images/death.png",
-                                height: 28,
-                                width: 28,
-                                color: AppTheme.colors.newWhite,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Death Claim",
-                            style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 16,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            deathClaimsTotalAmount == "0" || deathClaimsTotalAmount.isEmpty
-                                ? "0 PKR"
-                                : constants.ConvertMappedNumber(deathClaimsTotalAmount) + " PKR",
-                            style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 24,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStatusCard(
-                                  label: "Delivered",
-                                  amount: deathClaimsDeliveredAmount,
-                                  color: AppTheme.colors.colorD18,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: _buildStatusCard(
-                                  label: "In Progress",
-                                  amount: deathClaimsInprogressAmount,
-                                  color: AppTheme.colors.colorD18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD15,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.colors.colorD15.withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: AppTheme.colors.newWhite.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                "archive/images/merriage.png",
-                                height: 28,
-                                width: 28,
-                                color: AppTheme.colors.newWhite,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Marriage Claims",
-                            style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 16,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            marriageClaimsTotalAmount == "0" || marriageClaimsTotalAmount.isEmpty
-                                ? "0 PKR"
-                                : constants.ConvertMappedNumber(marriageClaimsTotalAmount) + " PKR",
-                            style: TextStyle(
-                              color: AppTheme.colors.newWhite,
-                              fontSize: 24,
-                              fontFamily: "AppFont",
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStatusCard(
-                                  label: "Delivered",
-                                  amount: marriageClaimDeliveredAmount,
-                                  color: AppTheme.colors.colorD19,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: _buildStatusCard(
-                                  label: "In Progress",
-                                  amount: marriageClaimsInprogressAmount,
-                                  color: AppTheme.colors.colorD19,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.colorD17,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.colors.colorD17.withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.school,
-                                color: AppTheme.colors.newWhite,
-                                size: 24,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "Education Claim",
-                                style: TextStyle(
-                                  color: AppTheme.colors.newWhite,
-                                  fontSize: 18,
-                                  fontFamily: "AppFont",
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 20),
-                            padding: EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppTheme.colors.newWhite,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        educationClaimsTotalAmount == "0" || educationClaimsTotalAmount.isEmpty
-                                            ? "0 PKR"
-                                            : constants.ConvertMappedNumber(educationClaimsTotalAmount) + " PKR",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newPrimary,
-                                          fontSize: 18,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 8),
-                                        width: 100,
-                                        height: 2,
-                                        color: AppTheme.colors.newPrimary,
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        "Total Amount",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppTheme.colors.colorDarkGray,
-                                          fontSize: 12,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1,
-                                  height: 60,
-                                  margin: EdgeInsets.symmetric(horizontal: 16),
-                                  color: AppTheme.colors.colorLightGray,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.colors.colorLightGray,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        totalEducationClaims,
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppTheme.colors.newPrimary,
-                                          fontSize: 18,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      Text(
-                                        "Count",
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: AppTheme.colors.colorDarkGray,
-                                          fontSize: 12,
-                                          fontFamily: "AppFont",
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildEducationSubCard(
-                                  title: "Fee Claims",
-                                  count: feeClaims,
-                                  amount: feeClaimAmount,
-                                  icon: Icons.receipt,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: _buildEducationSubCard(
-                                  title: "School Basics",
-                                  count: schoolBasics,
-                                  amount: schoolBasicsAmount,
-                                  icon: Icons.book,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildEducationSubCard(
-                                  title: "Transport",
-                                  count: "0",
-                                  amount: transportClaimsAmount,
-                                  icon: Icons.directions_bus,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: _buildEducationSubCard(
-                                  title: "Residence",
-                                  count: "0",
-                                  amount: residenceClaimAmount,
-                                  icon: Icons.home,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 20),
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppTheme.colors.newPrimary,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.colors.newPrimary.withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: _buildFeedbackStat(
-                              icon: Icons.report_problem,
-                              label: "Complaints",
-                              value: complaints,
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 40,
-                            color: AppTheme.colors.newWhite.withOpacity(0.3),
-                          ),
-                          Expanded(
-                            child: _buildFeedbackStat(
-                              icon: Icons.feedback,
-                              label: "Feedback",
-                              value: feedback,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void OpenContributionSelection() {
-    Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Contribution()
-    ));
-  }
-
-  // Helper function to safely parse JSON values
-  String _safeParseValue(dynamic value, {String defaultValue = "0"}) {
-    if (value == null) return defaultValue;
-    String strValue = value.toString().trim();
-    if (strValue.isEmpty || 
-        strValue.toLowerCase() == "null" || 
-        strValue == "N/A" ||
-        strValue == "undefined") {
-      return defaultValue;
-    }
-    return strValue;
-  }
-
-  // Helper function to format count values (shows "0" for zero, handles null)
-  String _formatCount(dynamic value) {
-    String parsed = _safeParseValue(value, defaultValue: "0");
-    try {
-      int count = int.parse(parsed);
-      return count.toString();
-    } catch (e) {
-      return "0";
-    }
-  }
-
-  // Helper function to format amount values (shows "0" for zero, handles null)
-  String _formatAmount(dynamic value) {
-    String parsed = _safeParseValue(value, defaultValue: "0");
-    try {
-      double amount = double.parse(parsed);
-      if (amount == 0) return "0";
-      return parsed;
-    } catch (e) {
-      return "0";
-    }
-  }
-
-  // Helper function to format notice text (shows "Not Available" for null/empty)
-  String _formatNotice(dynamic value) {
-    if (value == null) return "Not Available";
-    String strValue = value.toString().trim();
-    if (strValue.isEmpty || 
-        strValue.toLowerCase() == "null" || 
-        strValue == "N/A" ||
-        strValue == "undefined" ||
-        strValue == "NULL") {
-      return "Not Available";
-    }
-    return strValue;
-  }
-
-  // Helper function to format company information
-  String _formatCompanyInfo(dynamic value, {String defaultValue = "Unknown"}) {
-    if (value == null) return defaultValue;
-    String strValue = value.toString().trim();
-    if (strValue.isEmpty || 
-        strValue.toLowerCase() == "null" || 
-        strValue == "N/A" ||
-        strValue == "undefined" ||
-        strValue == "NULL") {
-      return defaultValue;
-    }
-    return strValue;
-  }
-
-  GetDashBoardData() async{
-    var url = constants.getApiBaseURL()+constants.homescreen+"/"+constants.homeCompanies+"/"+UserSessions.instance.getUserID+"/"
-        +UserSessions.instance.getRefID;
-    var response = await http.get(Uri.parse(url), headers: APIService.getDefaultHeaders());
-    ResponseCodeModel responseCodeModel= constants.CheckResponseCodesNew(response.statusCode, response);
-    uiUpdates.DismissProgresssDialog();
-    if (responseCodeModel.status == true) {
-      var body = jsonDecode(response.body);
-      String code = body["Code"].toString();
-      if (code == "1") {
-        var data= body["Data"];
-        var noteObject= data["notice"] ?? {};
-        var countObject= data["counts"] ?? {};
-        var amountObject= data["amount"] ?? {};
-        var feedsObject= data["feeds"] ?? {};
-        var information= data["extra"] != null && data["extra"]["company"] != null 
-            ? data["extra"]["company"] 
-            : {};
-        
-        // Parse company information with null safety
-        companyName= _formatCompanyInfo(information["comp_name"], defaultValue: "Unknown");
-        companyAddress= _formatCompanyInfo(information["comp_address"], defaultValue: "Unknown");
-        companyLogo= _formatCompanyInfo(information["comp_logo"], defaultValue: "null");
-        
-        // Parse counts with null safety
-        totalEmployee= _formatCount(countObject["workers"]);
-        totalDisable= _formatCount(countObject["special"]);
-        totalAvailingBenefits= _formatCount(countObject["availing"]);
-        totalClaim= _formatCount(countObject["overall"]);
-        totalReimbursed= _formatCount(countObject["completed"]);
-        totalInprogress= _formatCount(countObject["pending"]);
-        estateClaimCount= _formatCount(countObject["estate"]);
-        hajjClaims= _formatCount(countObject["hajj"]);
-        totalEducationClaims= _formatCount(countObject["education"]);
-        feeClaims= _formatCount(countObject["edu_fee"]);
-        
-        // Parse amounts with null safety
-        totalAmountReimbursed= _formatAmount(amountObject["benefits"]);
-        annexureAAmount= _formatAmount(amountObject["annexure_1"]);
-        annexure3AAmount= _formatAmount(amountObject["annexure_2"]);
-        totalAnnexesAmount= _formatAmount(amountObject["contribution"]);
-        estateClaimAmount= _formatAmount(amountObject["estate"]);
-        hajjClaimAmount= _formatAmount(amountObject["hajj"]);
-        deathClaimsTotalAmount= _formatAmount(amountObject["death"]);
-        deathClaimsDeliveredAmount= _formatAmount(amountObject["dth_done"]);
-        deathClaimsInprogressAmount= _formatAmount(amountObject["dth_remaining"]);
-        marriageClaimsTotalAmount= _formatAmount(amountObject["merriage"]);
-        marriageClaimDeliveredAmount= _formatAmount(amountObject["mrg_done"]);
-        marriageClaimsInprogressAmount= _formatAmount(amountObject["mrg_remaining"]);
-        educationClaimsTotalAmount= _formatAmount(amountObject["education"]);
-        feeClaimAmount= _formatAmount(amountObject["edu_fee"]);
-        schoolBasicsAmount= _formatAmount(amountObject["school_basics"]);
-        transportClaimsAmount= _formatAmount(amountObject["transport"]);
-        
-        // Parse notices with null safety
-        note1= _formatNotice(noteObject["notice_1"]);
-        note2= _formatNotice(noteObject["notice_2"]);
-        
-        // Parse feeds with null safety
-        complaints= _formatCount(feedsObject["complaints"]);
-        feedback= _formatCount(feedsObject["feedbacks"]);
-        
-        // Load claim stages from dashboard data if available
-        if (data["claim_stages"] != null) {
-          ClaimStagesData.loadFromInformationResponse(data);
-        }
-        
-        // Set defaults for missing data
-        schoolBasics= "0";
-        residenceClaimAmount= "0";
-        
-        setState(() {});
-      }
-    } else {
-      uiUpdates.DismissProgresssDialog();
-      uiUpdates.ShowError(responseCodeModel.message);
-    }
-  }
-
-  void GetTokenAndSave() async{
-    ///get fcm token
+  void GetTokenAndSave() async {
     FirebaseMessaging _firebaseMessaging = await FirebaseMessaging.instance;
     if (Platform.isAndroid) {
       GetToken();
-    }else if (Platform.isIOS) {
+    } else if (Platform.isIOS) {
       GetToken();
     }
   }
 
-  void GetToken() async{
+  void GetToken() async {
     await FirebaseMessaging.instance.getToken().then((token) => {
-      SaveNotificationToken(token)
-    });
+          SaveNotificationToken(token)
+        });
   }
 
-  void SaveNotificationToken(String notificationToken) async{
-    var url = constants.getApiBaseURL()+constants.authentication+"gadget";
+  void SaveNotificationToken(String notificationToken) async {
+    var url = constants.getApiBaseURL() + constants.authentication + "gadget";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['user_id'] = UserSessions.instance.getUserID;
     request.fields['gadget_id'] = notificationToken;
@@ -1364,300 +2057,26 @@ class _EmployerHomeState extends State<EmployerHome> {
     var response = await request.send();
     try {
       final resp = await http.Response.fromStream(response);
-      ResponseCodeModel responseCodeModel= constants.CheckResponseCodes(response.statusCode);
+      ResponseCodeModel responseCodeModel =
+          constants.CheckResponseCodes(response.statusCode);
       uiUpdates.DismissProgresssDialog();
       if (responseCodeModel.status == true) {
         var body = jsonDecode(resp.body);
         String code = body["Code"].toString();
         if (code == "1") {
-        } else {
-        }
+        } else {}
       } else {
         var body = jsonDecode(resp.body);
-        if(!(body["Message"].toString().contains('Your request has same device ID'))){
+        if (!(body["Message"]
+            .toString()
+            .contains('Your request has same device ID'))) {
           String message = body["Message"].toString();
           uiUpdates.ShowError(message);
         }
       }
-    }catch(e){
+    } catch (e) {
       uiUpdates.ShowError(e.toString());
     }
   }
-
-  // Helper widget for employee stat items
-  Widget _buildEmployeeStatItem({String label, String value}) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppTheme.colors.newPrimary,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            value,
-            style: TextStyle(
-              color: AppTheme.colors.newWhite,
-              fontSize: 12,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: AppTheme.colors.newWhite,
-              fontSize: 11,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Helper widget for notice items
-  Widget _buildNoticeItem(String notice) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.colors.colorD10.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.colors.newWhite.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: AppTheme.colors.newWhite.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.push_pin,
-              color: AppTheme.colors.newWhite,
-              size: 18,
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              notice,
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                color: AppTheme.colors.newWhite,
-                fontSize: 13,
-                fontFamily: "AppFont",
-                fontWeight: FontWeight.w500,
-                height: 1.5,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper widget for claim cards
-  Widget _buildClaimCard({String title, String subtitle, String amount, IconData icon}) {
-    final formattedAmount = amount == "0" || amount.isEmpty 
-        ? "0 PKR" 
-        : constants.ConvertMappedNumber(amount) + " PKR";
-    
-    return Column(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppTheme.colors.newWhite.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            icon,
-            color: AppTheme.colors.newWhite,
-            size: 22,
-          ),
-        ),
-        SizedBox(height: 12),
-        Text(
-          title,
-          style: TextStyle(
-            color: AppTheme.colors.newWhite,
-            fontSize: 13,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: TextStyle(
-            color: AppTheme.colors.newWhite.withOpacity(0.9),
-            fontSize: 11,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(
-          formattedAmount,
-          style: TextStyle(
-            color: AppTheme.colors.newWhite,
-            fontSize: 14,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Helper widget for status cards (Delivered/In Progress)
-  Widget _buildStatusCard({String label, String amount, Color color}) {
-    final formattedAmount = amount == "0" || amount.isEmpty 
-        ? "0 PKR" 
-        : constants.ConvertMappedNumber(amount) + " PKR";
-    
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppTheme.colors.newWhite,
-              fontSize: 12,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            formattedAmount,
-            style: TextStyle(
-              color: AppTheme.colors.newWhite,
-              fontSize: 13,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper widget for feedback/complaints stats
-  Widget _buildFeedbackStat({IconData icon, String label, String value}) {
-    final displayValue = value == "0" || value.isEmpty ? "0" : value;
-    
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: AppTheme.colors.newWhite,
-          size: 24,
-        ),
-        SizedBox(height: 8),
-        Text(
-          displayValue,
-          style: TextStyle(
-            color: AppTheme.colors.newWhite,
-            fontSize: 20,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppTheme.colors.newWhite.withOpacity(0.9),
-            fontSize: 12,
-            fontFamily: "AppFont",
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Helper widget for education sub-cards
-  Widget _buildEducationSubCard({String title, String count, String amount, IconData icon}) {
-    final displayCount = count == "0" || count.isEmpty ? "0" : count;
-    final formattedAmount = amount == "0" || amount.isEmpty 
-        ? "0 PKR" 
-        : constants.ConvertMappedNumber(amount) + " PKR";
-    
-    return Container(
-      padding: EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppTheme.colors.newWhite,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.colors.colorLightGray,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: AppTheme.colors.newPrimary,
-            size: 20,
-          ),
-          SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              color: AppTheme.colors.newPrimary,
-              fontSize: 12,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            "($displayCount)",
-            style: TextStyle(
-              color: AppTheme.colors.colorDarkGray,
-              fontSize: 10,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            formattedAmount,
-            style: TextStyle(
-              color: AppTheme.colors.newPrimary,
-              fontSize: 13,
-              fontFamily: "AppFont",
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
+

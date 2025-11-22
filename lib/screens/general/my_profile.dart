@@ -6,6 +6,8 @@ import 'package:wwf_apps/screens/home/employee/verification_scrutiny_screen.dart
 import 'package:wwf_apps/updates/UIUpdates.dart';
 import 'package:wwf_apps/sessions/UserSessions.dart';
 import 'package:wwf_apps/widgets/standard_header.dart';
+import 'package:wwf_apps/dialogs/inixio_profile_dialog.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -15,12 +17,21 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   Constants constants;
   UIUpdates uiUpdates;
+  String appVersion = "";
 
   @override
   void initState() {
     super.initState();
     constants = new Constants();
     uiUpdates = new UIUpdates(context);
+    _getAppVersion();
+  }
+
+  Future<void> _getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = packageInfo.version;
+    });
   }
 
   @override
@@ -90,11 +101,141 @@ class _MyProfileState extends State<MyProfile> {
                     _buildAdditionalInfoCard(agentExpiry),
 
                   SizedBox(height: 16),
+
+                  // Footer - Powered by Inixio
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildInixioFooter(),
+                  ),
+
+                  SizedBox(height: 16),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInixioFooter() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          showInixioProfileDialog(context);
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.grey.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              // Powered by Inixio
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Powered by ",
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                      fontSize: 12,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Text(
+                    "Inixio Technologies",
+                    style: TextStyle(
+                      color: AppTheme.colors.newPrimary,
+                      fontSize: 12,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(
+                    Icons.open_in_new,
+                    color: AppTheme.colors.newPrimary,
+                    size: 14,
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: 12),
+              
+              // Divider
+              Container(
+                height: 1,
+                color: Colors.grey.withOpacity(0.1),
+              ),
+              
+              SizedBox(height: 12),
+              
+              // Version and Copyright
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: AppTheme.colors.colorDarkGray.withOpacity(0.5),
+                        size: 14,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        "Version $appVersion",
+                        style: TextStyle(
+                          color: AppTheme.colors.colorDarkGray.withOpacity(0.7),
+                          fontSize: 11,
+                          fontFamily: "AppFont",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    "© ${DateTime.now().year} WWF-Pakistan. All rights reserved.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray.withOpacity(0.6),
+                      fontSize: 10,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Developed & Maintained by Inixio Technologies",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppTheme.colors.colorDarkGray.withOpacity(0.6),
+                      fontSize: 10,
+                      fontFamily: "AppFont",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
